@@ -1,76 +1,51 @@
+require 'json'
 
 module Ginatra
   class Repository
-    attr_accessor :path, :authors, :commits
+    attr_accessor :path, :commits
 
     def initialize(path)
+#      raise "#{path} is not a repository path" if path.is_repsitory?
       @path = path
-      @commits = Array.new()
-      @authors = Array.new()
-
-      p l_params = parameters(%w{
-                              --pretty=full
-                              --full-history
-                              --shortstat
-                            })
-
-      p l_format = parameters(%w{
-                            "commit=>%h,
-                            author=>%an,
-                            date=>%ai<--c-entry-->"
-                            })
-
-      l_command = "git -C #{path} log #{l_params} --format=#{l_format}"
-
-      c_logs = `#{l_command}`.split("<--c-entry-->")
-
-      c_logs.each do |c_log|
-        c_meta = Hash.new()
-        c_log.split("\n").reject { |c| c.empty? }.each do |c_raw|
-          if c_raw.index('commit=>') == 0
-            c_raw.split(/, /).inject(Hash.new { |h, k|
-                                       h[k] = nil }) do |h, s|
-              k,v = s.split(/=>/)
-              @authors = @authors | [v.to_s] unless k.to_s != "author"
-              h[k.to_sym] = v.to_s
-              c_meta = [c_meta, h].inject(&:merge)
-            end
-          else
-            # file & line changes
-            c_raw.split(/, /).inject(Hash.new { |h, k|
-                                       h[k] = nil }) do |h, s|
-              k = s.index("+") ? :additions :
-                  s.index("-") ? :deletions : :changed
-              h[k] = s.match(/[0-9]/).to_s.to_i
-              c_meta = [c_meta, h].inject(&:merge)
-            end
-          end
-        end
-        @commits << c_meta
-      end
+      @commits = nil
     end
 
-    def author_stats
-      a_stats = Array.new()
-      stats = [:additions, :deletions]
-      @commits.group_by { |h| h[:author] }.each do |a_name, c_list|
-        c_count = 0
-        a_name ||= "N/A"
-        a_stats << c_list.inject { |o, n|
-          Hash[*stats.map { |k|
-                 {:author => a_name,
-                  :commits => c_count += 1,
-                  k => o[k].to_i + n[k].to_i}
-               }.map(&:to_a).flatten]
-        }
-      end
-      a_stats
+    def commits
+      get_commits if @commits.nil?
+      return @commits
     end
 
     private
 
-    def parameters(arr)
-      arr.inject { |o, n| o.to_s + " " + n.to_s }
+    def get_commits
+      code = %s{
+               markers = %w{ id author date }
+               if $F.empty?
+                 puts "\"changes\": ["
+               else
+                 key = $F[0]
+                 if markers.include? key
+                   $F.shift
+                   value = $F.inject { |o, n| o + " " + n }
+                   puts key == "id" ? "]\}\},\{\"#{$F[0]}\":\{" : "\"#{key}\": \"#{value}\","
+                 else
+                   add = $F[0]
+                   del = $F[1]
+                   file = $F[2]
+                   puts "{\"additions\": #{$F[0]}, \"deletions\": #{$F[1]}, \"path\": \"#{$F[2]}\"},"
+                 end
+               end
+               }
+      wrapper = %s{ BEGIN{puts "["}; END{puts "]\}\}]"} }
+      json_str =  `git -C #{@path} log \
+                   --numstat \
+                   --format='id %h%nauthor %an%ndate %ai' $@ | \
+                   ruby -lawne '#{code}' | \
+                   ruby -wpe '#{wrapper}' | \
+                   tr -d '\n' | \
+                   sed "s/,]/]/g; s/]}},//"
+      `
+      @commits = JSON.parse(json_str)
     end
   end
 end

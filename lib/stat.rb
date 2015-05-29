@@ -1,8 +1,15 @@
+require 'sinatra/base'
+require 'sinatra/config_file'
+
 module Ginatra
-  class RepositoryStat < Repository
-    def initialize(path)
-      Repository.new(path)
-      p @commits.nil? ? "NIL" : "YISS"
+  class Stat < Sinatra::Base
+    register Sinatra::ConfigFile
+
+    config_file '../config.yml'
+
+    attr_accessor :repositories
+
+    def initialize
+      @repositories = settings.repositories
     end
-  end
 end

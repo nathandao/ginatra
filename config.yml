@@ -1,4 +1,7 @@
 repositories:
   git-nathan:
-    path: '~/Sites/vagrant-nesteoil/git/nesteoil'
-    name: 'Neste Oil'
+    path: ~/ruby-wife/ginatra
+    name: Ginatra
+  neste-oil:
+    path: ~/Sites/vagrant-nesteoil/git/nesteoil
+    name: Neste Oil

@@ -1,7 +1,9 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    awesome_print (1.6.1)
     backports (3.6.4)
+    json (1.8.2)
     multi_json (1.11.0)
     rack (1.6.1)
     rack-protection (1.5.3)
@@ -25,5 +27,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  awesome_print
+  json
   sinatra
   sinatra-contrib
