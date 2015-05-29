@@ -1,12 +1,14 @@
 require 'json'
+require_relative 'helpers'
 
 module Ginatra
   class Repository
-    attr_accessor :path, :commits
+    attr_accessor :id, :path, :name, :commits
 
-    def initialize(path)
-#      raise "#{path} is not a repository path" if path.is_repsitory?
+    def initialize(id, name, path)
+      @id = id
       @path = path
+      @name = name
       @commits = nil
     end
 
@@ -32,7 +34,7 @@ module Ginatra
                    add = $F[0]
                    del = $F[1]
                    file = $F[2]
-                   puts "{\"additions\": #{$F[0]}, \"deletions\": #{$F[1]}, \"path\": \"#{$F[2]}\"},"
+                   puts "{\"additions\": #{add}, \"deletions\": #{del}, \"path\": \"#{file}\"},"
                  end
                end
                }
