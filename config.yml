@@ -1,0 +1,4 @@
+repositories:
+  git-nathan:
+    path: '~/Sites/vagrant-nesteoil/git/nesteoil'
+    name: 'Neste Oil'

@@ -1,7 +1,7 @@
 module Ginatra
-  class RepoStat < Repo
+  class RepositoryStat < Repository
     def initialize(path)
-      Repo.new(path)
+      Repository.new(path)
       p @commits.nil? ? "NIL" : "YISS"
     end
   end

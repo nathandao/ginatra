@@ -1,3 +1,4 @@
+
 module Ginatra
   class Repository
     attr_accessor :path, :authors, :commits
