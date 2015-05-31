@@ -5,10 +5,10 @@ module Ginatra
   class Repository
     attr_accessor :id, :path, :name, :commits
 
-    def initialize(id, name, path)
-      @id = id
-      @path = path
-      @name = name
+    def initialize(params)
+      @id = params['id']
+      @path = params['path']
+      @name = params['name']
       @commits = nil
     end
 
@@ -21,33 +21,38 @@ module Ginatra
 
     def get_commits
       code = %s{
+             if !$F.empty?
                markers = %w{ id author date }
-               if $F.empty?
+               key = $F[0]
+               if key == "changes"
                  puts "\"changes\": ["
                else
-                 key = $F[0]
                  if markers.include? key
                    $F.shift
                    value = $F.inject { |o, n| o + " " + n }
                    puts key == "id" ? "]\}\},\{\"#{$F[0]}\":\{" : "\"#{key}\": \"#{value}\","
                  else
-                   add = $F[0]
-                   del = $F[1]
-                   file = $F[2]
+                   add = $F[0].to_i
+                   del = $F[1].to_i
+                   file = $F[2].to_s
                    puts "{\"additions\": #{add}, \"deletions\": #{del}, \"path\": \"#{file}\"},"
                  end
                end
+             end
                }
       wrapper = %s{ BEGIN{puts "["}; END{puts "]\}\}]"} }
       json_str = `git -C #{@path} log \
                   --numstat \
-                  --format='id %h%nauthor %an%ndate %ai' $@ | \
+                  --format='id %H%nauthor %an%ndate %ai %nchanges' $@ | \
                   ruby -lawne '#{code}' | \
                   ruby -wpe '#{wrapper}' | \
                   tr -d '\n' | \
                   sed "s/,]/]/g; s/]}},//"
       `
       @commits = JSON.parse(json_str)
+#      File.open(File.expand_path('.ginatra', @path), 'w') { |file|
+#        file.write(@commits.to_json)
+#      }
     end
   end
 end
