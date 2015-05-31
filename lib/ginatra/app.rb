@@ -6,7 +6,6 @@ require File.expand_path('stat', File.dirname(__FILE__))
 
 Encoding.default_external = 'utf-8' if RUBY_VERSION =~ /^1.9/
 
-
 module Ginatra
   class App < Sinatra::Base
 

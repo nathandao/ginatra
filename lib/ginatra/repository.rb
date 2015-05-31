@@ -39,13 +39,13 @@ module Ginatra
                end
                }
       wrapper = %s{ BEGIN{puts "["}; END{puts "]\}\}]"} }
-      json_str =  `git -C #{@path} log \
-                   --numstat \
-                   --format='id %h%nauthor %an%ndate %ai' $@ | \
-                   ruby -lawne '#{code}' | \
-                   ruby -wpe '#{wrapper}' | \
-                   tr -d '\n' | \
-                   sed "s/,]/]/g; s/]}},//"
+      json_str = `git -C #{@path} log \
+                  --numstat \
+                  --format='id %h%nauthor %an%ndate %ai' $@ | \
+                  ruby -lawne '#{code}' | \
+                  ruby -wpe '#{wrapper}' | \
+                  tr -d '\n' | \
+                  sed "s/,]/]/g; s/]}},//"
       `
       @commits = JSON.parse(json_str)
     end
