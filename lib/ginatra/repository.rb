@@ -20,6 +20,13 @@ module Ginatra
     private
 
     def get_commits
+      update_commits if !File.exists? File.expand_path('.ginatra', @path)
+      file = File.open File.expand_path('.ginatra', @path)
+      @commits = JSON.parse(file.read)
+      file.close
+    end
+
+    def update_commits
       code = %s{
              if !$F.empty?
                markers = %w{ id author date }
@@ -49,10 +56,9 @@ module Ginatra
                   tr -d '\n' | \
                   sed "s/,]/]/g; s/]}},//"
       `
-      @commits = JSON.parse(json_str)
-#      File.open(File.expand_path('.ginatra', @path), 'w') { |file|
-#        file.write(@commits.to_json)
-#      }
+      File.open(File.expand_path('.ginatra', @path), 'w') { |file|
+        file.write(json_str)
+      }
     end
   end
 end
