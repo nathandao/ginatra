@@ -1,5 +1,5 @@
 repositories:
-  git-nathan:
+  ginatra:
     path: ~/ruby-wife/ginatra
     name: Ginatra
   neste-oil:

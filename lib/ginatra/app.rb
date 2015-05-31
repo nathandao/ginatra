@@ -1,6 +1,8 @@
 require 'sinatra/base'
+require 'awesome_print'
 
 require File.expand_path('env', File.dirname(__FILE__))
+require File.expand_path('config', File.dirname(__FILE__))
 require File.expand_path('repository', File.dirname(__FILE__))
 require File.expand_path('stat', File.dirname(__FILE__))
 
@@ -12,6 +14,7 @@ module Ginatra
     set :root, Ginatra::Env.root
 
     get '/' do
+      Ginatra::Config.settings
       #  ap REPO.commits, :indent => -2
     end
 
@@ -20,8 +23,7 @@ module Ginatra
     end
 
     get '/stat' do
-      s = Ginatra::Stat.new
-      s.commits('git-nathan')
+      ap Ginatra::Stat.commits('ginatra')
       "HA!"
     end
   end
