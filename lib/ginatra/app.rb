@@ -22,9 +22,21 @@ module Ginatra
       #  puts REPO.author_stats
     end
 
-    get '/stat' do
-      ap Ginatra::Stat.commits('ginatra')
-      "HA!"
+    get '/stat/:id/commits' do
+      Ginatra::Stat.commits(params['id']).to_json
     end
+
+    get 'stat/:id/authors' do
+      "Repo author stats"
+    end
+
+    get '/stat/all_commits' do
+      Ginatra::Stat.all_commits.to_json
+    end
+
+    get 'stat/hourly/:range' do
+      "Hourly commit changes"
+    end
+
   end
 end
