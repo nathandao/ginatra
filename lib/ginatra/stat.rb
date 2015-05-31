@@ -1,19 +1,24 @@
-
 module Ginatra
   class Stat
 
     class << self
-
       def commits(repo_id)
-        repo_conf = Ginatra::Config.repositories.select { |repo|
-          repo['id'] == repo_id
-        }.first
-        return false if repo_conf.nil?
-        id = repo_conf['id']
-        name = repo_conf['name']
-        path = repo_conf['path']
-        Repository.new(id, name, path).commits
+        repo = Ginatra::Config.repositories[repo_id]
+        return false if repo.nil?
+        repo['id'] = repo_id
+        Ginatra::Repository.new(repo).commits
       end
+
+      def all_commits
+        commits = []
+        repos = Ginatra::Config.repositories
+        repos.each do |id, repo|
+          repo['id'] = id
+          commits << Ginatra::Repository.new(repo).commits
+        end
+        commits
+      end
+
     end
   end
 end
