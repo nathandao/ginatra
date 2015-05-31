@@ -5,7 +5,7 @@ module Ginatra
     class << self
 
       def settings
-        p YAML.load_file(File.expand_path('config.yml', Ginatra::Env.root))
+        YAML.load_file(File.expand_path('config.yml', Ginatra::App.root))
       end
 
       def repositories
