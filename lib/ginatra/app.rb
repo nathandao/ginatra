@@ -1,6 +1,7 @@
 require 'sinatra/base'
-require 'awesome_print'
+require 'sinatra/assetpack'
 require 'json'
+require 'sass'
 
 require File.expand_path('env', File.dirname(__FILE__))
 require File.expand_path('config', File.dirname(__FILE__))
@@ -11,12 +12,26 @@ Encoding.default_external = 'utf-8' if RUBY_VERSION =~ /^1.9/
 
 module Ginatra
   class App < Sinatra::Base
+    set :views, File.expand_path('../../views', File.dirname(__FILE__))
+    set :haml, { format: :html5 }
 
     set :root, Ginatra::Env.root
 
+    register Sinatra::AssetPack
+
+    assets do
+      # Custom assets mangement
+      serve '/js', from: 'assets/js'
+      serve '/css', from: 'assets/scss'
+    end
+
+    get '/css/:stylesheet.css' do
+      content_type 'text/css', charset: 'utf-8'
+      scss params['stylesheet'].to_sym, :style => :expanded
+    end
+
     get '/' do
-      Ginatra::Stat
-      #  ap REPO.commits, :indent => -2
+      erb :layout
     end
 
     get '/stat/:id/commits' do
