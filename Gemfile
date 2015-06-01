@@ -2,5 +2,6 @@ source 'https://rubygems.org'
 
 gem 'sinatra'
 gem 'sinatra-contrib'
+gem 'sinatra-assetpack'
 gem 'json'
-gem 'awesome_print'
+gem 'sass'

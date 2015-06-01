@@ -1,5 +1,6 @@
-test.rb
 .ginatra
+test.rb
+.sass-cache/
 config.yml
 node_modules
 node_modules/*
