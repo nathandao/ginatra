@@ -1,7 +1,14 @@
-.ginatra
-test.rb
-.sass-cache/
+# Confidential files
 config.yml
-node_modules
-node_modules/*
+data/
+
+# Caches
+.sass-cache/
+
+# npm dependencies
+node_modules/
+
+# misc
+test.rb
 .DS_Store
+.idea
