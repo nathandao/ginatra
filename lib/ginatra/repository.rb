@@ -13,23 +13,37 @@ module Ginatra
       @commits = nil
     end
 
-    def commits date_range = []
+    def commits
       get_commits if @commits.nil?
+      @commits
+    end
+
+    def commits_between date_range = []
       if date_range.empty?
-        return @commits
+        commits
       else
         date_range = date_range.map { |time_stamp|
-          Chronic.parse(time_stamp) if time_stamp.class != 'Time'
+          Chronic.parse time_stamp if time_stamp.class != 'Time'
         }
         date_range << Time.now if date_range.size == 1
-        return @commits.select { |commit|
-          commit_date = Chronic.parse(commit.flatten[1]['date'])
+        commits.select { |commit|
+          commit_date = Chronic.parse commit.flatten[1]['date']
           date_range[0] <= commit_date && date_range[1] >= commit_date
         }
       end
     end
 
-    def refresh_data
+    def commits_by_author name = nil
+      if name.nil?
+        return commits
+      else
+        return commits.select { |commit|
+          commit.flatten[1]['author'] == name
+        }
+      end
+    end
+
+    def refresh
       update_commits
     end
 
@@ -68,7 +82,7 @@ module Ginatra
                  end
                end
              end
-               }
+      }
       wrapper = %s{ BEGIN{puts "["}; END{puts "]\}\}]"} }
       json_str = `git -C #{@path} log \
                   --numstat \

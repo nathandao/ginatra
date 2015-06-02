@@ -1,19 +1,8 @@
 module Ginatra
   class Stat
-
     class << self
       def commits(repo_id)
         get_repo(repo_id).commits
-      end
-
-      def all_commits
-        commits = []
-        repos = Ginatra::Config.repositories
-        repos.each do |id, repo|
-          repo['id'] = id
-          commits << Ginatra::Repository.new(repo).commits
-        end
-        commits
       end
 
       def authors(repo_id)
@@ -40,6 +29,20 @@ module Ginatra
           end
         end
         lines
+      end
+
+      def all_commits
+        all_commits_between ['1/1/1', 'now']
+      end
+
+      def all_commits_between date_range = []
+        repos = Ginatra::Config.repositories
+        repos.inject(Hash.new) { |output, repo|
+          id = repo[0]
+          params = repo[1].merge({'id' => id})
+          output[id] = Repository.new(params).commits_between date_range
+          output
+        }
       end
 
       private
@@ -70,7 +73,6 @@ module Ginatra
       def get_deletions(commits)
         get_commit_value(commits, 'deletions')
       end
-
     end
   end
 end
