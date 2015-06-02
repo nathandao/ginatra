@@ -14,7 +14,8 @@
     ]
   },
   "scripts": {
-    "build": "browserify -t reactify assets/js/app.jsx -o assets/js/bundle.js"
+      "build": "browserify -t reactify assets/js/app.jsx -o assets/js/bundle.js",
+      "watch": "watchify -t reactify assets/js/app.jsx -o assets/js/bundle.js"
   },
   "repository": {
     "type": "git",
