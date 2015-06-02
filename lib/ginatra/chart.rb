@@ -2,18 +2,26 @@ module Ginatra
   class Chart < Stat
     class << self
 
-      def polararea_all_commits date_range = []
-        polararea all_commits_between(date_range).inject(Hash.new) { |o, n|
-          id = n[0]
-          c = n[1]
-          o[id] = {'value' => c.size}
-          o
+      def round_chart_all_commits date_range = []
+        round_chart all_commits_between(date_range).inject(Hash.new) { |result, repo|
+          repo_id = repo[0]
+          commits = repo[1]
+          result[repo_id] = {'value' => commits.size}
+          result
+        }
+      end
+
+      def round_chart_all_lines date_range = []
+        round_chart all_lines_between(date_range).inject(Hash.new) { |result, line_data|
+          repo_id = line_data[0]
+          result[repo_id] = {'value' => line_data[1]}
+          result
         }
       end
 
       private
 
-      def polararea data = Hash.new
+      def round_chart data = Hash.new
         c = colors
         h = highlights
         data.inject([]) { |output, v|
