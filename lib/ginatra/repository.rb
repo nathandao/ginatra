@@ -1,5 +1,5 @@
 require 'json'
-require_relative 'helpers'
+require 'fileutils'
 
 module Ginatra
   class Repository
@@ -17,12 +17,22 @@ module Ginatra
       return @commits
     end
 
+    def refresh_data
+      update_commits
+    end
+
     private
 
+    def data_file
+      dirname = File.dirname Ginatra::App.root + '/data/'
+      FileUtils.mkdir_p dirname unless File.directory?(dirname)
+      File.expand_path '.' + @id, dirname
+    end
+
     def get_commits
-      update_commits if !File.exists? File.expand_path('.ginatra', @path)
-      file = File.open File.expand_path('.ginatra', @path)
-      @commits = JSON.parse(file.read)
+      update_commits if !File.exists? data_file
+      file = File.open data_file
+      @commits = JSON.parse file.read
       file.close
     end
 
@@ -49,14 +59,14 @@ module Ginatra
                }
       wrapper = %s{ BEGIN{puts "["}; END{puts "]\}\}]"} }
       json_str = `git -C #{@path} log \
-                  --numstat \
+                  --numstat --max-count=4 \
                   --format='id %H%nauthor %an%ndate %ai %nchanges' $@ | \
                   ruby -lawne '#{code}' | \
                   ruby -wpe '#{wrapper}' | \
                   tr -d '\n' | \
                   sed "s/,]/]/g; s/]}},//"
       `
-      File.open(File.expand_path('.ginatra', @path), 'w') { |file|
+      File.open(data_file, 'w') { |file|
         file.write(json_str)
       }
     end
