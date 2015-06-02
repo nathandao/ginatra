@@ -2,7 +2,7 @@ require 'sinatra/base'
 require 'sinatra/assetpack'
 require 'json'
 require 'sass'
-require 'react/jsx'
+
 require File.expand_path('env', File.dirname(__FILE__))
 require File.expand_path('config', File.dirname(__FILE__))
 require File.expand_path('repository', File.dirname(__FILE__))
@@ -54,6 +54,8 @@ module Ginatra
     get '/stat/commits/past/:range' do
       "Hourly commit changes"
     end
+
+    # Chart specific stuff
 
   end
 end
