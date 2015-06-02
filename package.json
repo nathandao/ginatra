@@ -1,0 +1,39 @@
+{
+  "name": "ginatra",
+  "version": "1.0.0",
+  "description": "Ginatra is a team dashboard that displays git repository statistics in real time using Sinatra and ReactJs",
+  "main": "assets/js/app.js",
+  "browserify": {
+    "transform": [
+      [
+        "reactify",
+        {
+          "es6": true
+        }
+      ]
+    ]
+  },
+  "scripts": {
+    "build": "browserify -t reactify assets/js/app.jsx -o assets/js/bundle.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nathandao/ginatra.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nathandao/ginatra/issues"
+  },
+  "homepage": "https://github.com/nathandao/ginatra",
+  "devDependencies": {
+    "browserify": "^10.2.3",
+    "reactify": "^1.1.1",
+    "watchify": "^3.2.1"
+  },
+  "dependencies": {
+    "chart.js": "^1.0.2",
+    "react": "^0.13.3",
+    "react-chartjs": "^0.6.0"
+  }
+}
