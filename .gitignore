@@ -2,8 +2,9 @@
 config.yml
 data/
 
-# Caches
+# Autogenrated
 .sass-cache/
+assets/js/bundle.js
 
 # npm dependencies
 node_modules/

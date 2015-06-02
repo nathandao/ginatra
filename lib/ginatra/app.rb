@@ -29,6 +29,11 @@ module Ginatra
       erb :layout
     end
 
+    get '/test' do
+      content_type :json
+      Ginatra::Chart.round_chart_all_lines.to_json
+    end
+
     get '/css/:stylesheet.css' do
       content_type 'text/css', charset: 'utf-8'
       scss params['stylesheet'].to_sym, :style => :expanded
