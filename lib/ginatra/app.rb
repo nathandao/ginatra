@@ -2,7 +2,7 @@ require 'sinatra/base'
 require 'sinatra/assetpack'
 require 'json'
 require 'sass'
-
+require 'react/jsx'
 require File.expand_path('env', File.dirname(__FILE__))
 require File.expand_path('config', File.dirname(__FILE__))
 require File.expand_path('repository', File.dirname(__FILE__))
@@ -12,12 +12,10 @@ Encoding.default_external = 'utf-8' if RUBY_VERSION =~ /^1.9/
 
 module Ginatra
   class App < Sinatra::Base
-    set :views, File.expand_path('../../views', File.dirname(__FILE__))
-    set :haml, { format: :html5 }
-
-    set :root, Ginatra::Env.root
-
     register Sinatra::AssetPack
+
+    set :views, File.expand_path('../../views', File.dirname(__FILE__))
+    set :root, Ginatra::Env.root
 
     assets do
       # Custom assets mangement
