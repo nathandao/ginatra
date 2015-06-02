@@ -3,19 +3,9 @@
   "version": "1.0.0",
   "description": "Ginatra is a team dashboard that displays git repository statistics in real time using Sinatra and ReactJs",
   "main": "assets/js/app.js",
-  "browserify": {
-    "transform": [
-      [
-        "reactify",
-        {
-          "es6": true
-        }
-      ]
-    ]
-  },
   "scripts": {
-      "build": "browserify -t reactify assets/js/app.jsx -o assets/js/bundle.js",
-      "watch": "watchify -t reactify assets/js/app.jsx -o assets/js/bundle.js"
+    "build": "browserify -t reactify assets/js/app.jsx -o assets/js/bundle.js",
+    "watch": "watchify -t reactify assets/js/app.jsx -o assets/js/bundle.js"
   },
   "repository": {
     "type": "git",
@@ -34,7 +24,8 @@
   },
   "dependencies": {
     "chart.js": "^1.0.2",
+    "jquery": "^2.1.4",
     "react": "^0.13.3",
-    "react-chartjs": "^0.6.0"
+    "react-chartjs": "nathandao/react-chartjs"
   }
 }
