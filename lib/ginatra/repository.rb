@@ -6,7 +6,7 @@ module Ginatra
   class Repository
     attr_accessor :id, :path, :name, :commits, :color
 
-    def initialize(params)
+    def initialize params
       @id = params['id']
       @path = params['path']
       @name = params['name']
@@ -53,7 +53,7 @@ module Ginatra
     def data_file
       dirname = File.expand_path Ginatra::App.data
       FileUtils.mkdir_p dirname unless File.directory?(dirname)
-      File.expand_path('.' + @id, dirname)
+      File.expand_path '.' + @id, dirname
     end
 
     def get_commits
@@ -94,7 +94,7 @@ module Ginatra
                   sed "s/,]/]/g; s/]}},//"
       `
       File.open(data_file, 'w') { |file|
-        file.write(json_str)
+        file.write json_str
       }
     end
   end
