@@ -1,5 +1,6 @@
 require 'json'
 require 'fileutils'
+require 'chronic'
 
 module Ginatra
   class Repository
@@ -12,9 +13,20 @@ module Ginatra
       @commits = nil
     end
 
-    def commits
+    def commits date_range = []
       get_commits if @commits.nil?
-      return @commits
+      if date_range.empty?
+        return @commits
+      else
+        date_range = date_range.map { |time_stamp|
+          Chronic.parse(time_stamp) if time_stamp.class != 'Time'
+        }
+        date_range << Time.now if date_range.size == 1
+        return @commits.select { |commit|
+          commit_date = Chronic.parse(commit.flatten[1]['date'])
+          date_range[0] <= commit_date && date_range[1] >= commit_date
+        }
+      end
     end
 
     def refresh_data
@@ -24,9 +36,9 @@ module Ginatra
     private
 
     def data_file
-      dirname = File.dirname Ginatra::App.root + '/data/'
+      dirname = File.expand_path Ginatra::App.data
       FileUtils.mkdir_p dirname unless File.directory?(dirname)
-      File.expand_path '.' + @id, dirname
+      File.expand_path('.' + @id, dirname)
     end
 
     def get_commits
@@ -59,7 +71,7 @@ module Ginatra
                }
       wrapper = %s{ BEGIN{puts "["}; END{puts "]\}\}]"} }
       json_str = `git -C #{@path} log \
-                  --numstat --max-count=4 \
+                  --numstat \
                   --format='id %H%nauthor %an%ndate %ai %nchanges' $@ | \
                   ruby -lawne '#{code}' | \
                   ruby -wpe '#{wrapper}' | \
