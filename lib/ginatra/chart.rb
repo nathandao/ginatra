@@ -2,7 +2,7 @@ module Ginatra
   class Chart < Stat
     class << self
 
-      def polar_area_all_commits date_range = []
+      def polararea_all_commits date_range = []
         polararea all_commits_between(date_range).inject(Hash.new) { |o, n|
           id = n[0]
           c = n[1]
