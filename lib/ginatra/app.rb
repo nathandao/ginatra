@@ -7,6 +7,7 @@ require File.expand_path('env', File.dirname(__FILE__))
 require File.expand_path('config', File.dirname(__FILE__))
 require File.expand_path('repository', File.dirname(__FILE__))
 require File.expand_path('stat', File.dirname(__FILE__))
+require File.expand_path('chart', File.dirname(__FILE__))
 
 Encoding.default_external = 'utf-8' if RUBY_VERSION =~ /^1.9/
 
@@ -16,11 +17,17 @@ module Ginatra
 
     set :views, File.expand_path('../../views', File.dirname(__FILE__))
     set :root, Ginatra::Env.root
+    set :data, Ginatra::Env.data
 
     assets do
       # Custom assets mangement
       serve '/js', from: 'assets/js'
       serve '/css', from: 'assets/scss'
+    end
+
+    get '/chart/polararea/overview' do
+      content_type :json
+      Ginatra::Chart.polararea_all_commits([]).to_json
     end
 
     get '/css/:stylesheet.css' do
