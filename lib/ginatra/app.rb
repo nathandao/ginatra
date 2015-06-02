@@ -25,18 +25,13 @@ module Ginatra
       serve '/css', from: 'assets/scss'
     end
 
-    get '/chart/polararea/overview' do
-      content_type :json
-      Ginatra::Chart.polararea_all_commits([]).to_json
+    get '/' do
+      erb :layout
     end
 
     get '/css/:stylesheet.css' do
       content_type 'text/css', charset: 'utf-8'
       scss params['stylesheet'].to_sym, :style => :expanded
-    end
-
-    get '/' do
-      erb :layout
     end
 
     get '/stat/:id/commits' do
