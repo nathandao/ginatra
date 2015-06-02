@@ -4,12 +4,13 @@ require 'chronic'
 
 module Ginatra
   class Repository
-    attr_accessor :id, :path, :name, :commits
+    attr_accessor :id, :path, :name, :commits, :color
 
     def initialize(params)
       @id = params['id']
       @path = params['path']
       @name = params['name']
+      @color = params['color'].nil? ? nil : params['color']
       @commits = nil
     end
 
