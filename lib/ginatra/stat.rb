@@ -18,19 +18,6 @@ module Ginatra
         }
       end
 
-      def lines(repo_id)
-        lines = 0
-        commits = get_repo(repo_id).commits
-        commits.each do |commit|
-          commit.each do |id, info|
-            info["changes"].each do |change|
-              lines += line_change change
-            end
-          end
-        end
-        lines
-      end
-
       def all_commits
         all_commits_between ['1/1/1', 'now']
       end
@@ -42,6 +29,35 @@ module Ginatra
           params = repo[1].merge({'id' => id})
           output[id] = Repository.new(params).commits_between date_range
           output
+        }
+      end
+
+      def lines repo_id
+        lines_between repo_id, []
+      end
+
+      def lines_between repo_id, date_range = []
+        commits = get_repo(repo_id).commits_between date_range
+        commits.inject(0) { |line_count, commit|
+          changes = commit.flatten[1]["changes"]
+          line_count += changes.inject(0) { |c_line_count, change|
+            c_line_count -= change['deletions']
+            c_line_count += change['additions']
+          } unless changes.empty?
+          line_count
+        }
+      end
+
+      def all_lines
+        all_lines_between []
+      end
+
+      def all_lines_between date_range = []
+        repos = Ginatra::Config.repositories
+        repos.inject(0) { |line_count, repo|
+          id = repo[0]
+          line_count += lines_between id, date_range
+          line_count
         }
       end
 
