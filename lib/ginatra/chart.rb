@@ -1,7 +1,6 @@
 module Ginatra
   class Chart < Stat
     class << self
-
       def round_chart_all_commits date_range = []
         round_chart all_commits_between(date_range).inject(Hash.new) { |result, repo|
           repo_id = repo[0]
@@ -28,7 +27,6 @@ module Ginatra
         all_commits_between(date_range).inject(init_data) { |result, repo|
           repo_id = repo[0]
           commits = repo[1]
-          p repo_id
           result['labels'] << repo_id
           result['datasets'][0]['label'] ||= "Commits"
           result['datasets'][0]['data'] ||= []
