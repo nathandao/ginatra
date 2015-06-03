@@ -18,7 +18,7 @@ module Ginatra
         repos.inject(Hash.new) { |output, repo|
           id = repo[0]
           params = repo[1].merge({'id' => id})
-          output[id] = Repository.new(params).commits_between date_range
+          output[id] = Repository.new(params).commits_between(date_range)
           output
         }
       end
@@ -98,7 +98,7 @@ module Ginatra
         get_commit_value commits, 'additions'
       end
 
-      def get_deletionsx commits
+      def get_deletions commits
         get_commit_value commits, 'deletions'
       end
     end
