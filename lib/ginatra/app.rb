@@ -1,6 +1,8 @@
 require 'sinatra/base'
 require 'sinatra/assetpack'
-require 'json'
+require 'rufus/scheduler'
+require 'yajl'
+require 'yajl/json_gem'
 require 'sass'
 
 require File.expand_path('env', File.dirname(__FILE__))
@@ -25,13 +27,14 @@ module Ginatra
       serve '/css', from: 'assets/scss'
     end
 
-    get '/' do
-      erb :layout
+    scheduler = Rufus::Scheduler.new
+
+    scheduler.every '3m' do
+      Ginatra::Stat.refresh_all_data
     end
 
-    get '/test' do
-      content_type :json
-      Ginatra::Chart.round_chart_all_lines.to_json
+    get '/' do
+      erb :layout
     end
 
     get '/css/:stylesheet.css' do
@@ -39,30 +42,24 @@ module Ginatra
       scss params['stylesheet'].to_sym, :style => :expanded
     end
 
-    get '/stat/:id/commits' do
-      content_type :json
-      Ginatra::Stat.commits(params['id']).to_json
+    before '/stat/*' do
+      content_type 'application/json'
+      @filter = params.inject({}) { |p, v|
+        p[v[0].to_sym] = v[1] if [:from, :til, :by, :in].include? v[0].to_sym
+        p
+      }
     end
 
-    get '/stat/:id/authors' do
-      content_type :json
-      Ginatra::Stat.authors(params['id']).to_json
+    get '/stat/commits' do
+      Ginatra::Stat.commits(@filter).to_json
     end
 
-    get '/stat/:id/lines' do
-      Ginatra::Stat.lines(params['id'])
+    get '/stat/authors' do
+      Ginatra::Stat.authors(@filter).to_json
     end
 
-    get '/stat/all_commits' do
-      content_type :json
-      Ginatra::Stat.all_commits.to_json
+    get '/stat/lines' do
+      Ginatra::Stat.lines(@filter)
     end
-
-    get '/stat/commits/past/:range' do
-      "Hourly commit changes"
-    end
-
-    # Chart specific stuff
-
   end
 end
