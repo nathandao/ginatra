@@ -1,4 +1,3 @@
-require 'yajl/json_gem'
 require 'yajl'
 require 'fileutils'
 require 'chronic'
@@ -15,37 +14,44 @@ module Ginatra
       @commits = nil
     end
 
-    def commits
+    def authors
+      commits.group_by { |commit|
+        commit.first[1]['author']
+      }.map { |name, commits|
+        {
+         'name' => name,
+         'commits' => commits.size,
+         'additions' => get_additions(commits),
+         'deletions' => get_deletions(commits)
+        }
+      }
+    end
+
+    def commits params = {}
+      # initiate @commits if not set
       get_commits if @commits.nil?
-      @commits
+      result = nil
+      if params[:from] && params[:til]
+        result = commits_between params[:from], params[:til]
+      elsif params[:from]
+        result = commits_between params[:from], Time.now
+      elsif params[:til]
+        result = commits_between '1/1/1', params[:til]
+      else
+        result = @commits
+      end
+      commits_by result, params[:by]
     end
 
-    def commits_between date_range = []
-      if date_range.empty?
-        commits
-      else
-        date_range = date_range.map { |time_stamp|
-          Chronic.parse(time_stamp) unless time_stamp.class == 'Time'
-        }
-        date_range << Time.now if date_range.size == 1
-        result = []
-        commits.each do |commit|
-          commit_date = Chronic.parse(commit.flatten[1]['date'])
-          break if commit_date < date_range[0]
-          result << commit if commit_date >= date_range[0] && commit_date <= date_range[1]
-        end
-        return result
-      end
-    end
-
-    def commits_by_author name = nil
-      if name.nil?
-        return commits
-      else
-        return commits.select { |commit|
-          commit.flatten[1]['author'] == name
-        }
-      end
+    def lines params = {}
+      commits(params).inject(0) { |line_count, commit|
+        changes = commit.flatten[1]["changes"]
+        line_count += changes.inject(0) { |c_line_count, change|
+          c_line_count -= change['deletions']
+          c_line_count += change['additions']
+        } unless changes.empty?
+        line_count
+      }
     end
 
     def refresh_data
@@ -67,6 +73,50 @@ module Ginatra
       File.expand_path '.' + @id, dirname
     end
 
+    def commits_between from = 0, til = Time.now
+      date_range = [from, til].map { |time_stamp|
+        Chronic.parse(time_stamp.to_s)
+      }
+      result = []
+      commits.each do |commit|
+        commit_date = Chronic.parse(commit.flatten[1]['date'])
+        break if commit_date < date_range[0]
+        result << commit if commit_date >= date_range[0] &&
+          commit_date <= date_range[1]
+      end
+      return result
+    end
+
+    def commits_by comm = @commits, author = nil
+      if author.nil?
+        comm
+      else
+        comm.select { |commit|
+          commit.flatten[1]['author'] == author
+        }
+      end
+    end
+
+    def get_additions commits
+      get_commit_value commits, 'additions'
+    end
+
+    def get_deletions commits
+      get_commit_value commits, 'deletions'
+    end
+
+    def get_commit_value commits, key
+      value = 0
+      commits.each do |commit|
+        commit.each do |k, v|
+          v['changes'].each do |change|
+            value += change[key] unless change[key].nil?
+          end
+        end
+      end
+      value
+    end
+
     def get_commits
       create_commits_data unless File.exists?(data_file)
       file = File.new data_file, 'r'
@@ -82,24 +132,24 @@ module Ginatra
 
     def git_log since = nil
       code = %s{
-             if !$F.empty?
-               markers = %w{ id author date }
-               key = $F[0]
-               if key == "changes"
-                 puts "\"changes\": ["
-               else
-                 if markers.include? key
-                   $F.shift
-                   value = $F.inject { |o, n| o + " " + n }
-                   puts key == "id" ? "]\}\},\{\"#{$F[0]}\":\{" : "\"#{key}\": \"#{value}\","
-                 else
-                   add = $F[0].to_i
-                   del = $F[1].to_i
-                   file = $F[2].to_s
-                   puts "{\"additions\": #{add}, \"deletions\": #{del}, \"path\": \"#{file}\"},"
-                 end
-               end
-             end
+       if !$F.empty?
+          markers = %w{ id author date }
+          key = $F[0]
+          if key == "changes"
+            puts "\"changes\": ["
+          else
+            if markers.include? key
+              $F.shift
+              value = $F.inject { |o, n| o + " " + n }
+              puts key == "id" ? "]\}\},\{\"#{$F[0]}\":\{" : "\"#{key}\": \"#{value}\","
+            else
+              add = $F[0].to_i
+              del = $F[1].to_i
+              file = $F[2].to_s
+              puts "{\"additions\": #{add}, \"deletions\": #{del}, \"path\": \"#{file}\"},"
+            end
+          end
+        end
       }
       wrapper = %s{ BEGIN{puts "["}; END{puts "]\}\}]"} }
       since = since.nil? ? '' : "--since=#{since}"
