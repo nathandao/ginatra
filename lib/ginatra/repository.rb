@@ -1,4 +1,5 @@
-require 'json'
+require 'yajl/json_gem'
+require 'yajl'
 require 'fileutils'
 require 'chronic'
 
@@ -24,13 +25,16 @@ module Ginatra
         commits
       else
         date_range = date_range.map { |time_stamp|
-          Chronic.parse time_stamp if time_stamp.class != 'Time'
+          Chronic.parse(time_stamp) unless time_stamp.class == 'Time'
         }
         date_range << Time.now if date_range.size == 1
-        commits.select { |commit|
-          commit_date = Chronic.parse commit.flatten[1]['date']
-          date_range[0] <= commit_date && date_range[1] >= commit_date
-        }
+        result = []
+        commits.each do |commit|
+          commit_date = Chronic.parse(commit.flatten[1]['date'])
+          break if commit_date < date_range[0]
+          result << commit if commit_date >= date_range[0] && commit_date <= date_range[1]
+        end
+        return result
       end
     end
 
@@ -46,17 +50,12 @@ module Ginatra
 
     def refresh_data
       `git -C #{@path} pull >> /dev/null 2>&1`
-      if JSON.parse(git_log(1))[0] != commits[0]
-        count = 1
-        loop do
-          if JSON.parse(git_log(count)).last == commits[0]
-            File.open(data_file, 'w') { |file|
-              file.write (JSON.parse(git_log(count - 1)) + commits).to_json
-            }
-            break
-          end
-          count += 1
-        end
+      if @commits.nil?
+        get_commits
+      else
+        last_commit_date = commits[0].flatten[1]['date']
+        new_commits = Yajl::Parser.new.parse(git_log(last_commit_date))
+        Yajl::Encoder.encode(new_commits + commits, File.new(data_file, 'w')) unless new_commits.empty?
       end
     end
 
@@ -70,9 +69,9 @@ module Ginatra
 
     def get_commits
       create_commits_data unless File.exists?(data_file)
-      file = File.open data_file
-      @commits = JSON.parse(file.read)
-      file.close
+      file = File.new data_file, 'r'
+      parser = Yajl::Parser.new
+      @commits = parser.parse file
     end
 
     def create_commits_data
@@ -81,7 +80,7 @@ module Ginatra
       }
     end
 
-    def git_log max_count = 0
+    def git_log since = nil
       code = %s{
              if !$F.empty?
                markers = %w{ id author date }
@@ -103,9 +102,9 @@ module Ginatra
              end
       }
       wrapper = %s{ BEGIN{puts "["}; END{puts "]\}\}]"} }
-      maxcount = max_count > 0 ? "--max-count=#{max_count}" : ''
+      since = since.nil? ? '' : "--since=#{since}"
       json_str = `git -C #{@path} log \
-       --numstat #{maxcount} \
+       --numstat #{since} \
        --format='id %H%nauthor %an%ndate %ai %nchanges' $@ | \
        ruby -lawne '#{code}' | \
        ruby -wpe '#{wrapper}' | \
