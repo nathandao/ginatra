@@ -65,6 +65,14 @@ module Ginatra
         }
       end
 
+      def refresh_all_data
+        repos = Ginatra::Config.repositories
+        repos.each do |key, params|
+          params = params.merge({'id' => key})
+          Ginatra::Repository.new(params).refresh_data
+        end
+      end
+
       private
 
       def get_repo repo_id
