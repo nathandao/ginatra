@@ -44,26 +44,44 @@ module Ginatra
       end
     end
 
-    def refresh
-      update_commits
+    def refresh_data
+      `git -C #{@path} pull >> /dev/null 2>&1`
+      if JSON.parse(git_log(1))[0] != commits[0]
+        count = 1
+        loop do
+          if JSON.parse(git_log(count)).last == commits[0]
+            File.open(data_file, 'w') { |file|
+              file.write (JSON.parse(git_log(count - 1)) + commits).to_json
+            }
+            break
+          end
+          count += 1
+        end
+      end
     end
 
     private
 
     def data_file
-      dirname = File.expand_path Ginatra::App.data
+      dirname = Ginatra::App.data
       FileUtils.mkdir_p dirname unless File.directory?(dirname)
       File.expand_path '.' + @id, dirname
     end
 
     def get_commits
-      update_commits if !File.exists? data_file
+      create_commits_data unless File.exists?(data_file)
       file = File.open data_file
-      @commits = JSON.parse file.read
+      @commits = JSON.parse(file.read)
       file.close
     end
 
-    def update_commits
+    def create_commits_data
+      File.open(data_file, 'w') { |file|
+        file.write(git_log)
+      }
+    end
+
+    def git_log max_count = 0
       code = %s{
              if !$F.empty?
                markers = %w{ id author date }
@@ -85,17 +103,17 @@ module Ginatra
              end
       }
       wrapper = %s{ BEGIN{puts "["}; END{puts "]\}\}]"} }
+      maxcount = max_count > 0 ? "--max-count=#{max_count}" : ''
       json_str = `git -C #{@path} log \
-                  --numstat \
-                  --format='id %H%nauthor %an%ndate %ai %nchanges' $@ | \
-                  ruby -lawne '#{code}' | \
-                  ruby -wpe '#{wrapper}' | \
-                  tr -d '\n' | \
-                  sed "s/,]/]/g; s/]}},//"
+       --numstat #{maxcount} \
+       --format='id %H%nauthor %an%ndate %ai %nchanges' $@ | \
+       ruby -lawne '#{code}' | \
+       ruby -wpe '#{wrapper}' | \
+       tr -d '\n' | \
+       sed "s/,]/]/g; s/]}},//"
       `
-      File.open(data_file, 'w') { |file|
-        file.write json_str
-      }
+      return json_str
     end
+
   end
 end
