@@ -7,8 +7,10 @@ require 'sass'
 
 require File.expand_path('env', File.dirname(__FILE__))
 require File.expand_path('config', File.dirname(__FILE__))
+require File.expand_path('helper', File.dirname(__FILE__))
 require File.expand_path('repository', File.dirname(__FILE__))
 require File.expand_path('stat', File.dirname(__FILE__))
+require File.expand_path('activity', File.dirname(__FILE__))
 require File.expand_path('chart', File.dirname(__FILE__))
 
 Encoding.default_external = 'utf-8' if RUBY_VERSION =~ /^1.9/
@@ -48,6 +50,10 @@ module Ginatra
         p[v[0].to_sym] = v[1] if [:from, :til, :by, :in].include? v[0].to_sym
         p
       }
+    end
+
+    get '/stat/hours' do
+      Ginatra::Activity.hours(@filter).to_json
     end
 
     get '/stat/commits' do

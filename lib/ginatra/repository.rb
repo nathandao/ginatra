@@ -14,8 +14,8 @@ module Ginatra
       @commits = nil
     end
 
-    def authors
-      commits.group_by { |commit|
+    def authors params = {}
+      commits(params).group_by { |commit|
         commit.first[1]['author']
       }.map { |name, commits|
         {
@@ -40,7 +40,7 @@ module Ginatra
       else
         result = @commits
       end
-      commits_by result, params[:by]
+      commits_by(result, params[:by])
     end
 
     def lines params = {}
@@ -73,13 +73,19 @@ module Ginatra
       File.expand_path '.' + @id, dirname
     end
 
-    def commits_between from = 0, til = Time.now
+    def commits_between from = nil, til = nil
+      from ||= Time.new(0)
+      til ||= Time.now
       date_range = [from, til].map { |time_stamp|
-        Chronic.parse(time_stamp.to_s)
+        if time_stamp.class.to_s != "Time"
+          Chronic.parse time_stamp.to_s
+        else
+          time_stamp
+        end
       }
       result = []
       commits.each do |commit|
-        commit_date = Chronic.parse(commit.flatten[1]['date'])
+        commit_date = commit.flatten[1]['date']
         break if commit_date < date_range[0]
         result << commit if commit_date >= date_range[0] &&
           commit_date <= date_range[1]
@@ -122,6 +128,12 @@ module Ginatra
       file = File.new data_file, 'r'
       parser = Yajl::Parser.new
       @commits = parser.parse file
+      @commits.each_with_index do |commit, i|
+        commit_id = commit.flatten[0]
+        commit_date = commit.flatten[1]['date']
+        @commits[i][commit_id]['date'] = Chronic.parse commit_date
+      end
+      @commits = Ginatra::Helper.sort_commits @commits, by: 'date', order: 'desc'
     end
 
     def create_commits_data
@@ -163,6 +175,5 @@ module Ginatra
       `
       return json_str
     end
-
   end
 end
