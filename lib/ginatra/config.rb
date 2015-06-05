@@ -10,6 +10,14 @@ module Ginatra
       def repositories
         self.settings['repositories']
       end
+
+      def colors
+        self.settings['colors']
+      end
+
+      def threshold
+        self.settings['threshold']
+      end
     end
   end
 end

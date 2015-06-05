@@ -7,11 +7,17 @@ module Ginatra
     attr_accessor :id, :path, :name, :commits, :color
 
     def initialize params
+      colors = Ginatra::Config.colors
+      repos = Ginatra::Config.repositories
       @id = params['id']
       @path = params['path']
+      @color = nil
       @name = params['name']
-      @color = params['color'].nil? ? nil : params['color']
-      @commits = nil
+      if params['color'].nil?
+        @color = colors[repos.find_index { |k,_| k == @id } % colors.size]
+      else
+        @color = params['color']
+      end
     end
 
     def authors params = {}
@@ -36,7 +42,7 @@ module Ginatra
       elsif params[:from]
         result = commits_between params[:from], Time.now
       elsif params[:til]
-        result = commits_between '1/1/1', params[:til]
+        result = commits_between Time.new(0), params[:til]
       else
         result = @commits
       end
@@ -133,7 +139,6 @@ module Ginatra
         commit_date = commit.flatten[1]['date']
         @commits[i][commit_id]['date'] = Chronic.parse commit_date
       end
-      @commits = Ginatra::Helper.sort_commits @commits, by: 'date', order: 'desc'
     end
 
     def create_commits_data
@@ -144,7 +149,7 @@ module Ginatra
 
     def git_log since = nil
       code = %s{
-       if !$F.empty?
+        if !$F.empty?
           markers = %w{ id author date }
           key = $F[0]
           if key == "changes"
@@ -165,7 +170,7 @@ module Ginatra
       }
       wrapper = %s{ BEGIN{puts "["}; END{puts "]\}\}]"} }
       since = since.nil? ? '' : "--since=#{since}"
-      json_str = `git -C #{@path} log \
+      `git -C #{@path} log \
        --numstat #{since} \
        --format='id %H%nauthor %an%ndate %ai %nchanges' $@ | \
        ruby -lawne '#{code}' | \
@@ -173,7 +178,6 @@ module Ginatra
        tr -d '\n' | \
        sed "s/,]/]/g; s/]}},//"
       `
-      return json_str
     end
   end
 end

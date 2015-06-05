@@ -2,7 +2,6 @@ require 'chronic'
 
 module Ginatra
   class Activity
-
     class << self
       def hours params = {}
         # all repos
@@ -25,8 +24,9 @@ module Ginatra
         # get all hours from commits array
         # commits array should be from
         # the same author and repository
+        commits = Ginatra::Helper.sort_commits commits, by: 'date', order: 'desc'
         prev_time = nil
-        threshold = 2.00 * 60 * 60
+        threshold = Ginatra::Config.threshold.to_f * 60 * 60
         commits.inject(0.00) { |dev_time, commit|
           commit_time = commit.flatten[1]['date']
           unless prev_time.nil?

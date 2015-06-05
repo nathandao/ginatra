@@ -2,11 +2,11 @@ module Ginatra
   class Chart
     class << self
       def rc_commits params = {}
-        round_chart Ginatra::Stat.commits(params).inject(Hash.new) {
-          |result, repo|
+        round_chart Ginatra::Stat.commits(params).inject({}) { |result, repo|
           repo_id = repo[0]
           commits = repo[1]
-          result[repo_id] = {'value' => commits.size}
+          result[repo_id] = {'value' => commits.size,
+                             'color' => get_repo_color(repo_id)}
           result
         }
       end
@@ -16,8 +16,7 @@ module Ginatra
       end
 
       def rc_lines params = {}
-        round_chart Ginatra::Stat.lines(params).inject(Hash.new) {
-          |result, line_data|
+        round_chart Ginatra::Stat.lines(params).inject({}) { |result, line_data|
           repo_id = line_data[0]
           result[repo_id] = {'value' => line_data[1]}
           result
@@ -34,11 +33,17 @@ module Ginatra
 
       private
 
+      def get_repo_color repo_id
+        Ginatra::Helper.get_repo(repo_id).color
+      end
+
       def round_chart data = {}
         data.inject([]) { |output, v|
           params = v[1]
           params['label'] = v[0]
           params['highlight'] ||= v[1]['color']
+          params['color'] ||= v[1]['color']
+          p v[1]
           output << params
           output
         }
@@ -52,6 +57,7 @@ module Ginatra
           if key == 'labels'
             output[key] = v[1]
           else
+            # key == 'datasets'
             output[key] = v[1].inject([]) { |datasets, dataset|
               color = c.pop
               datasets << dataset.merge({'fillColor' => rgba(color, 0.2),
@@ -96,20 +102,11 @@ module Ginatra
 
       def lc_combine_data data1, data2
         if data1['labels'] == data2['labels']
-          return {'labels' => data1['labels'],
-                  'datasets' => data1['datasets'] + data2['datasets']
-                 }
+          {'labels' => data1['labels'],
+              'datasets' => data1['datasets'] + data2['datasets']}
         else
-          return false
+          false
         end
-      end
-
-      def colors
-        ['#114b5f','#028090','#e4fde1','#456990','#f45b69']
-      end
-
-      def highlights
-        ['#114b5f','#028090','#e4fde1','#456990','#f45b69']
       end
 
       def rgba hex, a = 1

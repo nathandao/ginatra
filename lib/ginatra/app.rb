@@ -67,5 +67,9 @@ module Ginatra
     get '/stat/lines' do
       Ginatra::Stat.lines(@filter)
     end
+
+    get '/stat/chart/commits' do
+      Ginatra::Chart.rc_commits(@filter).to_json
+    end
   end
 end
