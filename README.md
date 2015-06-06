@@ -1,4 +1,4 @@
-# Gitnatra
+# Ginatra
 
 Ginatra is a team dashboard that displays git repository statistics in real time using Sinatra for the API, and real-time visualization of data with ReactJs and ChartJs.
 
