@@ -14,6 +14,22 @@ module Ginatra
         end
       end
 
+      def commits_count params = {}
+        commits_count = nil
+        if params[:in].nil?
+          repos = Ginatra::Config.repositories
+          commits_count = repos.inject(0) { |count, repo|
+            repo_id = repo[0]
+            count += Ginatra::Helper.get_repo(repo_id).commits(params).size
+            count
+          }
+        else
+          repo_id = params[:in]
+          commits_count = Ginatra::Helper.get_repo(repo_id).commits(params).size
+        end
+        return commits_count.nil? ? 0 : commits_count
+      end
+
       def authors params = {}
         if params[:in].nil?
           Ginatra::Config.repositories.inject([]) { |output, repo|
