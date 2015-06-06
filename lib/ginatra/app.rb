@@ -46,11 +46,12 @@ module Ginatra
 
     before '/stat/*' do
       content_type 'application/json'
-      @filter = params.inject({}) { |p, v|
-        p[v[0].to_sym] = v[1] if [:from, :til, :by, :in, :color].include? v[0].to_sym
-        p[v[0].to_sym] = "##{p[v[0].to_sym]}" if v[0] == 'color'
-        p
+      @filter = params.inject({}) { |prms, v|
+        prms[v[0].to_sym] = v[1] if [:from, :til, :by, :in, :color].include? v[0].to_sym
+        prms[v[0].to_sym] = "##{p[v[0].to_sym]}" if v[0] == 'color'
+        prms
       }
+      @filter[:color] ||= '#97BBCD'
     end
 
     get '/stat/hours' do
@@ -70,11 +71,40 @@ module Ginatra
     end
 
     get '/stat/chart/commits' do
-      Ginatra::Chart.rc_commits(@filter).to_json
+      case params['type']
+      when 'linechart'
+        Ginatra::Chart.lc_commits(@filter).to_json
+      else
+        Ginatra::Chart.rc_commits(@filter).to_json
+      end
     end
 
     get '/stat/chart/lines' do
-      Ginatra::Chart.lc_lines(@filter).to_json
+      case params['type']
+      when 'linechart'
+        Ginatra::Chart.lc_lines(@filter).to_json
+      else
+        Ginatra::Chart.rc_lines(@filter).to_json
+      end
+    end
+
+    get '/stat/chart/hours' do
+      case params['type']
+      when 'linechart'
+        Ginatra::Chart.lc_hours(@filter).to_json
+      else
+        Ginatra::Chart.rc_hours(@filter).to_json
+      end
+    end
+
+    get '/stat/timeline/commits' do
+      Ginatra::Chart.timeline_commits(@filter).to_json
+    end
+
+    get '/stat/timeline/hours' do
+    end
+
+    get '/stat/timeline/lines' do
     end
   end
 end
