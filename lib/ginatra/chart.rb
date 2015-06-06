@@ -5,14 +5,9 @@ module Ginatra
         round_chart Ginatra::Stat.commits(params).inject({}) { |result, repo|
           repo_id = repo[0]
           commits = repo[1]
-          result[repo_id] = {'value' => commits.size,
-                             'color' => get_repo_color(repo_id)}
+          result[repo_id] = {'value' => commits.size}
           result
         }
-      end
-
-      def lc_commits params = {}
-        line_chart lc_commits_data params
       end
 
       def rc_lines params = {}
@@ -23,12 +18,28 @@ module Ginatra
         }
       end
 
+      def rc_hours params = {}
+        Ginatra::Activity.hours(params).inject({}) { |output, hour|
+          repo_id = hour[0]
+          hours = hour[1].inject(0.00) { |total, author|
+            total += author['hours']
+            total
+          }
+          output.merge!({repo_id => hours})
+          output
+        }
+      end
+
+      def lc_commits params = {}
+        line_chart lc_commits_data params
+      end
+
       def lc_lines params = {}
         line_chart lc_lines_data params
       end
 
       def lc_combined_lines_commits params = {}
-        line_chart lc_combine_data lc_lines_data, lc_commits_data
+        line_chart lc_combine_data lc_lines_data(params), lc_commits_data(params)
       end
 
       private
@@ -39,39 +50,31 @@ module Ginatra
 
       def round_chart data = {}
         data.inject([]) { |output, v|
+          repo_id = v[0]
+          color = get_repo_color repo_id
           params = v[1]
           params['label'] = v[0]
-          params['highlight'] ||= v[1]['color']
-          params['color'] ||= v[1]['color']
-          p v[1]
+          params['highlight'] ||= color
+          params['color'] ||= color
           output << params
           output
         }
       end
 
       def line_chart data = {}
-        c = colors
-        init_data = {'labels' => [], 'datasets' => []}
-        data.inject(init_data) { |output, v|
-          key = v[0]
-          if key == 'labels'
-            output[key] = v[1]
-          else
-            # key == 'datasets'
-            output[key] = v[1].inject([]) { |datasets, dataset|
-              color = c.pop
-              datasets << dataset.merge({'fillColor' => rgba(color, 0.2),
-                                         'strokeColor' => rgba(color),
-                                         'pointColor' => rgba(color),
-                                         'pointStrokeColor' => '#fff',
-                                         'pointHighlightFill' => '#fff',
-                                         'pointHighlightStroke' => rgba(color)})
-              c = colors if c.empty?
-              datasets
-            }
-          end
-          output
-        }
+        data['datasets'].each_with_index do |dataset, i|
+          color = dataset['color']
+          p i
+          data['datasets'][i].merge! ({
+                                       'fillColor' => rgba(color, 0.2),
+                                       'strokeColor' => rgba(color),
+                                       'pointColor' => rgba(color),
+                                       'pointStrokeColor' => '#ffffff',
+                                       'pointHighlightFill' => '#ffffff',
+                                       'pointHighlightStroke' => rgba(color)
+                                      })
+        end
+        data
       end
 
       def lc_commits_data params = {}
@@ -82,7 +85,8 @@ module Ginatra
           result['labels'] << repo_id
           result['datasets'][0]['label'] ||= "Commits"
           result['datasets'][0]['data'] ||= []
-          result['datasets'][0]['data'] += [commits.size]
+          result['datasets'][0]['data'] << commits.size
+          result['datasets'][0]['color'] = params[:color]
           result
         }
       end
@@ -96,6 +100,7 @@ module Ginatra
           result['datasets'][0]['label'] ||= "Lines"
           result['datasets'][0]['data'] ||= []
           result['datasets'][0]['data'] << lines_count
+          result['datasets'][0]['color'] = params[:color]
           result
         }
       end

@@ -38,10 +38,10 @@ module Ginatra
       def lines params = {}
         if params[:in].nil?
           repos = Ginatra::Config.repositories
-          repos.inject(0) { |total, repo|
+          repos.inject({}) { |result, repo|
             repo_id = repo[0]
-            total += Ginatra::Helper.get_repo(repo_id).lines params
-            total
+            result[repo_id] = Ginatra::Helper.get_repo(repo_id).lines params
+            result
           }
         else
           Ginatra::Helper.get_repo(params[:in]).lines params

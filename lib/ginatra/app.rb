@@ -47,13 +47,14 @@ module Ginatra
     before '/stat/*' do
       content_type 'application/json'
       @filter = params.inject({}) { |p, v|
-        p[v[0].to_sym] = v[1] if [:from, :til, :by, :in].include? v[0].to_sym
+        p[v[0].to_sym] = v[1] if [:from, :til, :by, :in, :color].include? v[0].to_sym
+        p[v[0].to_sym] = "##{p[v[0].to_sym]}" if v[0] == 'color'
         p
       }
     end
 
     get '/stat/hours' do
-      Ginatra::Activity.hours(@filter).to_json
+      Ginatra::Activity.hours(@filter)
     end
 
     get '/stat/commits' do
@@ -70,6 +71,10 @@ module Ginatra
 
     get '/stat/chart/commits' do
       Ginatra::Chart.rc_commits(@filter).to_json
+    end
+
+    get '/stat/chart/lines' do
+      Ginatra::Chart.lc_lines(@filter).to_json
     end
   end
 end
