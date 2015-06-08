@@ -18,8 +18,6 @@ module Ginatra
         }
       end
 
-      private
-
       def compute_hours commits
         # get all hours from commits array
         # commits array should be from

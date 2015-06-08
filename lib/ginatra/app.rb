@@ -29,11 +29,11 @@ module Ginatra
       serve '/css', from: 'assets/scss'
     end
 
-    scheduler = Rufus::Scheduler.new
+#    scheduler = Rufus::Scheduler.new
 
-    scheduler.every '3m' do
-      Ginatra::Stat.refresh_all_data
-    end
+#    scheduler.every '3m' do
+#      Ginatra::Stat.refresh_all_data
+#    end
 
     get '/' do
       erb :layout
@@ -55,7 +55,7 @@ module Ginatra
     end
 
     get '/stat/hours' do
-      Ginatra::Activity.hours(@filter)
+      Ginatra::Activity.hours(@filter).to_json
     end
 
     get '/stat/commits' do
@@ -102,6 +102,7 @@ module Ginatra
     end
 
     get '/stat/timeline/hours' do
+      Ginatra::Chart.timeline_hours(@filter).to_json
     end
 
     get '/stat/timeline/lines' do

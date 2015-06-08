@@ -46,19 +46,53 @@ module Ginatra
 
       def timeline_commits params = {}
         # default to 1 week from now
-        params[:time_stamps] ||= default_timeline_stamps
-        time_stamp_str = params[:time_stamps]
-        time_stamps = time_stamp_str.map { |time_stamp|
-          Chronic.parse time_stamp
-        }
-        params.reject! { |k| k == :time_stamps }
+        params = timeline_prepare_params params
+        time_stamp_str = params[:labels]
+        time_stamps = params[:time_stamps]
+        params.reject! { |k| [:time_stamps, :labels].include? k }
+        commits = Ginatra::Stat.commits params
         init_data = {'labels' => [], 'datasets' => [{'label' => 'Commits', 'data' => []}]}
         count = 0
         line_chart time_stamps[0..-2].inject(init_data) { |output, time_stamp|
-          params[:from] = time_stamp
-          params[:til] = time_stamps[count+1] - 1
-          commits_count = Ginatra::Stat.commits_count params
+          from = time_stamp
+          til = time_stamps[count + 1]
+          commits_count = 0
+          commits.each do |repo_id, repo_commits|
+            unless repo_commits.nil? || repo_commits.empty?
+              repo_commits.each_with_index do |commit, i|
+                commit_date = commit.flatten[1]['date']
+                commits_count += 1 if from <= commit_date && commit_date < til
+                break if commit_date < from
+              end
+            end
+          end
           output['datasets'][0]['data'] << commits_count
+          count += 1
+          output
+        }.merge({'labels' => time_stamp_str[0..-2]})
+      end
+
+      def timeline_hours params = {}
+        params = timeline_prepare_params
+        time_stamp_str = params[:labels]
+        time_stamps = params[:time_stamps]
+        params.reject! { |k| [:time_stamps, :labels].include? k }
+        commits = Ginatra::Stat.commits params
+        init_data = {'labels' => [], 'datasets' => [{'label' => 'Hours', 'data' => []}]}
+        count = 0
+        line_chart time_stamps[0..-2].inject(init_data) { |output, time_stamp|
+          from = time_stamp
+          til = time_stamps[count + 1]
+          hours = 0
+          commits.each do |repo_id, repo_commits|
+            unless repo_commits.nil? || repo_commits.empty?
+              hours += Ginatra::Activity.compute_hours repo_commits.select { |commit|
+                commit_date = commit.flatten[1]['date']
+                from <= commit_date && commit_date < til
+              }
+            end
+          end
+          output['datasets'][0]['data'] << hours
           count += 1
           output
         }.merge({'labels' => time_stamp_str[0..-2]})
@@ -162,7 +196,22 @@ module Ginatra
 
       def default_timeline_stamps
         ['7 days ago at 0:00', '6 days ago at 0:00', '5 days ago at 0:00',
-         '4 days ago at 0:00', '3 days ago at 0:00', 'yesterday at 0:00', '0:00', 'now']
+         '4 days ago at 0:00', '3 days ago at 0:00', '2 days ago at 0:00',
+         'yesterday at 0:00', 'today at 0:00', 'now']
+      end
+
+      def timeline_prepare_params params = {}
+        # default to 1 week from now
+        params[:time_stamps] ||= default_timeline_stamps
+        params[:time_stamps].map! { |time_stamp|
+          Chronic.parse time_stamp unless time_stamp.class.to_s == 'Time'
+        }
+        params[:labels] ||= params[:time_stamps][0..-2].map { |time_stamp|
+          time_stamp.strftime("%a %d %b %H:%M")
+        }
+        params[:from] = params[:time_stamps][0]
+        params[:til] = params[:time_stamps][-1]
+        params
       end
 
       def total_hours hours_data = {}
