@@ -62,6 +62,10 @@ module Ginatra
       Ginatra::Stat.commits(@filter).to_json
     end
 
+    get '/stat/commits_overview' do
+      Ginatra::Stat.commits_overview(@filter).to_json
+    end
+
     get '/stat/authors' do
       Ginatra::Stat.authors(@filter).to_json
     end

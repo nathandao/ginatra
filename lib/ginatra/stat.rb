@@ -30,6 +30,19 @@ module Ginatra
         return commits_count.nil? ? 0 : commits_count
       end
 
+      def commits_overview params = {}
+        commits_count = 0
+        additions = 0
+        deletions = 0
+        commits(params).each do |repo_id, repo_commits|
+          commits_count += repo_commits.size
+          additions += Ginatra::Helper.get_additions(repo_commits)
+          deletions += Ginatra::Helper.get_deletions(repo_commits)
+        end
+        return {commits_count: commits_count, additions: additions,
+                deletions: deletions}
+      end
+
       def authors params = {}
         if params[:in].nil?
           Ginatra::Config.repositories.inject([]) { |output, repo|
