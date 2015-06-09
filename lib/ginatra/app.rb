@@ -78,46 +78,43 @@ module Ginatra
       Ginatra::Stat.lines(@filter)
     end
 
-    get '/stat/chart/commits' do
-      case params['type']
-      when 'linechart'
+    get '/stat/chart/round/commits' do
+      Ginatra::Chart.rc_commits(@filter).to_json
+    end
+
+    get '/stat/chart/line/commits' do
         Ginatra::Chart.lc_commits(@filter).to_json
-      else
-        Ginatra::Chart.rc_commits(@filter).to_json
-      end
     end
 
-    get '/stat/chart/lines' do
-      case params['type']
-      when 'linechart'
-        Ginatra::Chart.lc_lines(@filter).to_json
-      else
-        Ginatra::Chart.rc_lines(@filter).to_json
-      end
+    get '/stat/chart/round/lines' do
+      Ginatra::Chart.rc_lines(@filter).to_json
     end
 
-    get '/stat/chart/hours' do
-      case params['type']
-      when 'linechart'
-        Ginatra::Chart.lc_hours(@filter).to_json
-      else
+    get '/stat/chart/line/lines' do
+      Ginatra::Chart.lc_lines(@filter).to_json
+    end
+
+    get '/stat/chart/round/hours' do
         Ginatra::Chart.rc_hours(@filter).to_json
-      end
     end
 
-    get '/stat/timeline/commits' do
+    get '/stat/chart/line/hours' do
+      Ginatra::Chart.lc_hours(@filter).to_json
+    end
+
+    get '/stat/chart/timeline/commits' do
       Ginatra::Chart.timeline_commits(@filter).to_json
     end
 
-    get '/stat/timeline/hours' do
+    get '/stat/chart/timeline/hours' do
       Ginatra::Chart.timeline_hours(@filter).to_json
     end
 
-    get '/stat/timeline/sprint_commits' do
+    get '/stat/chart/timeline/sprint_commits' do
       Ginatra::Chart.timeline_sprint_commits(@filter).to_json
     end
 
-    get '/stat/timeline/sprint_hours' do
+    get '/stat/chart/timeline/sprint_hours' do
       Ginatra::Chart.timeline_sprint_hours(@filter).to_json
     end
   end

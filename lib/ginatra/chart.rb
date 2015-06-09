@@ -32,7 +32,21 @@ module Ginatra
         line_chart lc_data params, 'commits'
       end
 
+      def lc_sprint_commits params = {}
+        dates = Ginatra::Config.sprint_dates
+        dates << dates.last + 24 * 3600 - 1
+        params[:time_stamps] = dates
+        line_chart lc_data params, 'commits'
+      end
+
       def lc_lines params = {}
+        line_chart lc_data params, 'lines'
+      end
+
+      def lc_sprint_lines params = {}
+        dates = Ginatra::Config.sprint_dates
+        dates << dates.last + 24 * 3600 - 1
+        params[:time_stamps] = dates
         line_chart lc_data params, 'lines'
       end
 
@@ -40,8 +54,26 @@ module Ginatra
         line_chart lc_data params, 'hours'
       end
 
-      def lc_combined_lines_commits params = {}
+      def lc_sprint_hours params = {}
+        dates = Ginatra::Config.sprint_dates
+        dates << dates.last + 24 * 3600 - 1
+        params[:time_stamps] = dates
+        line_chart lc_data params, 'hours'
+      end
+
+      def lc_lines_commits params = {}
         line_chart lc_combine_data lc_lines_data(params), lc_commits_data(params)
+      end
+
+      def lc_hours_commits params = {}
+        line_chart lc_combine_data lc_hours_data(params), lc_commits_data(params)
+      end
+
+      def lc_sprint_hours_commits params = {}
+        dates = Ginatra::Config.sprint_dates
+        dates << dates.last + 24 * 3600 - 1
+        params[:time_stamps] = dates
+        lc_hours_commits params
       end
 
       def timeline_commits params = {}

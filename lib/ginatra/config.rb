@@ -21,7 +21,7 @@ module Ginatra
       end
 
       def sprint_period
-        self.settings['sprint']['period'] * 24 * 60 * 60
+        self.settings['sprint']['period'] * 24 * 3600
       end
 
       def sprint_reference
@@ -30,8 +30,10 @@ module Ginatra
 
       def sprint_start_time
         today = Chronic.parse 'today at 0:00'
-        diff = (today - sprint_reference).abs % sprint_period
-        today - diff
+        diff = 0
+        diff = (today - sprint_reference)
+        diff = sprint_period + diff if diff < 0
+        today - (diff % sprint_period)
       end
 
       def sprint_end_time
