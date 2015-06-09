@@ -30,17 +30,34 @@ module Ginatra
         return commits_count.nil? ? 0 : commits_count
       end
 
+      def repo_overview params = {}
+        repos = params[:in].nil? ? Ginatra::Config.repositories.keys : [params[:in]]
+        repos.inject({}) { |result, repo_id|
+          result[repo_id] ||= {}
+          params[:in] = repo_id
+          result[repo_id] = commits_overview params
+          result
+        }
+      end
+
       def commits_overview params = {}
         commits_count = 0
         additions = 0
         deletions = 0
+        lines = 0
+        hours = 0.00
+        last_commit = Time.new
         commits(params).each do |repo_id, repo_commits|
           commits_count += repo_commits.size
           additions += Ginatra::Helper.get_additions(repo_commits)
           deletions += Ginatra::Helper.get_deletions(repo_commits)
+          lines += additions - deletions
+          hours += Ginatra::Activity.compute_hours(repo_commits)
+          last_commit = repo_commits[0].flatten[1]['date']
         end
-        return {commits_count: commits_count, additions: additions,
-                deletions: deletions}
+        {commits_count: commits_count, additions: additions,
+         deletions: deletions, lines: lines,
+         hours: hours, last_commit: last_commit}
       end
 
       def authors params = {}
