@@ -25,17 +25,26 @@ module Ginatra
       end
 
       def sprint_reference
-        Chronic.parse self.settings['sprint']['reference']
+        Chronic.parse self.settings['sprint']['reference_date']
       end
 
-      def sprint_start_date
+      def sprint_start_time
         today = Chronic.parse 'today at 0:00'
         diff = (today - sprint_reference).abs % sprint_period
         today - diff
       end
 
-      def sprint_end_date
-        sprint_start_date + sprint_period - (24 * 60 * 60)
+      def sprint_end_time
+        sprint_start_time + sprint_period
+      end
+
+      def sprint_dates
+        s = sprint_start_time
+        e = sprint_end_time
+        date_range = Date.new(s.year, s.month, s.day)..Date.new(e.year, e.month, e.day)
+        date_range.map { |d|
+          Time.new(d.year, d.month, d.day)
+        }.uniq
       end
     end
   end

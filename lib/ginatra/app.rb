@@ -113,7 +113,12 @@ module Ginatra
       Ginatra::Chart.timeline_hours(@filter).to_json
     end
 
-    get '/stat/timeline/lines' do
+    get '/stat/timeline/sprint_commits' do
+      Ginatra::Chart.timeline_sprint_commits(@filter).to_json
+    end
+
+    get '/stat/timeline/sprint_hours' do
+      Ginatra::Chart.timeline_sprint_hours(@filter).to_json
     end
   end
 end

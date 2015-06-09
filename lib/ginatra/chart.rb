@@ -46,7 +46,7 @@ module Ginatra
 
       def timeline_commits params = {}
         # default to 1 week from now
-        params = timeline_prepare_params params
+        params = timeline_prepare_params(params)
         time_stamp_str = params[:labels]
         time_stamps = params[:time_stamps]
         params.reject! { |k| [:time_stamps, :labels].include? k }
@@ -72,7 +72,7 @@ module Ginatra
       end
 
       def timeline_hours params = {}
-        params = timeline_prepare_params
+        params = timeline_prepare_params(params)
         time_stamp_str = params[:labels]
         time_stamps = params[:time_stamps]
         params.reject! { |k| [:time_stamps, :labels].include? k }
@@ -95,6 +95,26 @@ module Ginatra
           count += 1
           output
         }.merge({'labels' => time_stamp_str[0..-2]})
+      end
+
+      def timeline_sprint_commits params = {}
+        timeline_sprint params, 'commits'
+      end
+
+      def timeline_sprint_hours params = {}
+        timeline_sprint params, 'hours'
+      end
+
+      def timeline_sprint params = {}, type = 'commits'
+        dates = Ginatra::Config.sprint_dates
+        dates << dates.last + 24 * 3600 - 1
+        params[:time_stamps] = dates
+        case type
+        when 'commits'
+          timeline_commits params
+        when 'hours'
+          timeline_hours params
+        end
       end
 
       private
@@ -203,10 +223,14 @@ module Ginatra
         # default to 1 week from now
         params[:time_stamps] ||= default_timeline_stamps
         params[:time_stamps].map! { |time_stamp|
-          Chronic.parse time_stamp unless time_stamp.class.to_s == 'Time'
+          if time_stamp.class.to_s == 'Time'
+            time_stamp
+          else
+            Chronic.parse time_stamp
+          end
         }
         params[:labels] ||= params[:time_stamps][0..-2].map { |time_stamp|
-          time_stamp.strftime("%a %d %b %H:%M")
+          time_stamp.strftime("%a %d %b")
         }
         params[:from] = params[:time_stamps][0]
         params[:til] = params[:time_stamps][-1]
