@@ -23,7 +23,7 @@ var GinatraChart = React.createClass({
         });
     },
     getInitialState: function() {
-        return { chartData: [] }
+        return { chartData: {} }
     },
     componentDidMount: function() {
         this.loadChartData();
@@ -32,7 +32,7 @@ var GinatraChart = React.createClass({
         }
     },
     render: function() {
-        var width = this.props.width || 500;
+        var width = this.props.width || 1000;
         var height = this.props.height || 500;
         var type = this.props.type || "PolarArea"
         var chart = [];
@@ -45,7 +45,7 @@ var GinatraChart = React.createClass({
         chart["Doughnut"] = DoughnutChart;
 
         return (
-            React.createElement(chart[type], {data: this.state.chartData, width: width, height: height})
+            React.createElement(chart[type], {data: this.state.chartData, width: width, height: height })
         );
     }
 });

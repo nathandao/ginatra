@@ -1,7 +1,10 @@
 repositories:
+  neste-oil:
+    path: ~/Sites/vagrant-nesteoil/git/nesteoil/
+    name: Neste Oil
   ginatra:
     path: ~/ruby-wife/ginatra
     name: Ginatra
-  neste-oil:
-    path: ~/Sites/vagrant-nesteoil/git/nesteoil
-    name: Neste Oil
+
+colors: ['#114b5f','#028090','#e4fde1','#456990','#f45b69']
+threshold: 2

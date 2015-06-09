@@ -62,7 +62,6 @@ module Ginatra
               repo_commits.each_with_index do |commit, i|
                 commit_date = commit.flatten[1]['date']
                 commits_count += 1 if from <= commit_date && commit_date < til
-                break if commit_date < from
               end
             end
           end

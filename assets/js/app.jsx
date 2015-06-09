@@ -1,10 +1,16 @@
 var React = require("react");
 var $ = require("jquery");
-var GinatraChart = require("./components/GinatraChart.jsx");
+var TimelineCommits = require("./components/TimelineCommits.jsx");
+var PolarAreaLines = require("./components/PolarAreaLines.jsx");
 
 $(function(){
     React.render(
-        <GinatraChart url='/chart/polararea/overview' interval='10000' type="PolarArea" />,
+        <TimelineCommits url='/stat/timeline/commits' interval='120000' width='1000' height='500' />,
         document.getElementById("dashboard")
+    );
+
+    React.render(
+        <PolarAreaLines url='/stat/chart/lines?type=polararea' interval='3600000' width='500' height='500' />,
+        document.getElementById("round")
     );
 });
