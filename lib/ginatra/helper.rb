@@ -20,6 +20,26 @@ module Ginatra
           commits
         end
       end
+
+      def get_additions commits
+        get_commit_value commits, 'additions'
+      end
+
+      def get_deletions commits
+        get_commit_value commits, 'deletions'
+      end
+
+      def get_commit_value commits, key
+        value = 0
+        commits.each do |commit|
+          commit.each do |k, v|
+            v['changes'].each do |change|
+              value += change[key] unless change[key].nil?
+            end
+          end
+        end
+        value
+      end
     end
   end
 end

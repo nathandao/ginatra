@@ -27,8 +27,8 @@ module Ginatra
         {
          'name' => name,
          'commits' => commits.size,
-         'additions' => get_additions(commits),
-         'deletions' => get_deletions(commits)
+         'additions' => Ginatra::Helper.get_additions(commits),
+         'deletions' => Ginatra::Helper.get_deletions(commits)
         }
       }
     end
@@ -107,26 +107,6 @@ module Ginatra
           commit.flatten[1]['author'] == author
         }
       end
-    end
-
-    def get_additions commits
-      get_commit_value commits, 'additions'
-    end
-
-    def get_deletions commits
-      get_commit_value commits, 'deletions'
-    end
-
-    def get_commit_value commits, key
-      value = 0
-      commits.each do |commit|
-        commit.each do |k, v|
-          v['changes'].each do |change|
-            value += change[key] unless change[key].nil?
-          end
-        end
-      end
-      value
     end
 
     def get_commits
