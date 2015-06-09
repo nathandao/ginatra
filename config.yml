@@ -7,4 +7,7 @@ repositories:
     name: Ginatra
 
 colors: ['#114b5f','#028090','#e4fde1','#456990','#f45b69']
-threshold: 2
+threshold: 3
+sprint:
+  period: 14
+  reference_date: 3 june 2015

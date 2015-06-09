@@ -1,5 +1,5 @@
 # Confidential files
-config.yml
+./config.yml
 data/
 
 # Autogenrated
