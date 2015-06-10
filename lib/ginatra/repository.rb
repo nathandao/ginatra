@@ -69,6 +69,7 @@ module Ginatra
         get_commits
       else
         last_commit_date = Time.parse commits[0].flatten[1]['date']
+        last_commit_id = commits[0].keys[0]
         new_commits = Yajl::Parser.new.parse(git_log(last_commit_date))
         unless new_commits.empty?
           new_commits.reject! { |c| c.keys[0] == last_commit_id }
