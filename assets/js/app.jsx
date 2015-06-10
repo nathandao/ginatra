@@ -3,10 +3,16 @@ var $ = require("jquery");
 var TimelineCommits = require("./components/TimelineCommits.jsx");
 var PolarAreaLines = require("./components/PolarAreaLines.jsx");
 var CommitsOverview = require("./components/CommitsOverview.jsx");
+var SprintOverview = require("./components/SprintOverview.jsx");
 
 $(function(){
     React.render(
-        <CommitsOverview url='/stat/commits_overview?from=today%20at%200:00&til=now' interval='120000' width='500' height='500' />,
+        <CommitsOverview url='/stat/commits_overview?from=today%20at%200:00&til=now' interval='10000' width='500' height='500' />,
         document.getElementById("today-overview")
+    );
+
+    React.render(
+        <SprintOverview interval='10000' />,
+        document.getElementById("sprint-overview")
     );
 });

@@ -12,9 +12,15 @@
     <body>
         <%= erb :header %>
         <div class="row full">
-            <div id="dashboard"></div>
             <!-- today commits overview -->
-            <div id="today-overview"></div>
+            <div class="half">
+                <h2>Today</h2>
+                <div id="today-overview"></div>
+            </div>
+            <div class="half">
+                <h2>Sprint overview</h2>
+                <div id="sprint-overview"></div>
+            </div>
         </div>
         <%= erb :footer %>
 

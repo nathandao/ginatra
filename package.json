@@ -5,7 +5,7 @@
   "main": "assets/js/app.js",
   "scripts": {
     "build": "browserify -t reactify assets/js/app.jsx -o assets/js/bundle.js",
-    "watch": "watchify -t reactify assets/js/app.jsx -o assets/js/bundle.js"
+    "watch": "watchify -t reactify assets/js/app.jsx -d -o assets/js/bundle.js"
   },
   "repository": {
     "type": "git",

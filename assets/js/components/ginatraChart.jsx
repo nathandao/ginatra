@@ -23,7 +23,15 @@ var GinatraChart = React.createClass({
         });
     },
     getInitialState: function() {
-        return { chartData: {} }
+        var initData = null;
+        var type = this.props.type || "PolarArea";
+        if (type === "PolarArea" || type === "Pie" || type === "Doughnut") {
+            initData = { chartData: []};
+        } else {
+            initData = { chartData: { labels:['loading...'], datasets:[{ label: 'loading...', data: [0] }] } };
+        }
+
+        return initData;
     },
     componentDidMount: function() {
         this.loadChartData();

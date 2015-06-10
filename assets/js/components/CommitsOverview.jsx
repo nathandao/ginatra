@@ -31,9 +31,9 @@ var CommitsOverview = React.createClass({
         var interval = this.props.interval || 20000;
         return(
             <div className="commits-overview">
-            <p>{this.state.commits_count} commits</p>
-            <p>{this.state.additions} additions</p>
-            <p>{this.state.deletions} deletions</p>
+              <p>{this.state.commits_count} commits</p>
+              <p>{this.state.additions} additions</p>
+              <p>{this.state.deletions} deletions</p>
             </div>
         );
     }
