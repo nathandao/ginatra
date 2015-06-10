@@ -70,7 +70,10 @@ module Ginatra
       else
         last_commit_date = Time.parse commits[0].flatten[1]['date']
         new_commits = Yajl::Parser.new.parse(git_log(last_commit_date))
-        Yajl::Encoder.encode(new_commits + commits, File.new(data_file, 'w')) unless new_commits.empty?
+        unless new_commits.empty?
+          new_commits.reject! { |c| c.keys[0] == last_commit_id }
+          Yajl::Encoder.encode(new_commits + commits, File.new(data_file, 'w')) unless new_commits.empty?
+        end
       end
     end
 
@@ -151,7 +154,7 @@ module Ginatra
       since = since.nil? ? '' : "--since='#{since.to_s}'"
       `git -C #{@path} log \
        --numstat #{since} \
-       --format='id %H%nauthor %an%ndate %ai %nchanges' $@ | \
+       --format='id %h%nauthor %an%ndate %ai %nchanges' $@ | \
        ruby -lawne '#{code}' | \
        ruby -wpe '#{wrapper}' | \
        tr -d '\n' | \
