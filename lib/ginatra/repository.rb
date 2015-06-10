@@ -65,13 +65,11 @@ module Ginatra
 
     def refresh_data
       `git -C #{@path} pull >> /dev/null 2>&1`
-      if @commits.nil?
+      if commits.nil?
         get_commits
       else
         last_commit_date = Time.parse commits[0].flatten[1]['date']
-        p last_commit_date
         new_commits = Yajl::Parser.new.parse(git_log(last_commit_date))
-        p new_commits
         Yajl::Encoder.encode(new_commits + commits, File.new(data_file, 'w')) unless new_commits.empty?
       end
     end
@@ -150,7 +148,7 @@ module Ginatra
         end
       }
       wrapper = %s{ BEGIN{puts "["}; END{puts "]\}\}]"} }
-      since = since.nil? ? '' : "--since=#{since}"
+      since = since.nil? ? '' : "--since='#{since.to_s}'"
       `git -C #{@path} log \
        --numstat #{since} \
        --format='id %H%nauthor %an%ndate %ai %nchanges' $@ | \
