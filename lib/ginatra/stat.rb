@@ -47,6 +47,7 @@ module Ginatra
         lines = 0
         hours = 0.00
         last_commit = Time.new
+        first_commit = Time.new
         commits(params).each do |repo_id, repo_commits|
           commits_count += repo_commits.size
           additions += Ginatra::Helper.get_additions(repo_commits)
@@ -55,11 +56,12 @@ module Ginatra
           hours += Ginatra::Activity.compute_hours(repo_commits)
           unless repo_commits[0].nil?
             last_commit = repo_commits[0].flatten[1]['date']
+            first_commit = repo_commits[-1].flatten[1]['date']
           end
         end
         {commits_count: commits_count, additions: additions,
-         deletions: deletions, lines: lines,
-         hours: hours, last_commit: last_commit}
+         deletions: deletions, lines: lines, hours: hours,
+         last_commit: last_commit, first_commit: first_commit}
       end
 
       def authors params = {}
