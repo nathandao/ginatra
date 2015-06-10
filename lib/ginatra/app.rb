@@ -14,6 +14,7 @@ require File.expand_path('activity', File.dirname(__FILE__))
 require File.expand_path('chart', File.dirname(__FILE__))
 
 Encoding.default_external = 'utf-8' if RUBY_VERSION =~ /^1.9/
+Redis.current = Redis.new(:host => '127.0.0.1', :port => 6379)
 
 module Ginatra
   class App < Sinatra::Base
@@ -29,11 +30,11 @@ module Ginatra
       serve '/css', from: 'assets/scss'
     end
 
-#    scheduler = Rufus::Scheduler.new
+    scheduler = Rufus::Scheduler.new
 
-#    scheduler.every '3m' do
-#      Ginatra::Stat.refresh_all_data
-#    end
+    scheduler.every '10s' do
+      Ginatra::Stat.refresh_all_data
+    end
 
     get '/' do
       erb :layout
@@ -75,27 +76,39 @@ module Ginatra
     end
 
     get '/stat/lines' do
-      Ginatra::Stat.lines(@filter)
+      Ginatra::Stat.lines(@filter).to_json
     end
 
     get '/stat/chart/round/commits' do
       Ginatra::Chart.rc_commits(@filter).to_json
     end
 
-    get '/stat/chart/line/commits' do
-        Ginatra::Chart.lc_commits(@filter).to_json
-    end
-
     get '/stat/chart/round/lines' do
       Ginatra::Chart.rc_lines(@filter).to_json
     end
 
-    get '/stat/chart/line/lines' do
-      Ginatra::Chart.lc_lines(@filter).to_json
-    end
-
     get '/stat/chart/round/hours' do
         Ginatra::Chart.rc_hours(@filter).to_json
+    end
+
+    get '/stat/chart/round/sprint_commits' do
+      Ginatra::Chart.rc_sprint_commits(@filter).to_json
+    end
+
+    get '/stat/chart/round/sprint_lines' do
+      Ginatra::Chart.rc_sprint_lines(@filter).to_json
+    end
+
+    get '/stat/chart/round/sprint_hours' do
+      Ginatra::Chart.rc_sprint_hours(@filter).to_json
+    end
+
+   get '/stat/chart/line/commits' do
+        Ginatra::Chart.lc_commits(@filter).to_json
+    end
+
+    get '/stat/chart/line/lines' do
+      Ginatra::Chart.lc_lines(@filter).to_json
     end
 
     get '/stat/chart/line/hours' do
@@ -128,6 +141,10 @@ module Ginatra
 
     get '/stat/chart/timeline/sprint_hours' do
       Ginatra::Chart.timeline_sprint_hours(@filter).to_json
+    end
+
+    get '/stat/chart/timeline/sprint_hours_commits' do
+      Ginatra::Chart.timeline_sprint_hours_commits(@filter).to_json
     end
   end
 end

@@ -21,11 +21,32 @@ module Ginatra
       end
 
       def rc_hours params = {}
-        Ginatra::Activity.hours(params).inject({}) { |output, hour|
-          repo_id = hour[0]
+        Ginatra::Activity.hours(params).inject({}) { |output, repo|
+          repo_id = repo[0]
           output.merge!({repo_id => total_hours(repo[1])})
           output
         }
+      end
+
+      def rc_sprint_commits params = {}
+        dates = Ginatra::Config.sprint_dates
+        params[:from] = dates[0]
+        params[:til] = dates[-1] + 24 * 3600 - 1
+        rc_commits params
+      end
+
+      def rc_sprint_lines params = {}
+        dates = Ginatra::Config.sprint_dates
+        params[:from] = dates[0]
+        params[:til] = dates[-1] + 24 * 3600 - 1
+        rc_lines params
+      end
+
+      def rc_sprint_hours params = {}
+        dates = Ginatra::Config.sprint_dates
+        params[:from] = dates[0]
+        params[:til] = dates[-1] + 24 * 3600 - 1
+        rc_hours params
       end
 
       def lc_commits params = {}
@@ -92,7 +113,7 @@ module Ginatra
           commits.each do |repo_id, repo_commits|
             unless repo_commits.nil? || repo_commits.empty?
               repo_commits.each_with_index do |commit, i|
-                commit_date = commit.flatten[1]['date']
+                commit_date = Time.parse commit.flatten[1]['date']
                 commits_count += 1 if from <= commit_date && commit_date < til
               end
             end
@@ -118,7 +139,7 @@ module Ginatra
           commits.each do |repo_id, repo_commits|
             unless repo_commits.nil? || repo_commits.empty?
               hours += Ginatra::Activity.compute_hours repo_commits.select { |commit|
-                commit_date = commit.flatten[1]['date']
+                commit_date = Time.parse commit.flatten[1]['date']
                 from <= commit_date && commit_date < til
               }
             end
@@ -135,6 +156,13 @@ module Ginatra
 
       def timeline_sprint_hours params = {}
         timeline_sprint params, 'hours'
+      end
+
+      def timeline_sprint_hours_commits params = {}
+        spr_commits = timeline_sprint_commits params
+        spr_hours = timeline_sprint_hours params
+        spr_commits['datasets'] += spr_hours['datasets']
+        spr_commits
       end
 
       def timeline_sprint params = {}, type = 'commits'

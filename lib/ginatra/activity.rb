@@ -1,5 +1,3 @@
-require 'chronic'
-
 module Ginatra
   class Activity
     class << self
@@ -26,7 +24,7 @@ module Ginatra
         prev_time = nil
         threshold = Ginatra::Config.threshold.to_f * 60 * 60
         commits.inject(0.00) { |dev_time, commit|
-          commit_time = commit.flatten[1]['date']
+          commit_time = Time.parse commit.flatten[1]['date']
           unless prev_time.nil?
             session = prev_time - commit_time
             if session <= threshold

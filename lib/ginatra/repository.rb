@@ -1,9 +1,12 @@
 require 'yajl'
 require 'fileutils'
 require 'chronic'
+require 'redis-objects'
 
 module Ginatra
   class Repository
+    include Redis::Objects
+
     attr_accessor :id, :path, :name, :commits, :color
 
     def initialize params
@@ -65,8 +68,10 @@ module Ginatra
       if @commits.nil?
         get_commits
       else
-        last_commit_date = commits[0].flatten[1]['date']
+        last_commit_date = Time.parse commits[0].flatten[1]['date']
+        p last_commit_date
         new_commits = Yajl::Parser.new.parse(git_log(last_commit_date))
+        p new_commits
         Yajl::Encoder.encode(new_commits + commits, File.new(data_file, 'w')) unless new_commits.empty?
       end
     end
@@ -91,7 +96,7 @@ module Ginatra
       }
       result = []
       commits.each do |commit|
-        commit_date = commit.flatten[1]['date']
+        commit_date = Time.parse commit.flatten[1]['date']
         break if commit_date < date_range[0]
         result << commit if commit_date >= date_range[0] &&
           commit_date <= date_range[1]
@@ -114,11 +119,7 @@ module Ginatra
       file = File.new data_file, 'r'
       parser = Yajl::Parser.new
       @commits = parser.parse file
-      @commits.each_with_index do |commit, i|
-        commit_id = commit.flatten[0]
-        commit_date = commit.flatten[1]['date']
-        @commits[i][commit_id]['date'] = Chronic.parse commit_date
-      end
+      @commits
     end
 
     def create_commits_data
