@@ -11,6 +11,9 @@ GEM
       rack
     rack-test (0.6.3)
       rack (>= 1.0)
+    redis (3.2.1)
+    redis-objects (1.2.0)
+      redis (>= 3.0.2)
     rufus-scheduler (3.1.2)
     sass (3.4.14)
     sinatra (1.4.6)
@@ -38,6 +41,7 @@ PLATFORMS
 DEPENDENCIES
   chronic
   json
+  redis-objects
   rufus-scheduler
   sass
   sinatra
