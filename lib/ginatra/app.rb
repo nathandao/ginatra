@@ -102,6 +102,18 @@ module Ginatra
       Ginatra::Chart.lc_hours(@filter).to_json
     end
 
+    get '/stat/chart/line/sprint_hours_commits' do
+      Ginatra::Chart.lc_sprint_hours_commits(@filter).to_json
+    end
+
+    get '/stat/chart/line/sprint_commits' do
+      Ginatra::Chart.lc_sprint_commits(@filter).to_json
+    end
+
+    get '/stat/chart/line/sprint_hours' do
+      Ginatra::Chart.lc_sprint_hours(@filter).to_json
+    end
+
     get '/stat/chart/timeline/commits' do
       Ginatra::Chart.timeline_commits(@filter).to_json
     end

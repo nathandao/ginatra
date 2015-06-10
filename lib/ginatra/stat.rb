@@ -53,7 +53,9 @@ module Ginatra
           deletions += Ginatra::Helper.get_deletions(repo_commits)
           lines += additions - deletions
           hours += Ginatra::Activity.compute_hours(repo_commits)
-          last_commit = repo_commits[0].flatten[1]['date']
+          unless repo_commits[0].nil?
+            last_commit = repo_commits[0].flatten[1]['date']
+          end
         end
         {commits_count: commits_count, additions: additions,
          deletions: deletions, lines: lines,
