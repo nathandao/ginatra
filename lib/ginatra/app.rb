@@ -55,6 +55,10 @@ module Ginatra
       @filter[:color] ||= '#97BBCD'
     end
 
+    get '/stat/repo_list' do
+      Ginatra::Config.repositories.keys.to_json
+    end
+
     get '/stat/hours' do
       Ginatra::Activity.hours(@filter).to_json
     end
