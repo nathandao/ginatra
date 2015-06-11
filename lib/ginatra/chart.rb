@@ -104,7 +104,8 @@ module Ginatra
         time_stamps = params[:time_stamps]
         params.reject! { |k| [:time_stamps, :labels].include? k }
         commits = Ginatra::Stat.commits params
-        init_data = {'labels' => [], 'datasets' => [{'label' => 'Commits', 'data' => []}]}
+        color = params[:in].nil? ? nil : Ginatra::Helper.get_repo(params[:in]).color
+        init_data = {'labels' => [], 'datasets' => [{'label' => 'Commits', 'data' => [], 'color' => color}]}
         count = 0
         line_chart time_stamps[0..-2].inject(init_data) { |output, time_stamp|
           from = time_stamp
@@ -200,7 +201,7 @@ module Ginatra
         data['datasets'].each_with_index do |dataset, i|
           color = dataset['color'].nil? ? '#97BBCD' : dataset['color']
           data['datasets'][i].merge! ({
-                                       'fillColor' => rgba(color, 0.2),
+                                       'fillColor' => rgba(color, 0.5),
                                        'strokeColor' => rgba(color),
                                        'pointColor' => rgba(color),
                                        'pointStrokeColor' => '#ffffff',
@@ -266,6 +267,8 @@ module Ginatra
 
       def lc_combine_data data1, data2
         if data1['labels'] == data2['labels']
+          data1['datasets'][0]['color'] = '#ce0000'
+          data2['datasets'][0]['color'] = '#9ccf31'
           {'labels' => data1['labels'],
               'datasets' => data1['datasets'] + data2['datasets']}
         else
@@ -281,6 +284,7 @@ module Ginatra
 
       def timeline_prepare_params params = {}
         # default to 1 week from now
+        p params[:time_stamps]
         params[:time_stamps] ||= default_timeline_stamps
         params[:time_stamps].map! { |time_stamp|
           if time_stamp.class.to_s == 'Time'

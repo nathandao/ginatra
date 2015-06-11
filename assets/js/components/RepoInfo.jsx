@@ -16,7 +16,7 @@ var RepoInfo = React.createClass({
                     commitsCount: info.commits_count,
                     additions: info.additions,
                     deletions: info.deletions,
-                    hours: info.hours,
+                    hours: info.hours.toFixed(2),
                     firstCommit: info.first_commit,
                     lastCommit: info.last_commit
                 });
@@ -37,7 +37,7 @@ var RepoInfo = React.createClass({
     componentDidMount: function() {
         this.loadRepoData();
         if (this.props.interval != false) {
-            setInterval(this.loatRepoData, this.props.interval);
+            setInterval(this.loadRepoData, this.props.interval);
         }
     },
     render: function() {
@@ -48,25 +48,28 @@ var RepoInfo = React.createClass({
         var deletions = this.state.deletions;
         var firstCommit = this.state.firstCommit;
         var lastCommit = this.state.lastCommit;
+        var hours = this.state.hours;
+
         var url = '/stat/chart/timeline/commits?in=' + repoId;
 
         return (
-            <tbody>
-            <tr>
-            <td>{repoId}</td>
-            <td>{commitsCount}</td>
-            <td>{lines}</td>
-            <td>{additions}</td>
-            <td>{deletions}</td>
-            <td>{firstCommit}</td>
-            <td>{lastCommit}</td>
-            </tr>
-            <tr>
-            <td colspan="7">
-            <GinatraChart type="Line" url={url} interval={this.props.interval} width="1000" height="150" />
-            </td>
-            </tr>
-            </tbody>
+        <div className="repo-cell full">
+            <div className="full"><h3 className="half">{repoId}</h3></div>
+            <div className="third">
+                <ul>
+                    <li><span className="label">Commits:</span> {commitsCount}</li>
+                    <li><span className="label">Lines:</span> {lines}</li>
+                    <li><span className="label">Additions:</span> {additions}</li>
+                    <li><span className="label">Deletions:</span> {deletions}</li>
+                    <li><span className="label">First commit:</span> {firstCommit}</li>
+                    <li><span className="label">Last commit:</span> {lastCommit}</li>
+                    <li><span className="label">Estimated hours:</span> {hours}</li>
+                </ul>
+            </div>
+            <div className="half">
+                <GinatraChart type="Line" url={url} interval={this.props.interval} width="300" height="100" />
+            </div>
+        </div>
         );
     }
 });

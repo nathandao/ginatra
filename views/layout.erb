@@ -11,18 +11,43 @@
 
     <body>
         <%= erb :header %>
-        <div class="row full">
-            <!-- today commits overview -->
-            <div class="half">
-                <h2>Today</h2>
+        <div class="half">
+
+
+            <!-- TODAY COMMITS -->
+            <div class="full">
+                <h1 class="label">Thurs 11 June 2015</h1>
                 <div id="today-overview"></div>
             </div>
-            <div class="half">
-                <h2>Sprint overview</h2>
+            <!-- /TODAY COMMITS -->
+
+
+            <!-- TODAY ACTIVITY -->
+            <div class="half big-margin">
+                <h2 class="label center">Today's Commit Activity</h2>
+                <div id="today-activity"></div>
+            </div>
+            <!-- /TODAY ACTIVITY -->
+
+
+            <!-- PROJECT SIZE COMPARISON -->
+            <div class="half big-margin">
+                <h2 class="label center">Project Sizes</h2>
+                <div id="project-size-comparison"></div>
+            </div>
+            <!-- /PROJECT SIZE COMPARISON -->
+
+
+            <!-- SPRINT OVERVIEW -->
+            <div class="full big-margin">
+                <h2 class="label">Sprint Overview</h2>
                 <div id="sprint-overview"></div>
             </div>
+            <!-- /SPRINT OVERVIEW -->
+
+
         </div>
-        <div class="row full">
+        <div class="half">
             <div id="repo-info"></div>
         </div>
         <%= erb :footer %>

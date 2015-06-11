@@ -40,6 +40,13 @@ module Ginatra
         end
         value
       end
+
+      def get_repos_with_color
+        repos = Ginatra::Config.repositories.keys
+        repos.map { |repo|
+          { repo => get_repo(repo).color }
+        }
+      end
     end
   end
 end

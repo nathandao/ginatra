@@ -53,7 +53,7 @@ var GinatraChart = React.createClass({
         chart["Doughnut"] = DoughnutChart;
 
         return (
-            React.createElement(chart[type], {data: this.state.chartData, width: width, height: height })
+            React.createElement(chart[type], {data: this.state.chartData, width: width, height: height, options: { responsive: true, scaleGridLineColor: "rgba(255,255,255,0.5)" } })
         );
     }
 });

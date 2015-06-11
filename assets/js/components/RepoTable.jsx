@@ -22,22 +22,9 @@ var RepoTable = React.createClass({
         var rows = [];
         var repos = this.state.repos
         for (var i = 0; i < repos.length; i++) {
-            rows.push(<RepoInfo interval={this.props.interval} repoId={repos[i]} />);
+            rows.push(<RepoInfo interval="10000" repoId={repos[i]} />);
         }
-        return (
-            <table>
-            <thead>
-            <th>Project</th>
-            <th>Commits</th>
-            <th>Lines</th>
-            <th>Add</th>
-            <th>Del</th>
-            <th>First Commit</th>
-            <th>Last Commit</th>
-            </thead>
-            {rows}
-            </table>
-        );
+        return ( <div className="repo-list row full">{rows}</div> );
     }
 });
 

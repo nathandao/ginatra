@@ -32,7 +32,7 @@ module Ginatra
 
     scheduler = Rufus::Scheduler.new
 
-    scheduler.every '10s' do
+    scheduler.every '20s' do
       Ginatra::Stat.refresh_all_data
     end
 
@@ -48,7 +48,7 @@ module Ginatra
     before '/stat/*' do
       content_type 'application/json'
       @filter = params.inject({}) { |prms, v|
-        prms[v[0].to_sym] = v[1] if [:from, :til, :by, :in, :color].include? v[0].to_sym
+        prms[v[0].to_sym] = v[1] if [:from, :til, :by, :in, :color, :labels, :time_stamps].include? v[0].to_sym
         prms[v[0].to_sym] = "##{p[v[0].to_sym]}" if v[0] == 'color'
         prms
       }
@@ -107,7 +107,7 @@ module Ginatra
       Ginatra::Chart.rc_sprint_hours(@filter).to_json
     end
 
-   get '/stat/chart/line/commits' do
+    get '/stat/chart/line/commits' do
         Ginatra::Chart.lc_commits(@filter).to_json
     end
 
