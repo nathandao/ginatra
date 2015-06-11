@@ -4,7 +4,6 @@ data/
 
 # Autogenrated
 .sass-cache/
-assets/js/bundle.js
 
 # npm dependencies
 node_modules/
