@@ -1,7 +1,6 @@
 require 'yajl'
 require 'fileutils'
 require 'chronic'
-require 'redis-objects'
 
 module Ginatra
   class Repository
