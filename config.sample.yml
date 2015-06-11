@@ -1,0 +1,16 @@
+repositories:
+  ginatra:
+    path: ~/Repositories/ginatra
+    name: Fiskars 2015
+  repo2label:
+    path: ~/Repositories/repo2
+    name: Repository 2
+  repo3label:
+    path: ~/Repositories/repo3
+    name: Repository 3
+
+colors: ['#ce0000','#114b5f','#f7d708','#028090','#9ccf31','#ff9e00','#e4fde1','#456990','#ff9e00','#f45b69']
+threshold: 3
+sprint:
+  period: 14
+  reference_date: 3 June 2015
