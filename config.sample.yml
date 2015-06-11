@@ -1,7 +1,7 @@
 repositories:
   ginatra:
     path: ~/Repositories/ginatra
-    name: Fiskars 2015
+    name: Ginatra
   repo2label:
     path: ~/Repositories/repo2
     name: Repository 2
