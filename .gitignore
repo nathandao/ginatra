@@ -8,6 +8,7 @@ assets/js/bundle.js
 
 # npm dependencies
 node_modules/
+npm-debug.log
 
 # misc
 test.rb
