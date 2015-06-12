@@ -21,7 +21,7 @@ From the app's root directory:
     bundle install
     npm install
 
-Ginatra is using ```browserify``` and ```watchify``` to handle javascript dependencies.
+Ginatra is using ```browserify``` and ```watchify``` to compile all js dependencies into a single file.
 
 Compile the ```bundle.js``` file that will be used by the app:
 
