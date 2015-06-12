@@ -3,29 +3,29 @@ var React = require("react");
 var RepoInfo = require("./RepoInfo.jsx");
 
 var RepoTable = React.createClass({
-    loadRepoList: function() {
-        $.ajax({
-            url: this.props.url,
-            cache: false,
-            success: function(data) {
-                this.setState({ repos: data });
-            }.bind(this)
-        });
-    },
-    getInitialState: function() {
-        return { repos: [] };
-    },
-    componentDidMount: function() {
-        this.loadRepoList();
-    },
-    render: function() {
-        var rows = [];
-        var repos = this.state.repos
-        for (var i = 0; i < repos.length; i++) {
-            rows.push(<RepoInfo interval="10000" repoId={repos[i]} />);
-        }
-        return ( <div className="repo-list row full">{rows}</div> );
+  loadRepoList: function() {
+    $.ajax({
+      url: this.props.url,
+      cache: false,
+      success: function(data) {
+        this.setState({ repos: data });
+      }.bind(this)
+    });
+  },
+  getInitialState: function() {
+    return { repos: [] };
+  },
+  componentDidMount: function() {
+    this.loadRepoList();
+  },
+  render: function() {
+    var rows = [];
+    var repos = this.state.repos
+    for (var i = 0; i < repos.length; i++) {
+      rows.push(<RepoInfo interval="10000" repoId={repos[i]} />);
     }
+    return ( <div className="repo-list row full">{rows}</div> );
+  }
 });
 
 module.exports = RepoTable;
