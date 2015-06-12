@@ -1,18 +1,23 @@
 # Ginatra
 
-## Table of Content
-
-* [About Ginatra](#wiki-About Ginatra)
-* [Setup](#wiki-Set up)
-* [Configurations](#wiki-Configurations)
-* [Threshold](#wiki-Threshold)
-* [Usage](#wiki-Usage)
-* [Development](#wiki-Development)
-* [Todos](#wiki-Todos)
-
 ## <a name="About Ginatra"/> About Ginatra
 
 Ginatra displays real-time visualization of your git repositories, using Sinatra, ReactJs and ChartJs.
+
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc/generate-toc again -->
+**Table of Contents**
+
+- [Ginatra](#ginatra)
+    - [<a name="About Ginatra"/> About Ginatra](#a-nameabout-ginatra-about-ginatra)
+    - [<a name="Setup"/> Setup](#a-namesetup-setup)
+    - [<a name="Configurations"/> Configurations](#a-nameconfigurations-configurations)
+    - [<a name="Threshold"/> Threshold](#a-namethreshold-threshold)
+    - [<a name="Usage" /> Usage](#a-nameusage--usage)
+    - [<a name="Development" /> Development](#a-namedevelopment--development)
+    - [<a name="Todo" /> Todo](#a-nametodo--todo)
+
+<!-- markdown-toc end -->
+
 
 ## <a name="Setup"/> Setup
 
