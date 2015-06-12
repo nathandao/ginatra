@@ -111,4 +111,5 @@ Details on API and class extensions to be added...
 
 - Tests!
 - Refactor into a gem
-- Rake tasks to setup ```config.yml``` and ```data``` folder automatically.
+- Setup ```config.yml``` and ```data``` folder automatically.
+- API for author info
