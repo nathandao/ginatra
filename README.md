@@ -1,25 +1,21 @@
 # Ginatra
 
-## <a name="About Ginatra"/> About Ginatra
-
 Ginatra displays real-time visualization of your git repositories, using Sinatra, ReactJs and ChartJs.
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc/generate-toc again -->
 **Table of Contents**
 
 - [Ginatra](#ginatra)
-    - [<a name="About Ginatra"/> About Ginatra](#a-nameabout-ginatra-about-ginatra)
-    - [<a name="Setup"/> Setup](#a-namesetup-setup)
-    - [<a name="Configurations"/> Configurations](#a-nameconfigurations-configurations)
-    - [<a name="Threshold"/> Threshold](#a-namethreshold-threshold)
-    - [<a name="Usage" /> Usage](#a-nameusage--usage)
-    - [<a name="Development" /> Development](#a-namedevelopment--development)
-    - [<a name="Todo" /> Todo](#a-nametodo--todo)
+- [Setup](#setup)
+- [Configurations](#configurations)
+- [Threshold](#threshold)
+- [Usage](#usage)
+- [Developing](#developing)
+- [Todos](#todos)
 
 <!-- markdown-toc end -->
 
-
-## <a name="Setup"/> Setup
+# Setup
 
 From the app's root directory:
 
@@ -38,7 +34,7 @@ Create a ```data``` folder in the app root directory and make sure it is writabl
 
 Copy ```config.sample.yml``` to ```config.yml``` file in the app root directory.
 
-## <a name="Configurations"/> Configurations
+# Configurations
 
 Add some repositories on your local installation to ```config.yml```:
 
@@ -83,7 +79,7 @@ Add some repositories on your local installation to ```config.yml```:
         period: 14
         reference_date: 4 July 2015
 
-## <a name="Threshold"/> Threshold
+# Threshold
 
 Assuming threshold is set to 3 hours, any 2 commits by the same author that are less than 3 hours apart are considered a development section, so the time difference is added to the session.
 
@@ -91,7 +87,7 @@ The time keeps adding on until the next commit is more than 3 hours away from th
 
 To compensate for the time leading to the first commit, 3 hours are added to that period.
 
-## <a name="Usage" /> Usage
+# Usage
 
 Once you have added your repositories, start the ```Unicorn``` server from the app root directory:
 
@@ -101,7 +97,7 @@ The dashboard can now be accessed at ```http://localhost:8080```
 
 mr-sparkle will also watch the file changes in Ginatra so you don't need to restart the server frequently when developing.
 
-## <a name="Development" /> Development
+# Developing
 
 Currently I am using separate jsx component files for the dashboard. If you want to make changes or add new js code, run
 
@@ -112,7 +108,7 @@ Component files are in ```assets/js/``` folder. Only the compiled ```bundle.js``
 Details on API and class extensions to be added...
 
 
-## <a name="Todo" /> Todo
+# Todos
 
 - Tests!
 - Use websockets instead of constantly sending ajax requests.
