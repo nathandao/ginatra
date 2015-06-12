@@ -110,7 +110,7 @@ Details on API and class extensions to be added...
 ## <a name="Todo" /> Todo
 
 - Tests!
-- Use websocket instead of constantly sending ajax requests.
+- Use websockets instead of constantly sending ajax requests.
 - Refactor into a gem
 - Setup ```config.yml``` and ```data``` folder automatically.
 - API for author info
