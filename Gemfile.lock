@@ -3,6 +3,7 @@ GEM
   specs:
     backports (3.6.4)
     chronic (0.10.2)
+    diff-lcs (1.2.5)
     ffi (1.9.6)
     jsmin (1.0.1)
     json (1.8.3)
@@ -28,9 +29,19 @@ GEM
       ffi (>= 0.5.0)
     rb-kqueue (0.2.4)
       ffi (>= 0.5.0)
-    redis (3.2.1)
-    redis-objects (1.2.0)
-      redis (>= 3.0.2)
+    rspec (3.3.0)
+      rspec-core (~> 3.3.0)
+      rspec-expectations (~> 3.3.0)
+      rspec-mocks (~> 3.3.0)
+    rspec-core (3.3.0)
+      rspec-support (~> 3.3.0)
+    rspec-expectations (3.3.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.3.0)
+    rspec-mocks (3.3.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.3.0)
+    rspec-support (3.3.0)
     rufus-scheduler (3.1.2)
     sass (3.4.14)
     sinatra (1.4.6)
@@ -63,7 +74,7 @@ DEPENDENCIES
   chronic
   json
   mr-sparkle
-  redis-objects
+  rspec (~> 3.3)
   rufus-scheduler
   sass
   sinatra
