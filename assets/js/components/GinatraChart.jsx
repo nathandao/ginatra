@@ -1,4 +1,5 @@
 var React = require("react");
+var Chart = require('react-chartjs');
 var PolarAreaChart = require("react-chartjs").PolarArea;
 var BarChart = require("react-chartjs").Bar;
 var LineChart = require("react-chartjs").Line;
@@ -43,6 +44,7 @@ var GinatraChart = React.createClass({
     var width = this.props.width || 1000;
     var height = this.props.height || 500;
     var type = this.props.type || "PolarArea"
+    var chart = [];
 
 
     chart["PolarArea"] = PolarAreaChart;
