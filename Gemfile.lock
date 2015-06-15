@@ -70,3 +70,6 @@ DEPENDENCIES
   sinatra-assetpack
   sinatra-contrib
   yajl-ruby
+
+BUNDLED WITH
+   1.10.3
