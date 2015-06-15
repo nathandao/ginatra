@@ -4,8 +4,6 @@ require 'chronic'
 
 module Ginatra
   class Repository
-    include Redis::Objects
-
     attr_accessor :id, :path, :name, :commits, :color
 
     def initialize params
