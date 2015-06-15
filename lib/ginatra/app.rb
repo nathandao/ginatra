@@ -5,24 +5,23 @@ require 'yajl'
 require 'yajl/json_gem'
 require 'sass'
 
-require File.expand_path('env', File.dirname(__FILE__))
-require File.expand_path('config', File.dirname(__FILE__))
-require File.expand_path('helper', File.dirname(__FILE__))
-require File.expand_path('repository', File.dirname(__FILE__))
-require File.expand_path('stat', File.dirname(__FILE__))
-require File.expand_path('activity', File.dirname(__FILE__))
-require File.expand_path('chart', File.dirname(__FILE__))
+require_relative 'env'
+require_relative 'config'
+require_relative 'helper'
+require_relative 'repository'
+require_relative 'stat'
+require_relative 'activity'
+require_relative 'chart'
 
 Encoding.default_external = 'utf-8' if RUBY_VERSION =~ /^1.9/
-Redis.current = Redis.new(:host => '127.0.0.1', :port => 6379)
 
 module Ginatra
   class App < Sinatra::Base
     register Sinatra::AssetPack
 
     set :views, File.expand_path('../../views', File.dirname(__FILE__))
-    set :root, Ginatra::Env.root
-    set :data, Ginatra::Env.data
+    set :root, Ginatra::Env.root || ::File.expand_path('../../', ::File.dirname(__FILE__))
+    set :data, Ginatra::Env.data || ::File.expand_path('../../data/', ::File.dirname(__FILE__))
 
     assets do
       # Custom assets mangement
