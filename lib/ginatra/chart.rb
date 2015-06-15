@@ -279,12 +279,11 @@ module Ginatra
       def default_timeline_stamps
         ['7 days ago at 0:00', '6 days ago at 0:00', '5 days ago at 0:00',
          '4 days ago at 0:00', '3 days ago at 0:00', '2 days ago at 0:00',
-         'yesterday at 0:00', 'today at 0:00', 'now']
+         'yesterday at 0:00', 'today at 0:00', 'today at 23:59:59']
       end
 
       def timeline_prepare_params params = {}
         # default to 1 week from now
-        p params[:time_stamps]
         params[:time_stamps] ||= default_timeline_stamps
         params[:time_stamps].map! { |time_stamp|
           if time_stamp.class.to_s == 'Time'
