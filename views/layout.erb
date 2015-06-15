@@ -16,7 +16,8 @@
 
             <!-- TODAY COMMITS -->
             <div class="full">
-                <h1 class="label">Thurs 11 June 2015</h1>
+                <% today = Time.new %>
+                <h1 class="label"><%= "#{today.day}-#{today.month}-#{today.year}" %></h1>
                 <div id="today-overview"></div>
             </div>
             <!-- /TODAY COMMITS -->
