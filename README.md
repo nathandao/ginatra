@@ -105,8 +105,46 @@ Currently I am using separate jsx component files for the dashboard. If you want
 
 Component files are in ```assets/js/``` folder. Only the compiled ```bundle.js``` file is being loaded on the page.
 
-Details on API and class extensions to be added...
+# Using the API
 
+Get commits:
+
+    /stat/repo_list
+
+returns
+
+    ["repo_1", "repo_2", "repo_3"]
+
+List all repository ids
+
+    /start/hours
+
+returns
+
+    {
+        "repo_1": [
+            {
+                "author": "Foo",
+                "hours": 900.123
+            },
+            {
+                "author": "Bar",
+                "hours": 800.123
+            }
+        ],
+        "repo_2": [
+            {
+                "author": "Foo",
+                "hours": 900.123
+            },
+            {
+                "author": "Bar",
+                "hours": 800.123
+            }
+        ]
+    }
+
+```repository``` class is the only class with instance methods handling retrieving and storing of commits json data, from which other classes get data from.
 
 # Todos
 
