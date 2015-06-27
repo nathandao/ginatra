@@ -10,6 +10,9 @@ assets/js/bundle.js
 node_modules/
 npm-debug.log
 
+# Test directory
+test/
+
 # misc
 test.rb
 .DS_Store

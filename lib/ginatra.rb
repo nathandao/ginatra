@@ -5,13 +5,13 @@ require 'yajl'
 require 'yajl/json_gem'
 require 'sass'
 
-require_relative 'env'
-require_relative 'config'
-require_relative 'helper'
-require_relative 'repository'
-require_relative 'stat'
-require_relative 'activity'
-require_relative 'chart'
+require_relative 'ginatra/env'
+require_relative 'ginatra/config'
+require_relative 'ginatra/helper'
+require_relative 'ginatra/repository'
+require_relative 'ginatra/stat'
+require_relative 'ginatra/activity'
+require_relative 'ginatra/chart'
 
 Encoding.default_external = 'utf-8' if RUBY_VERSION =~ /^1.9/
 
