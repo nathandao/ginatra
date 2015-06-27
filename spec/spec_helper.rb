@@ -13,7 +13,7 @@ module Ginatra
   end
 end
 
-module GinatraTestHelper
+module GinatraSpecHelper
   DUMMY_DIR = File.expand_path('../../test/dummy', File.dirname(__FILE__))
   REPO_1 = 'git@github.com:nathandao/ginatra_dummy_1.git'
   REPO_2 = 'git@github.com:nathandao/ginatra_dummy_2.git'
@@ -37,4 +37,8 @@ module GinatraTestHelper
   def dummy_exists?
     File.directory?(DUMMY_DIR)
   end
+end
+
+RSpec.configure do |config|
+  config.include(GinatraSpecHelper)
 end
