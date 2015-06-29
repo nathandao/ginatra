@@ -13,8 +13,8 @@ module Ginatra
 end
 
 module GinatraSpecHelper
-  DUMMY_DIR = File.expand_path('../../test/dummy', File.dirname(__FILE__))
-  REPOS_DIR = File.expand_path('repos/', DUMMY_DIR)
+  DUMMY_DIR = File.expand_path('../test/dummy', File.dirname(__FILE__))
+  REPOS_DIR = File.expand_path('repos/', GinatraSpecHelper::DUMMY_DIR)
   REPOS = %w{ git@github.com:nathandao/ginatra_dummy_1.git
               git@github.com:nathandao/ginatra_dummy_2.git }
 
@@ -22,7 +22,7 @@ module GinatraSpecHelper
     unless dummy_exists?
       create_dummy_directory
       pull_dummy_repos
-      create_cofig_yml
+      create_config_yml
     end
   end
 
@@ -35,30 +35,30 @@ module GinatraSpecHelper
   private
 
   def dummy_exists?
-    File.directory?(DUMMY_DIR)
+    File.directory?(GinatraSpecHelper::DUMMY_DIR)
   end
 
   def pull_dummy_repos
-    REPOS.each_with_index do |repo, i|
-      `git clone #{repo} #{REPOS_DIR}/repo_#{i}`
+    GinatraSpecHelper::REPOS.each_with_index do |repo, i|
+      `git clone #{repo} #{GinatraSpecHelper::REPOS_DIR}/repo_#{i}`
     end
   end
 
   def create_config_yml
-    FileUtils.mkdir_p DUMMY_DIR unless File.directory?(DUMMY_DIR)
-    File.open(File.expand_path 'config.yml', DUMMY_DIR, 'w') { |f|
+    puts config_yml_content
+    File.open(File.expand_path('./config.yml', GinatraSpecHelper::DUMMY_DIR), 'w') { |f|
       f.write(config_yml_content)
     }
   end
 
   def config_yml_content
     "
-repositories
+repositories:
   repo_1:
-    path: #{REPOS_PATH[0]}
+    path: #{GinatraSpecHelper::REPOS_DIR}/repo_1
     name: First Repository
   repo_2:
-    path: #{REPOS_PATH[1]}
+    path: #{GinatraSpecHelper::REPOS_DIR}/repo_2
     name: Second Repository
 
 colors: ['#ce0000','#114b5f','#f7d708','#028090','#9ccf31','#ff9e00','#e4fde1','#456990','#ff9e00','#f45b69']
@@ -71,11 +71,11 @@ sprint:
   end
 
   def create_dummy_directory
-    FileUtils.mkdir_p(GinatraHelper::DUMMY_DIR)
+    FileUtils.mkdir_p(GinatraSpecHelper::DUMMY_DIR)
   end
 
   def remove_dummy_directory
-    FileUtils.rm_r(Ginatra::Helper::DUMMY_DIR)
+    FileUtils.rm_r(GinatraSpecHelper::DUMMY_DIR)
   end
 end
 
@@ -84,15 +84,11 @@ RSpec.configure do |config|
 end
 
 module RequestSpecHelper
-  def app
-    Ginatra::App
-  end
-
   shared_context "dummy test app" do
     before(:each) do
+      Ginatra::App.root = GinatraSpecHelper::DUMMY_DIR
+      Ginatra::App.data = GinatraSpecHelper::DUMMY_DIR + '/data'
       create_test_dummy
-      Ginatra::Env.root = ::File.expand_path('../../test/dummy', File.dirname(__FILE__))
-      Ginatra::Env.data = ::File.expand_path('data/', Ginatra::Env.root)
     end
 
     after(:each) do
