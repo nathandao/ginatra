@@ -20,8 +20,8 @@ module Ginatra
     register Sinatra::AssetPack
 
     set :views, File.expand_path('../views', File.dirname(__FILE__))
-    set :root, Ginatra::Env.root || ::File.expand_path('../../', ::File.dirname(__FILE__))
-    set :data, Ginatra::Env.data || ::File.expand_path('../../data/', ::File.dirname(__FILE__))
+    set :root, Ginatra::Env.root || ::File.expand_path('../', ::File.dirname(__FILE__))
+    set :data, Ginatra::Env.data || ::File.expand_path('../data/', ::File.dirname(__FILE__))
 
     assets do
       # Custom assets mangement
