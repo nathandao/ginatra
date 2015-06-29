@@ -110,6 +110,7 @@ DEPENDENCIES
   guard (~> 2.1)
   guard-rspec
   json
+  minitest
   rspec (~> 3.3)
   rufus-scheduler
   sass
