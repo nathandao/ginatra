@@ -96,6 +96,6 @@ RSpec.configure do |config|
   end
 
   config.after(:all) do
-    destroy_test_dummy
+    # destroy_test_dummy
   end
 end
