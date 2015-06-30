@@ -1,6 +1,8 @@
 # Ginatra
 
 [![Build Status](https://travis-ci.org/nathandao/ginatra.svg?branch=master)](https://travis-ci.org/nathandao/ginatra)
+[![Code Climate](https://codeclimate.com/github/nathandao/ginatra/badges/gpa.svg)](https://codeclimate.com/github/nathandao/ginatra)
+[![Test Coverage](https://codeclimate.com/github/nathandao/ginatra/badges/coverage.svg)](https://codeclimate.com/github/nathandao/ginatra/coverage)
 
 Ginatra displays real-time visualization of your git repositories, using Sinatra, ReactJs and ChartJs.
 
