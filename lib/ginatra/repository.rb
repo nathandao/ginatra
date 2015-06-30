@@ -4,32 +4,33 @@ require 'chronic'
 
 module Ginatra
   class Repository
+    class MissingName < RuntimeError; end
+    class MissingPath < RuntimeError; end
+    class InvalidPath < RuntimeError; end
+    class MissingId < RuntimeError; end
+    class InvalidRepoId < RuntimeError; end
+
     attr_accessor :id, :path, :name, :commits, :color
 
-    def initialize params
-      colors = Ginatra::Config.colors
-      repos = Ginatra::Config.repositories
-      @id = params['id']
-      @path = params['path']
-      @color = nil
-      @name = params['name']
-      if params['color'].nil?
-        @color = colors[repos.find_index { |k,_| k == @id } % colors.size]
-      else
-        @color = params['color']
-      end
+    def self.new(params)
+      self.validate(params)
+      super
+    rescue MissingName, MissingPath, MissingId, InvalidPath, InvalidRepoId
+      false
+    end
+
+    def initialize(params)
+      prepare_repo_values(params)
     end
 
     def authors params = {}
       commits(params).group_by { |commit|
         commit.first[1]['author']
       }.map { |name, commits|
-        {
-         'name' => name,
+        {'name' => name,
          'commits' => commits.size,
          'additions' => Ginatra::Helper.get_additions(commits),
-         'deletions' => Ginatra::Helper.get_deletions(commits)
-        }
+         'deletions' => Ginatra::Helper.get_deletions(commits)}
       }
     end
 
@@ -76,6 +77,49 @@ module Ginatra
     end
 
     private
+
+    def self.validate(params)
+      colors = Ginatra::Config.colors
+      repos = Ginatra::Config.repositories
+      if params['color'].nil? and !params['id'].nil?
+        begin
+          params['color'] = colors[repos.find_index { |k,_| k == params["id"] } % colors.size]
+        rescue NoMethodError
+          raise InvalidRepoId, "#{self.current_path} repository's id is invalid"
+        end
+      end
+      raise MissingName, "#{self.current_path} repository's name missing" unless params['name']
+      raise MissingPath, "#{self.current_path} repository's path missing" unless params['path']
+      raise MissingId, "#{self.current_path} repository's id missing" unless params['id']
+      raise MissingColor, "#{self.current_path} repository's color missing" unless params['color']
+      raise InvalidPath, "#{self.current_path} repository's path is invalid" unless self.is_repo_path?(params['path'])
+    end
+
+    def self.is_repo_path?(path)
+      if path.nil? || !File.directory?(path)
+        false
+      else
+        `git -C "#{path}" status`.match(/On branch/)
+      end
+    end
+
+    def self.current_path
+      File.dirname(__FILE__)
+    end
+
+    def prepare_repo_values(params)
+      colors = Ginatra::Config.colors
+      repos = Ginatra::Config.repositories
+      @id = params['id'].strip
+      @path = params['path'].strip
+      @color = nil
+      @name = params['name'].strip
+      if params['color'].nil?
+        @color = colors[repos.find_index { |k,_| k == @id } % colors.size]
+      else
+        @color = params['color']
+      end
+    end
 
     def data_file
       dirname = Ginatra::App.data
