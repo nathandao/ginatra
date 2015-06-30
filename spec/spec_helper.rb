@@ -13,9 +13,9 @@ module Ginatra
   end
 end
 
-module GinatraSpecHelper
+module GinatraDummy
   DUMMY_DIR = File.expand_path('../test/dummy', File.dirname(__FILE__))
-  REPOS_DIR = File.expand_path('repos/', GinatraSpecHelper::DUMMY_DIR)
+  REPOS_DIR = File.expand_path('repos/', DUMMY_DIR)
   REPOS = %w{ git@github.com:nathandao/ginatra_dummy_1.git
               git@github.com:nathandao/ginatra_dummy_2.git }
 
@@ -36,18 +36,18 @@ module GinatraSpecHelper
   private
 
   def dummy_exists?
-    File.directory?(GinatraSpecHelper::DUMMY_DIR)
+    File.directory?(DUMMY_DIR)
   end
 
   def pull_dummy_repos
-    GinatraSpecHelper::REPOS.each_with_index do |repo, i|
-      `git clone #{repo} #{GinatraSpecHelper::REPOS_DIR}/repo_#{i+1}`
+    REPOS.each_with_index do |repo, i|
+      `git clone #{repo} #{REPOS_DIR}/repo_#{i+1}`
     end
   end
 
   def create_config_yml
     puts config_yml_content
-    File.open(File.expand_path('./config.yml', GinatraSpecHelper::DUMMY_DIR), 'w') { |f|
+    File.open(File.expand_path('./config.yml', GinatraDummy::DUMMY_DIR), 'w') { |f|
       f.write(config_yml_content)
     }
   end
@@ -56,10 +56,10 @@ module GinatraSpecHelper
     "
 repositories:
   repo_1:
-    path: #{GinatraSpecHelper::REPOS_DIR}/repo_1
+    path: #{GinatraDummy::REPOS_DIR}/repo_1
     name: First Repository
   repo_2:
-    path: #{GinatraSpecHelper::REPOS_DIR}/repo_2
+    path: #{GinatraDummy::REPOS_DIR}/repo_2
     name: Second Repository
 
 colors: ['#ce0000','#114b5f','#f7d708','#028090','#9ccf31','#ff9e00','#e4fde1','#456990','#ff9e00','#f45b69']
@@ -72,21 +72,26 @@ sprint:
   end
 
   def create_dummy_directory
-    FileUtils.mkdir_p(GinatraSpecHelper::DUMMY_DIR)
+    FileUtils.mkdir_p(GinatraDummy::DUMMY_DIR)
   end
 
   def remove_dummy_directory
-    FileUtils.rm_r(GinatraSpecHelper::DUMMY_DIR)
+    FileUtils.rm_r(GinatraDummy::DUMMY_DIR)
   end
+end
+
+module GinatraSpecHelper
+  # Place holda' for da futra' ~~~
 end
 
 RSpec.configure do |config|
   config.include(GinatraSpecHelper)
+  config.include(GinatraDummy)
   config.include(GinatraFactory)
 
   config.before(:all) do
-    Ginatra::App.root = GinatraSpecHelper::DUMMY_DIR
-    Ginatra::App.data = GinatraSpecHelper::DUMMY_DIR + '/data'
+    Ginatra::App.root = GinatraDummy::DUMMY_DIR
+    Ginatra::App.data = GinatraDummy::DUMMY_DIR + '/data'
     create_test_dummy
   end
 

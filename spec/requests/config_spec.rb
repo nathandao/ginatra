@@ -3,7 +3,7 @@ require_relative '../spec_helper'
 RSpec.describe Ginatra::Config do
   before(:all) do
     @settings = Ginatra::Config.settings
-    @repos_dir = GinatraSpecHelper::REPOS_DIR
+    @repos_dir = GinatraDummy::REPOS_DIR
   end
 
   describe "settings" do
