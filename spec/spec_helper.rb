@@ -16,8 +16,8 @@ end
 module GinatraDummy
   DUMMY_DIR = File.expand_path('../test/dummy', File.dirname(__FILE__))
   REPOS_DIR = File.expand_path('repos/', DUMMY_DIR)
-  REPOS = %w{ git@github.com:nathandao/ginatra_dummy_1.git
-              git@github.com:nathandao/ginatra_dummy_2.git }
+  REPOS = %w{ https://github.com/nathandao/ginatra_dummy_1.git
+              https://github.com/nathandao/ginatra_dummy_1.git }
 
   def create_test_dummy
     unless dummy_exists?
