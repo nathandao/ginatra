@@ -3,7 +3,8 @@ require 'rack/test'
 require 'sinatra'
 require 'fileutils'
 
-require_relative '../lib/ginatra.rb'
+require_relative '../lib/ginatra'
+require_relative 'factory'
 
 module Ginatra
   class App < Sinatra::Base
@@ -27,7 +28,7 @@ module GinatraSpecHelper
   end
 
   def destroy_test_dummy
-    unless dummy_exists?
+    if dummy_exists?
       remove_dummy_directory
     end
   end
@@ -40,7 +41,7 @@ module GinatraSpecHelper
 
   def pull_dummy_repos
     GinatraSpecHelper::REPOS.each_with_index do |repo, i|
-      `git clone #{repo} #{GinatraSpecHelper::REPOS_DIR}/repo_#{i}`
+      `git clone #{repo} #{GinatraSpecHelper::REPOS_DIR}/repo_#{i+1}`
     end
   end
 
@@ -81,18 +82,15 @@ end
 
 RSpec.configure do |config|
   config.include(GinatraSpecHelper)
-end
+  config.include(GinatraFactory)
 
-module RequestSpecHelper
-  shared_context "dummy test app" do
-    before(:each) do
-      Ginatra::App.root = GinatraSpecHelper::DUMMY_DIR
-      Ginatra::App.data = GinatraSpecHelper::DUMMY_DIR + '/data'
-      create_test_dummy
-    end
+  config.before(:all) do
+    Ginatra::App.root = GinatraSpecHelper::DUMMY_DIR
+    Ginatra::App.data = GinatraSpecHelper::DUMMY_DIR + '/data'
+    create_test_dummy
+  end
 
-    after(:each) do
-      destroy_test_dummy
-    end
+  config.after(:all) do
+    destroy_test_dummy
   end
 end
