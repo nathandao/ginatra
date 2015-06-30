@@ -5,6 +5,9 @@ rvm:
   - 2.2
 sudo: false
 cache: bundler
+addons:
+  code_climate:
+    repo_token: 5d6e1a5081ac011ef194cd6c150d6f3aad2185621273b88329acd0c1dffce9c1
 before_script:
   - sh -e /etc/init.d/xvfb start
   - export DISPLAY=:99.0
