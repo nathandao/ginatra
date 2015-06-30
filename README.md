@@ -1,5 +1,7 @@
 # Ginatra
 
+[![Build Status](https://travis-ci.org/nathandao/ginatra.svg?branch=master)](https://travis-ci.org/nathandao/ginatra)
+
 Ginatra displays real-time visualization of your git repositories, using Sinatra, ReactJs and ChartJs.
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc/generate-toc again -->
