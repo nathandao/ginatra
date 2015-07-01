@@ -15,6 +15,8 @@ module Ginatra
     def self.new(params)
       self.validate(params)
       super
+    rescue MissingName, MissingPath, MissingId, InvalidPath, InvalidId
+      false
     end
 
     def initialize(params)
@@ -77,11 +79,11 @@ module Ginatra
           raise InvalidRepoId, "#{self.current_path} repository's id is invalid"
         end
       end
-      raise MissingName, "#{self.current_path} repository's name missing" unless params['name']
-      raise MissingPath, "#{self.current_path} repository's path missing" unless params['path']
-      raise MissingId, "#{self.current_path} repository's id missing" unless params['id']
-      raise MissingColor, "#{self.current_path} repository's color missing" unless params['color']
-      raise InvalidPath, "#{self.current_path} repository's path is invalid" unless self.is_repo_path?(params['path'])
+      raise MissingName, "repository's name missing" unless params['name']
+      raise MissingPath, "repository's path missing" unless params['path']
+      raise MissingId, "repository's id missing" unless params['id']
+      raise MissingColor, "repository's color missing" unless params['color']
+      raise InvalidPath, "repository's path is invalid" unless self.is_repo_path?(params['path'])
     end
 
     def self.is_repo_path?(path)
@@ -94,7 +96,7 @@ module Ginatra
     end
 
     def self.current_path
-      File.dirname(__FILE__)
+      'ginatra/repository.rb'
     end
 
     def prepare_repo_values(params)
