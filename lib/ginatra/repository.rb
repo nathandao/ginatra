@@ -15,8 +15,6 @@ module Ginatra
     def self.new(params)
       self.validate(params)
       super
-    rescue MissingName, MissingPath, MissingId, InvalidPath, InvalidRepoId
-      false
     end
 
     def initialize(params)
@@ -87,6 +85,7 @@ module Ginatra
     end
 
     def self.is_repo_path?(path)
+      path = File.expand_path(path)
       if path.nil? || !File.directory?(path)
         false
       else

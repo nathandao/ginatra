@@ -6,7 +6,7 @@ module Ginatra
           repos = Ginatra::Config.repositories
           repos.inject({}) { |output, repo|
             repo_id = repo[0]
-            output[repo_id] = Ginatra::Helper.get_repo(repo_id).commits params
+            output[repo_id] = Ginatra::Helper.get_repo(repo_id).commits(params)
             output
           }
         else

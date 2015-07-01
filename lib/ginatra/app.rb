@@ -13,7 +13,7 @@ require_relative 'stat'
 require_relative 'activity'
 require_relative 'chart'
 
-Encoding.default_external = 'utf-8' if RUBY_VERSION =~ /^1.9/
+Encoding.default_external = 'utf-8' if RUBY_VERSION =~ /^2.0/
 
 module Ginatra
   class App < Sinatra::Base
@@ -21,7 +21,7 @@ module Ginatra
 
     set :root, Ginatra::Env.root || ::File.expand_path('../../', ::File.dirname(__FILE__))
     set :data, Ginatra::Env.data || ::File.expand_path('../../data/', ::File.dirname(__FILE__))
-    set :views, File.expand_path('/views', Ginatra::App.root)
+    set :views, File.expand_path('./views', Ginatra::App.root)
 
     assets do
       # Custom assets mangement
