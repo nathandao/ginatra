@@ -10,8 +10,8 @@ RSpec.describe Ginatra::Repository do
   context "initialize" do
     context "with valid information" do
       before(:each) do
-        @repo_1 = get_repo "repo_1"
-        @repo_2 = get_repo "repo_2"
+        @repo_1 = get_repo('repo_1')
+        @repo_2 = get_repo('repo_2')
         @repos_dir = GinatraDummy::REPOS_DIR
       end
 
@@ -33,13 +33,6 @@ RSpec.describe Ginatra::Repository do
       it "should have the correct color" do
         expect(@repo_1.color).to eq "#ce0000"
         expect(@repo_2.color).to eq "#114b5f"
-      end
-
-      it "should have the correct commits count" do
-        # We are only checking for commit size at the moment
-        # Need a better fool proof test for this?
-        expect(@repo_1.commits.size).to eq 61
-        expect(@repo_2.commits.size).to eq 593
       end
     end
 
@@ -70,6 +63,47 @@ RSpec.describe Ginatra::Repository do
         before { @params['id'] = "invalid_repo" }
         let(:params) { @params }
         include_examples "invalid repository"
+      end
+    end
+  end
+
+  describe "commits data behaviours" do
+    before(:each) do
+      @repo = get_repo('repo_1')
+    end
+
+    it "should have the correct commits count" do
+      # We are only checking for commit size at the moment
+      # Need a better fool proof test for this?
+      expect(@repo.commits.size).to eq 61
+    end
+
+    context "when no data file exists" do
+      before { remove_data_file('repo_1') }
+
+      it "should retrieve commits and create new data file" do
+        expect(@repo.commits.size).to eq 61
+        expect(File.exists?(repo_data_path(@repo.id))).to be true
+      end
+    end
+
+    context "on refresh" do
+      before do
+        undo_commits(@repo.id, 5)
+        remove_data_file(@repo.id)
+      end
+
+      describe "before" do
+        it "should have the old commits count" do
+          expect(@repo.commits.size).to eq 49
+        end
+      end
+
+      describe "after" do
+        before { @repo.refresh_data }
+        it "should have the new commits count" do
+          expect(@repo.commits.size).to eq 61
+        end
       end
     end
   end

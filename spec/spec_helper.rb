@@ -83,7 +83,20 @@ sprint:
 end
 
 module GinatraSpecHelper
-  # Place holda' for da futra' ~~~
+  def undo_commits(repo_id, count = 1)
+    repo = Ginatra::Helper.get_repo(repo_id)
+    `git -C '#{repo.path}' reset --hard HEAD~#{count} >> /dev/null 2>&1`
+  end
+
+  def remove_data_file(repo_id)
+    if File.exists?(repo_data_path(repo_id))
+      FileUtils.rm(repo_data_path(repo_id))
+    end
+  end
+
+  def repo_data_path(repo_id)
+    File.expand_path("./data/.#{repo_id}", GinatraDummy::DUMMY_DIR)
+  end
 end
 
 RSpec.configure do |config|

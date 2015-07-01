@@ -63,17 +63,8 @@ module Ginatra
 
     def refresh_data
       `git -C #{@path} pull >> /dev/null 2>&1`
-      if commits.nil?
-        get_commits
-      else
-        last_commit_date = Time.parse commits[0].flatten[1]['date']
-        last_commit_id = commits[0].keys[0]
-        new_commits = Yajl::Parser.new.parse(git_log(last_commit_date))
-        unless new_commits.empty?
-          new_commits.reject! { |c| c.keys[0] == last_commit_id }
-          Yajl::Encoder.encode(new_commits + commits, File.new(data_file, 'w')) unless new_commits.empty?
-        end
-      end
+      remove_data_file
+      get_commits
     end
 
     private
@@ -125,6 +116,10 @@ module Ginatra
       dirname = Ginatra::App.data
       FileUtils.mkdir_p dirname unless File.directory?(dirname)
       File.expand_path '.' + @id, dirname
+    end
+
+    def remove_data_file
+      FileUtils.rm(data_file) if File.exists?(data_file)
     end
 
     def commits_between from = nil, til = nil
