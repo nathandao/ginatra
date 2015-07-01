@@ -10,29 +10,24 @@ RSpec.describe Ginatra::Repository do
   context "initialize" do
     context "with valid information" do
       before(:each) do
-        @repo_1 = get_repo('repo_1')
-        @repo_2 = get_repo('repo_2')
+        @repo= get_repo('repo_1')
         @repos_dir = GinatraDummy::REPOS_DIR
       end
 
       it "should have the correct id" do
-        expect(@repo_1.id).to eq "repo_1"
-        expect(@repo_2.id).to eq "repo_2"
+        expect(@repo.id).to eq "repo_1"
       end
 
       it "should have the correct path" do
-        expect(@repo_1.path).to eq "#{@repos_dir}/repo_1"
-        expect(@repo_2.path).to eq "#{@repos_dir}/repo_2"
+        expect(@repo.path).to eq "#{@repos_dir}/repo_1"
       end
 
       it "should have the correct name" do
-        expect(@repo_1.name).to eq "First Repository"
-        expect(@repo_2.name).to eq "Second Repository"
+        expect(@repo.name).to eq "First Repository"
       end
 
       it "should have the correct color" do
-        expect(@repo_1.color).to eq "#ce0000"
-        expect(@repo_2.color).to eq "#114b5f"
+        expect(@repo.color).to eq "#ce0000"
       end
     end
 
