@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require_relative '../spec_helper.rb'
 
 shared_examples "invalid repository" do
@@ -6,7 +7,7 @@ shared_examples "invalid repository" do
   end
 end
 
-RSpec.describe Ginatra::Repository do
+describe Ginatra::Repository do
   context "initialize" do
     context "with valid information" do
       before(:each) do
@@ -98,6 +99,44 @@ RSpec.describe Ginatra::Repository do
         before { @repo.refresh_data }
         it "should have the new commits count" do
           expect(@repo.commits.size).to eq 61
+        end
+      end
+    end
+  end
+
+  describe "authors" do
+    let(:repo) { get_repo('repo_1') }
+    let(:authors_hash) { repo.authors }
+    let(:authors) { authors_hash.map { |v| v['name'] } }
+    let(:expected_authors) { ["Joe Hudson", "Nathan Dao", "bultas",
+                              "David Ascher", "aaronhayes", "Steven Dickinson",
+                              "Toni Cárdenas", "Neo Alienson", "jefffriesen",
+                              "Peter Halliday", "Eric Tse"] }
+
+    it "should return the correct authors" do
+      expect(authors & expected_authors).to eq authors
+    end
+
+    let(:expected_author_data) { [{"name"=>"Joe Hudson", "commits"=>49, "additions"=>1167, "deletions"=>881},
+                                  {"name"=>"Nathan Dao", "commits"=>1, "additions"=>5, "deletions"=>1},
+                                  {"name"=>"bultas", "commits"=>1, "additions"=>1, "deletions"=>1},
+                                  {"name"=>"David Ascher", "commits"=>1, "additions"=>1, "deletions"=>1},
+                                  {"name"=>"aaronhayes", "commits"=>3, "additions"=>19, "deletions"=>3},
+                                  {"name"=>"Steven Dickinson", "commits"=>1, "additions"=>295, "deletions"=>1},
+                                  {"name"=>"Toni Cárdenas", "commits"=>1, "additions"=>6, "deletions"=>5},
+                                  {"name"=>"Neo Alienson", "commits"=>1, "additions"=>1, "deletions"=>1},
+                                  {"name"=>"jefffriesen", "commits"=>1, "additions"=>35, "deletions"=>3},
+                                  {"name"=>"Peter Halliday", "commits"=>1, "additions"=>27, "deletions"=>27},
+                                  {"name"=>"Eric Tse", "commits"=>1, "additions"=>4, "deletions"=>4}] }
+
+    it "should return the correct author data" do
+      authors_hash.each do |author|
+        expected_author = expected_author_data.select { |v|
+          v['name'] == author['name']
+        }.first
+
+        author.each do |key, val|
+          expect(val).to eq expected_author[key]
         end
       end
     end

@@ -15,7 +15,7 @@ module Ginatra
     def self.new(params)
       self.validate(params)
       super
-    rescue MissingName, MissingPath, MissingId, InvalidPath, InvalidId
+    rescue MissingName, MissingPath, MissingId, InvalidPath, InvalidRepoId
       false
     end
 
