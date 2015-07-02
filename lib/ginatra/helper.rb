@@ -2,10 +2,10 @@ module Ginatra
   class Helper
     class << self
       def get_repo repo_id
-        repo = Ginatra::Config.repositories[repo_id]
-        return nil if repo.nil?
-        repo['id'] = repo_id
-        Ginatra::Repository.new repo
+        params = Ginatra::Config.repositories[repo_id]
+        return nil if params.nil?
+        params['id'] = repo_id
+        Ginatra::Repository.new(params)
       end
 
       def sort_commits commits, params

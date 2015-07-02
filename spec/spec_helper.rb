@@ -97,6 +97,60 @@ module GinatraSpecHelper
   def repo_data_path(repo_id)
     File.expand_path("./data/.#{repo_id}", GinatraDummy::DUMMY_DIR)
   end
+
+  def commit_id(commit)
+    commit.first[0]
+  end
+
+  def commit_data(commit)
+    commit.values[0]
+  end
+
+  def commit_author(commit)
+    commit_data(commit)['author']
+  end
+
+  def same_commit_authors?(c_1, c_2)
+    commit_author(c_1) == commit_author(c_2)
+  end
+
+  def commit_dates(commit)
+    Time.new(commit_data(commit)['date'])
+  end
+
+  def same_commit_dates?(c_1, c_2)
+    commit_date(c_1) == commit_date(c_2)
+  end
+
+  def commit_changes(commits)
+    commit_data(commit)['changes']
+  end
+
+  def same_commit_changes?(c_1, c_2)
+    ch_1 = commit_changes(c_1)
+    ch_2 = commit_changes(c_2)
+    ch_1 | ch_2 == c_1
+  end
+
+  def same_commits?(c_1, c_2)
+    id_1 = commit_id(c_1)
+    id_2 = commit_id(c_2)
+    if id_1 == id_2
+      if same_commit_dates?(c_1, c_2) and
+          same_commit_authors?(c_1, c_2) and
+          same_commit_changes?(c_1, c_2)
+        true
+      else
+        false
+      end
+    else
+      false
+    end
+  end
+
+  def same_commit_arrays?(c_1, c_2)
+    c_1 | c_2 == c_1
+  end
 end
 
 RSpec.configure do |config|
