@@ -1,7 +1,7 @@
 module Ginatra
   class Stat
     class << self
-      def commits params = {}
+      def commits(params = {})
         if params[:in].nil?
           repos = Ginatra::Config.repositories
           repos.inject({}) { |output, repo|
@@ -14,7 +14,7 @@ module Ginatra
         end
       end
 
-      def commits_count params = {}
+      def commits_count(params = {})
         commits_count = nil
         if params[:in].nil?
           repos = Ginatra::Config.repositories
@@ -30,7 +30,7 @@ module Ginatra
         return commits_count.nil? ? 0 : commits_count
       end
 
-      def repo_overview params = {}
+      def repo_overview(params = {})
         repos = params[:in].nil? ? Ginatra::Config.repositories.keys : [params[:in]]
         repos.inject({}) { |result, repo_id|
           result[repo_id] ||= {}
@@ -40,7 +40,7 @@ module Ginatra
         }
       end
 
-      def commits_overview params = {}
+      def commits_overview(params = {})
         commits_count = 0
         additions = 0
         deletions = 0
@@ -64,7 +64,7 @@ module Ginatra
          last_commit: last_commit, first_commit: first_commit}
       end
 
-      def authors params = {}
+      def authors(params = {})
         if params[:in].nil?
           Ginatra::Config.repositories.inject([]) { |output, repo|
             repo_id = repo[0]
@@ -85,7 +85,7 @@ module Ginatra
         end
       end
 
-      def lines params = {}
+      def lines(params = {})
         if params[:in].nil?
           repos = Ginatra::Config.repositories
           repos.inject({}) { |result, repo|
