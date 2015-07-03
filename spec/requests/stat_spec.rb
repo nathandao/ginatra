@@ -28,6 +28,7 @@ describe Ginatra::Stat do
                      by: "Nathan Dao",
                      in: "repo_1"}
 
+      # Test all combinations of params
       (1..4).to_a.each do |s|
         full_params.keys.combination(s).to_a.each do |combi|
           params = combi.inject({}) { |p, k|
@@ -42,6 +43,17 @@ describe Ginatra::Stat do
               end
             end
           end
+        end
+      end
+    end
+
+    context "with invalid params" do
+      let(:commits) { Ginatra::Stat.commits(with: "invalid params") }
+
+      it "should ignore the params and return full commits" do
+        Ginatra::Stat.commits.each do |repo_commits|
+          repo_id = repo_commits[0]
+          expect(same_commit_arrays?(commits[repo_id], repo_commits[1])).to be true
         end
       end
     end
