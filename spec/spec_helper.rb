@@ -106,50 +106,30 @@ module GinatraSpecHelper
     commit.values[0]
   end
 
-  def commit_author(commit)
-    commit_data(commit)['author']
-  end
-
-  def same_commit_authors?(c_1, c_2)
-    commit_author(c_1) == commit_author(c_2)
-  end
-
-  def commit_dates(commit)
-    Time.new(commit_data(commit)['date'])
-  end
-
-  def same_commit_dates?(c_1, c_2)
-    commit_date(c_1) == commit_date(c_2)
-  end
-
-  def commit_changes(commits)
-    commit_data(commit)['changes']
-  end
-
-  def same_commit_changes?(c_1, c_2)
-    ch_1 = commit_changes(c_1)
-    ch_2 = commit_changes(c_2)
-    ch_1 | ch_2 == c_1
-  end
-
-  def same_commits?(c_1, c_2)
-    id_1 = commit_id(c_1)
-    id_2 = commit_id(c_2)
-    if id_1 == id_2
-      if same_commit_dates?(c_1, c_2) and
-          same_commit_authors?(c_1, c_2) and
-          same_commit_changes?(c_1, c_2)
-        true
-      else
-        false
-      end
-    else
-      false
-    end
-  end
-
   def same_commit_arrays?(c_1, c_2)
     c_1 | c_2 == c_1
+  end
+
+  def repo_commits_overview(repo)
+    init = {commits_count: 0 , additions: 0, deletions: 0, lines: 0,
+            hours: 0, last_commit: '', first_commit: ''}
+
+    repo.commits.inject(init) { |result, v|
+      result[:commits_count] += 1
+      result[:additions] += v
+    }
+  end
+
+  def commit_additions(commit)
+    changes = commit.flatten[1]['changes']
+    if changes
+      changes.inject(0) { |sum, v|
+        sum += v['deletions'] if v['deletions']
+        sum
+      }
+    else
+      0
+    end
   end
 end
 
