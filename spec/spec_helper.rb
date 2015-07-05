@@ -111,20 +111,32 @@ module GinatraSpecHelper
   end
 
   def repo_commits_overview(repo)
+    commits_overview(repo.commits)
+  end
+
+  def commits_overview(commits)
     init = {commits_count: 0 , additions: 0, deletions: 0, lines: 0,
             hours: 0, last_commit: '', first_commit: ''}
 
-    repo.commits.inject(init) { |result, v|
+    commits.inject(init) { |result, v|
       result[:commits_count] += 1
       result[:additions] += v
     }
   end
 
   def commit_additions(commit)
+    commit_changes_count(commits, 'additions')
+  end
+
+  def commit_deletions(commit)
+    commit_changes_count(commitm 'deletions')
+  end
+
+  def commit_changes_count(commit, type = 'additions')
     changes = commit.flatten[1]['changes']
     if changes
       changes.inject(0) { |sum, v|
-        sum += v['deletions'] if v['deletions']
+        sum += v[type] if v[type]
         sum
       }
     else
