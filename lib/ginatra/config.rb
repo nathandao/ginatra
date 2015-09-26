@@ -8,6 +8,10 @@ module Ginatra
         YAML.load_file(File.expand_path('config.yml', Ginatra::App.root))
       end
 
+      def title
+        self.settings['title']
+      end
+
       def repositories
         self.settings['repositories']
       end

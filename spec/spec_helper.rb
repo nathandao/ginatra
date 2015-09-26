@@ -56,6 +56,8 @@ module GinatraDummy
 
   def config_yml_content
     "
+title: Team Name
+
 repositories:
   repo_1:
     path: #{GinatraDummy::REPOS_DIR}/repo_1
