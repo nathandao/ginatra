@@ -44,6 +44,10 @@ module Ginatra
       scss params['stylesheet'].to_sym, :style => :expanded
     end
 
+    def title
+      Ginatra::Config.title
+    end
+
     before '/stat/*' do
       content_type 'application/json'
       @filter = params.inject({}) { |prms, v|

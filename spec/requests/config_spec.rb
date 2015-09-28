@@ -13,6 +13,10 @@ RSpec.describe Ginatra::Config do
                  '#ff9e00','#f45b69']
     end
 
+    it "should have a title" do
+      expect(@settings["title"]).to eq("Team Name")
+    end
+
     it "should have the correct repos" do
       @settings["repositories"].each do |repo|
         repo_id = repo[0]
