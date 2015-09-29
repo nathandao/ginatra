@@ -46,6 +46,8 @@ Add some repositories on your local installation to ```config.yml```:
     # repo_id should be unique and only use "_" (underscore)
     # if needed. This is because "-" will break javascript later on
 
+    title: Your dashboard title
+
     repositories:
         repo_id_1:
             path: /path/to/your/repo_1
