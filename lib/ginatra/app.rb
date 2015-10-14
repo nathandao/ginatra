@@ -29,11 +29,11 @@ module Ginatra
       serve '/css', from: 'assets/scss'
     end
 
-#    scheduler = Rufus::Scheduler.new
-#
-#    scheduler.every '20s' do
-#      Ginatra::Stat.refresh_all_data
-#    end
+   scheduler = Rufus::Scheduler.new
+
+   scheduler.every '15 minutes' do
+     Ginatra::Stat.refresh_all_data
+   end
 
     get '/' do
       erb :layout
