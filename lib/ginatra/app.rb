@@ -59,7 +59,7 @@ module Ginatra
     end
 
     get '/stat/repo_list' do
-      Ginatra::Config.repositories.keys.to_json
+      Ginatra::Config.repositories.to_json
     end
 
     get '/stat/hours' do

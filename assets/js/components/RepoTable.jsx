@@ -20,9 +20,10 @@ var RepoTable = React.createClass({
   },
   render: function() {
     var rows = [];
-    var repos = this.state.repos
-    for (var i = 0; i < repos.length; i++) {
-      rows.push(<RepoInfo interval="10000" repoId={repos[i]} />);
+    var repos = this.state.repos;
+    var repoKeys = Object.keys(repos);
+    for (var i = 0; i < repoKeys.length; i++) {
+      rows.push(<RepoInfo interval="10000" repoId={repoKeys[i]} repoName={repos[repoKeys[i]].name} />);
     }
     return ( <div className="repo-list row full">{rows}</div> );
   }
