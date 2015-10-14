@@ -31,9 +31,11 @@ module Ginatra
 
    scheduler = Rufus::Scheduler.new
 
-   scheduler.every '15 minutes' do
+   # TODO: move refresh interval to settings
+   scheduler.every '600000' do
      Ginatra::Stat.refresh_all_data
    end
+
 
     get '/' do
       erb :layout

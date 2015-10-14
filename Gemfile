@@ -7,6 +7,7 @@ gem 'json'
 gem 'sass'
 gem 'chronic'
 gem 'rufus-scheduler'
+gem 'unicorn'
 gem 'yajl-ruby', require: 'yajl'
 
 group :test do
