@@ -42,6 +42,7 @@ var RepoInfo = React.createClass({
   },
   render: function() {
     var repoId = this.props.repoId;
+    var repoName = this.props.repoName;
     var commitsCount = this.state.commitsCount;
     var lines = this.state.lines;
     var additions = this.state.additions;
@@ -54,7 +55,10 @@ var RepoInfo = React.createClass({
 
     return (
       <div className="repo-cell full">
-        <div className="full"><h3 className="half">{repoId}</h3></div>
+        <div className="full">
+          <h3 className="half">{repoName}<br/>
+          <small>({repoId})</small></h3>
+        </div>
         <div className="third">
           <ul>
             <li><span className="label">Commits:</span> {commitsCount}</li>
