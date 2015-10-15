@@ -141,8 +141,8 @@ module Ginatra
       result = `for i in $(git -C #{@path} branch -r | grep -vE "HEAD|master"); do
                 git -C #{@path} checkout ${i}
 
-                GINATRA_LOCAL=$(git rev-parse @)
-                GINATRA_REMOTE=$(git rev-parse @{u})
+                GINATRA_LOCAL=$(git -C #{@path} rev-parse @)
+                GINATRA_REMOTE=$(git -C #{@path} rev-parse @{u})
                 if [ $GINATRA_LOCAL = $GINATRA_REMOTE ]; then
                   echo "[ginatra_branch_up_to_date]"
                 else
