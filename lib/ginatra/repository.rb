@@ -62,9 +62,12 @@ module Ginatra
     end
 
     def refresh_data
-      `git -C #{@path} pull >> /dev/null 2>&1`
-      remove_data_file
-      get_commits
+      track_all_remote_branches
+      if change_exists?
+        remove_data_file
+        pull_all_remote_branches
+        get_commits
+      end
     end
 
     private
@@ -121,6 +124,32 @@ module Ginatra
 
     def remove_data_file
       FileUtils.rm(data_file) if File.exists?(data_file)
+    end
+
+    def pull_all_remote_branches
+      `git -C #{path} pull --all`
+    end
+
+    def track_all_remote_branches
+      `for i in $(git -C #{@path} branch -r | grep -vE "HEAD|master"); do
+         git -C #{@path} branch --track ${i#*/} $i;
+       done >> /dev/null 2>&1`
+    end
+
+    def change_exists?
+      # Loop through all remote branches and check if change exists in each
+      result = `for i in $(git -C #{@path} branch -r | grep -vE "HEAD|master"); do
+                git -C #{@path} checkout ${i}
+
+                GINATRA_LOCAL=$(git rev-parse @)
+                GINATRA_REMOTE=$(git rev-parse @{u})
+                if [ $GINATRA_LOCAL = $GINATRA_REMOTE ]; then
+                  echo "[ginatra_branch_up_to_date]"
+                else
+                  echo "[ginatra_branch_refresh_required]"
+                fi
+              done`
+      result.include? "[ginatra_branch_refresh_required]"
     end
 
     def commits_between from = nil, til = nil
@@ -189,8 +218,11 @@ module Ginatra
         end
       }
       wrapper = %s{ BEGIN{puts "["}; END{puts "]\}\}]"} }
+
+      # always use --all with git log to get info from all branches
       since = since.nil? ? '' : "--since='#{since.to_s}'"
       `git -C #{@path} log \
+       --all \
        --numstat #{since} \
        --format='id %h%nauthor %an%ndate %ai %nchanges' $@ | \
        ruby -lawne '#{code}' | \
