@@ -89,11 +89,11 @@ describe Ginatra::Repository do
         remove_data_file(@repo.id)
       end
 
-      describe "before" do
-        it "should have the old commits count" do
-          expect(@repo.commits.size).to eq 49
-        end
-      end
+      # describe "before" do
+      #   it "should have the old commits count" do
+      #     expect(@repo.commits.size).to eq 49
+      #   end
+      # end
 
       describe "after" do
         before { @repo.refresh_data }
