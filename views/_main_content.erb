@@ -1,0 +1,36 @@
+<div class="half">
+
+  <!-- TODAY COMMITS -->
+  <div class="full">
+    <% today = Time.new %>
+    <h1 class="label"><%= "#{today.day}-#{today.month}-#{today.year}" %></h1>
+    <div id="today-overview"></div>
+  </div>
+  <!-- /TODAY COMMITS -->
+
+  <!-- TODAY ACTIVITY -->
+  <div class="half big-margin">
+    <h2 class="label center">Today's Commit Activity</h2>
+    <div id="today-activity"></div>
+  </div>
+  <!-- /TODAY ACTIVITY -->
+
+  <!-- PROJECT SIZE COMPARISON -->
+  <div class="half big-margin">
+    <h2 class="label center">Project Sizes</h2>
+    <div id="project-size-comparison"></div>
+  </div>
+  <!-- /PROJECT SIZE COMPARISON -->
+
+  <!-- SPRINT OVERVIEW -->
+  <div class="full big-margin">
+    <h2 class="label">Sprint Overview</h2>
+    <div id="sprint-overview"></div>
+  </div>
+  <!-- /SPRINT OVERVIEW -->
+
+</div>
+<div class="half">
+  <div id="repo-info"></div>
+</div>
+

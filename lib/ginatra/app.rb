@@ -3,6 +3,7 @@ require 'rack'
 require 'sass'
 require 'sinatra/assetpack'
 require 'sinatra/base'
+require 'sinatra/partial'
 require 'yajl/json_gem'
 
 require_relative 'activity'
@@ -18,10 +19,15 @@ Encoding.default_external = 'utf-8' if RUBY_VERSION =~ /^2.0/
 module Ginatra
   class App < Sinatra::Base
     register Sinatra::AssetPack
+    register Sinatra::Partial
 
-    set :root, Ginatra::Env.root || ::File.expand_path('../../', ::File.dirname(__FILE__))
+
     set :data, Ginatra::Env.data || ::File.expand_path('../../data/', ::File.dirname(__FILE__))
+    set :root, Ginatra::Env.root || ::File.expand_path('../../', ::File.dirname(__FILE__))
     set :views, File.expand_path('./views', Ginatra::App.root)
+
+    set :partial_template_engine, :erb
+    enable :partial_underscores
 
     assets do
       # Custom assets mangement
@@ -34,12 +40,8 @@ module Ginatra
       scss params['stylesheet'].to_sym, :style => :expanded
     end
 
-    def title
-      Ginatra::Config.title
-    end
-
     get '/' do
-      erb :layout
+      erb :layout, :locals => {:title => "TEST"}
     end
 
     before '/stat/*' do
