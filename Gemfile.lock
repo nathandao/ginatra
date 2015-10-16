@@ -14,8 +14,12 @@ GEM
     coderay (1.1.0)
     diff-lcs (1.2.5)
     docile (1.1.5)
+    eventmachine (1.0.8)
     factory_girl (4.5.0)
       activesupport (>= 3.0.0)
+    faye-websocket (0.10.0)
+      eventmachine (>= 0.12.0)
+      websocket-driver (>= 0.5.1)
     ffi (1.9.10)
     formatador (0.2.5)
     guard (2.13.0)
@@ -107,6 +111,9 @@ GEM
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
+    websocket-driver (0.6.2)
+      websocket-extensions (>= 0.1.0)
+    websocket-extensions (0.1.2)
     yajl-ruby (1.2.1)
 
 PLATFORMS
@@ -116,6 +123,7 @@ DEPENDENCIES
   chronic
   codeclimate-test-reporter
   factory_girl (~> 4.5.0)
+  faye-websocket
   guard (~> 2.1)
   guard-rspec
   json
@@ -127,3 +135,6 @@ DEPENDENCIES
   sinatra-contrib
   unicorn
   yajl-ruby
+
+BUNDLED WITH
+   1.10.6

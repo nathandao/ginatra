@@ -1,3 +1,6 @@
+#rbenv-gemset folder
+.gems/
+
 # Confidential files
 config.yml
 data/
