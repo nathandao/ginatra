@@ -1,3 +1,4 @@
+require 'faye/websocket'
 require 'permessage_deflate'
 require 'rack'
 require 'sass'
@@ -17,7 +18,17 @@ require_relative 'stat'
 Encoding.default_external = 'utf-8' if RUBY_VERSION =~ /^2.0/
 
 module Ginatra
+
+  # Need this since faye-websocket and Rack::Lint does not
+  # work well together
+  class Rack::Lint::HijackWrapper
+    def to_int
+      @io.to_i
+    end
+  end
+
   class App < Sinatra::Base
+
     register Sinatra::AssetPack
     register Sinatra::Partial
 
@@ -34,6 +45,25 @@ module Ginatra
       serve '/css', from: 'assets/scss'
     end
 
+    # WebSocket repos updates stream
+    get '/stream' do
+      if Faye::WebSocket.websocket?(request.env)
+        ws = Faye::WebSocket.new(request.env)
+
+        # Only the event machine backend websocket client is sending messages
+        # regarding repositories that hae changes. The server then sends this
+        # message to all the connecting clients.
+        ws.on :message do |event|
+          ws.send(event.data)
+        end
+
+        ws.on :close do |event|
+          p [:close, event.code, event.reason]
+          ws = nil
+        end
+      end
+    end
+
     get '/css/:stylesheet.css' do
       content_type 'text/css', charset: 'utf-8'
       scss params['stylesheet'].to_sym, :style => :expanded
@@ -46,7 +76,10 @@ module Ginatra
     before '/stat/*' do
       content_type 'application/json'
       @filter = params.inject({}) { |prms, v|
-        prms[v[0].to_sym] = v[1] if [:from, :til, :by, :in, :color, :labels, :time_stamps].include? v[0].to_sym
+        if [:from, :til, :by, :in, :color, :labels,
+          :time_stamps].include? v[0].to_sym
+          prms[v[0].to_sym] = v[1] 
+        end
         prms[v[0].to_sym] = "##{p[v[0].to_sym]}" if v[0] == 'color'
         prms
       }
