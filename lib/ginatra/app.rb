@@ -1,17 +1,17 @@
-require 'sinatra/base'
-require 'sinatra/assetpack'
-require 'rufus/scheduler'
-require 'yajl'
-require 'yajl/json_gem'
+require 'permessage_deflate'
+require 'rack'
 require 'sass'
+require 'sinatra/assetpack'
+require 'sinatra/base'
+require 'yajl/json_gem'
 
-require_relative 'env'
+require_relative 'activity'
+require_relative 'chart'
 require_relative 'config'
+require_relative 'env'
 require_relative 'helper'
 require_relative 'repository'
 require_relative 'stat'
-require_relative 'activity'
-require_relative 'chart'
 
 Encoding.default_external = 'utf-8' if RUBY_VERSION =~ /^2.0/
 
@@ -29,17 +29,6 @@ module Ginatra
       serve '/css', from: 'assets/scss'
     end
 
-    scheduler = Rufus::Scheduler.new
-
-    # TODO: move refresh interval to settings
-    scheduler.every '600000' do
-      Ginatra::Stat.refresh_all_data
-    end
-
-    get '/' do
-      erb :layout
-    end
-
     get '/css/:stylesheet.css' do
       content_type 'text/css', charset: 'utf-8'
       scss params['stylesheet'].to_sym, :style => :expanded
@@ -47,6 +36,10 @@ module Ginatra
 
     def title
       Ginatra::Config.title
+    end
+
+    get '/' do
+      erb :layout
     end
 
     before '/stat/*' do
