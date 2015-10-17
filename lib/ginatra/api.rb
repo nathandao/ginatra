@@ -1,7 +1,4 @@
-require 'sass'
-require 'sinatra/assetpack'
 require 'sinatra/base'
-require 'sinatra/partial'
 require 'yajl/json_gem'
 
 require_relative 'activity'

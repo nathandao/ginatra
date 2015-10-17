@@ -3,6 +3,7 @@ require 'eventmachine'
 require 'sinatra/assetpack'
 require 'sinatra/partial'
 require 'rufus-scheduler'
+require 'sass'
 
 require_relative 'config'
 require_relative 'api'
