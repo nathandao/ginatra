@@ -1,17 +1,17 @@
 source 'https://rubygems.org'
 
 gem 'chronic'
-gem 'faye-websocket'
+gem 'em-websocket'
+gem 'eventmachine'
 gem 'json'
-gem 'permessage_deflate'
+gem 'rainbows', require: 'unicorn'
 gem 'rufus-scheduler'
 gem 'sass'
+gem 'signal'
 gem 'sinatra'
 gem 'sinatra-assetpack'
 gem 'sinatra-contrib'
 gem 'sinatra-partial'
-gem 'thin'
-gem 'unicorn'
 gem 'yajl-ruby', require: 'yajl'
 
 group :test do
