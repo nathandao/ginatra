@@ -100,13 +100,13 @@ Once you have added your repositories, start the app server from the app root di
 ```
 bundle exec rackup
 ```
+or run in production mode:
+```
+bundle exec rackup -E production
+```
 
-The dashboard can now be accessed at ```http://localhost:9290```
-
-Some additional environment options for the rainbows script
-- ```--port```: 
-
-mr-sparkle will also watch the file changes in Ginatra so you don't need to restart the server frequently when developing.
+The dashboard can now be accessed at ```http://127.0.0.1:8080```
+The websocket server can be connected to at ```ws://127.0.0.1:9290```.
 
 # Developing
 
@@ -159,7 +159,6 @@ returns
 
 # Todos
 
-- Provides options for diffrent servers support.
-- Refactor into a gem
+- Provides options for diffrent servers support. Currently only works with Rainbows
 - Install scripts to setup ```config.yml``` and ```data``` folder automatically.
-- API for author info
+- Web API for author info (Name, email, ...)

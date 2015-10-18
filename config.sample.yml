@@ -1,5 +1,6 @@
 title: Team Name
 
+# List for repositories
 repositories:
   ginatra:
     path: ~/Repositories/ginatra
@@ -11,8 +12,21 @@ repositories:
     path: ~/Repositories/repo3
     name: Repository 3
 
+# The interval at which the scheduler check for new updates on all repositories
+update_interval: 60000
+
+# Color palete to be used in the graphs
 colors: ['#ce0000','#114b5f','#f7d708','#028090','#9ccf31','#ff9e00','#e4fde1','#456990','#ff9e00','#f45b69']
+
+# Threshold value used for estimated working time calculations.
+# See README.md for mor information
 threshold: 3
+
+# Sprint info for Agile teams.
 sprint:
-  period: 14
-  reference_date: 3 June 2015
+  period: 14 # number of dates in the sprint
+  reference_date: 3 June 2015 # usually starting date of the sprint. If the
+                              # sprints are repeating, Ginatra will automatically
+                              # calculate the starting date of the next sprint,
+                              # from the reference_date. That means you don't
+                              # need to update the reference date every sprint.
