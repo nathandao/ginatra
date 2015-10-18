@@ -98,13 +98,21 @@ module Ginatra
         end
       end
 
-      def updated_repos
+      def list_updated_repos
         repos = Ginatra::Config.repositories
         updated = []
         threads = []
         repos.each do |key, params|
-          threads << Thread.new { Ginatra::Helper.get_repo(key).refresh_data }
+          threads << Thread.new {
+            if Ginatra::Helper.get_repo(key).refresh_data
+              updated << key
+            end
+          }
         end
+        threads.each do |t|
+          t.join
+        end
+        updated
       end
     end
   end

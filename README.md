@@ -154,8 +154,7 @@ returns
 
 # Todos
 
-- Tests!
-- Use websockets instead of constantly sending ajax requests.
+- Provides options for diffrent servers support.
 - Refactor into a gem
-- Setup ```config.yml``` and ```data``` folder automatically.
+- Install scripts to setup ```config.yml``` and ```data``` folder automatically.
 - API for author info

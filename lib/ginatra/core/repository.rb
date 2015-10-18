@@ -67,7 +67,9 @@ module Ginatra
         remove_data_file
         pull_all_remote_branches
         get_commits
+        true
       end
+      true
     end
 
     private
@@ -117,7 +119,7 @@ module Ginatra
     end
 
     def data_file
-      dirname = Ginatra::App.data
+      dirname = Ginatra::Env.data ? Ginatra::Env.data : '../../data'
       FileUtils.mkdir_p dirname unless File.directory?(dirname)
       File.expand_path '.' + @id, dirname
     end

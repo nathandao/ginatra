@@ -1,14 +1,6 @@
 require 'sinatra/base'
 require 'yajl/json_gem'
 
-require_relative 'activity'
-require_relative 'chart'
-require_relative 'config'
-require_relative 'env'
-require_relative 'helper'
-require_relative 'repository'
-require_relative 'stat'
-
 module Ginatra
   class API < Sinatra::Base
     before '/stat/*' do
