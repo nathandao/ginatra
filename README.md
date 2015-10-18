@@ -95,11 +95,16 @@ To compensate for the time leading to the first commit, 3 hours are added to tha
 
 # Usage
 
-Once you have added your repositories, start the ```Unicorn``` server from the app root directory:
+Once you have added your repositories, start the app server from the app root directory:
 
-    mr-sparkle config.ru
+```
+bundle exec rackup
+```
 
-The dashboard can now be accessed at ```http://localhost:8080```
+The dashboard can now be accessed at ```http://localhost:9290```
+
+Some additional environment options for the rainbows script
+- ```--port```: 
 
 mr-sparkle will also watch the file changes in Ginatra so you don't need to restart the server frequently when developing.
 

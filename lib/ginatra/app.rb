@@ -15,7 +15,7 @@ module Ginatra
     Ginatra::WebsocketServer.start
 
     # start rainbows
-    port = Ginatra::Env.port || 9292
+    port = Ginatra::Env.port || 8080
     rackup = Unicorn::Configurator::RACKUP
     rackup[:set_listener] = true
     rackup[:port] = port
