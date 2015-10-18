@@ -8,7 +8,7 @@ Ginatra is a Sinatra app that provides a web API for git repositories. Updates o
 
 There is also a front-end dashboard that comes with the package built with ReacJs and ChartJS to display real-time visualization of your git repos.
 
-Features:
+## Features:
 - All repos are stored and accessed locally.
 - Quick setup. No database required.
 - Intuitive API to get repo data. Example: ```/commits?by=AuthorName&in=RepoName&from=2 days ago&til=2 hours ago```
@@ -16,6 +16,9 @@ Features:
 - Calculation of estimated time based on the commit time of each authors.
 - Realtime updates of repo changes through websocket.
 - Provides a default super cool looking dashboard built with ReactJs and ChartJs, althought you can always build a custom front-end with data from the API.
+
+## Requirement:
+- npm : to build the bundled javascript used in the demo Dashboard.
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc/generate-toc again -->
 **Table of Contents**
@@ -105,14 +108,6 @@ The time keeps adding on until the next commit is more than 3 hours away from th
 To compensate for the time leading to the first commit, 3 hours are added to that period.
 
 # Usage
-
-Build the bundled javascript to be used in the Dashboard chart page:
-From the Ginatra's root folder, run:
-```npm install```
-
-Build the bundled javascript:
-```npm run build```
-
 
 Once you have added your repositories start the app server from the app root directory:
 
