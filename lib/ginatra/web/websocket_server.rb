@@ -1,31 +1,34 @@
+require 'rufus-scheduler'
+require 'yajl/json_gem'
+
 module Ginatra
   class WebsocketServer
-    attr_accessor :clients
+    attr_accessor :channel, :scheduler
 
     class << self
       def start
-        @clients ||= []
         websocket_port = Ginatra::Env.websocket_port || 9290
 
+        @channel = EM::Channel.new
+        @scheduler = Rufus::Scheduler.new
+
+        @scheduler.every '10s' do
+          updated_repos = Ginatra::Stat.list_updated_repos
+          unless updated_repos.empty?
+            sid = @channel.subscribe { |msg| p updated_repos }
+            @channel.push updated_repos.to_json
+            @channel.unsubscribe(sid)
+          end
+        end
+
         EM::WebSocket.start(:host => '0.0.0.0', :port => websocket_port) do |ws|
-
           ws.onopen do |handshake|
-            ws.send "Connected"
-            @clients << ws
-          end
+            sid = @channel.subscribe { |msg| ws.send msg }
 
-          ws.onmessage do |msg|
-            @clients.each do |socket|
-              if socket != ws
-                socket.send msg
-              end
+            ws.onclose do
+              @channel.unsubscribe(sid)
+              ws = nil
             end
-          end
-
-          ws.onclose do
-            ws.send "Closed."
-            @clients.delete ws
-            ws = nil
           end
 
           # hit Control + C to stop

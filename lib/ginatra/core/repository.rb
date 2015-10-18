@@ -62,14 +62,13 @@ module Ginatra
     end
 
     def refresh_data
-      track_all_remote_branches
       if change_exists?
         remove_data_file
-        pull_all_remote_branches
+        pull_latest_commits
         get_commits
-        true
+        return true
       end
-      true
+      false
     end
 
     private
@@ -128,29 +127,24 @@ module Ginatra
       FileUtils.rm(data_file) if File.exists?(data_file)
     end
 
-    def pull_all_remote_branches
-      `git -C #{path} pull --all`
+    def pull_latest_commits
+      `git -C #{path} pull &>/dev/null`
     end
 
-    def track_all_remote_branches
-      `for i in $(git -C #{@path} branch -r | grep -vE "HEAD|master"); do
-         git -C #{@path} branch --track ${i#*/} $i;
-       done >> /dev/null 2>&1`
-    end
+    # def track_all_remote_branches
+    #   `for i in $(git -C #{@path} branch -r | grep -vE "HEAD|master"); do
+    #      git -C #{@path} branch --track ${i#*/} $i;
+    #    done >> `
+    # end
 
     def change_exists?
-      # Loop through all remote branches and check if change exists in each
-      result = `for i in $(git -C #{@path} branch -r | grep -vE "HEAD|master"); do
-                git -C #{@path} checkout ${i}
-
-                GINATRA_LOCAL=$(git -C #{@path} rev-parse @)
+      result = `GINATRA_LOCAL=$(git -C #{@path} rev-parse @)
                 GINATRA_REMOTE=$(git -C #{@path} rev-parse @{u})
                 if [ $GINATRA_LOCAL = $GINATRA_REMOTE ]; then
                   echo "[ginatra_branch_up_to_date]"
                 else
                   echo "[ginatra_branch_refresh_required]"
-                fi
-              done`
+                fi`
       result.include? "[ginatra_branch_refresh_required]"
     end
 
@@ -221,10 +215,8 @@ module Ginatra
       }
       wrapper = %s{ BEGIN{puts "["}; END{puts "]\}\}]"} }
 
-      # always use --all with git log to get info from all branches
       since = since.nil? ? '' : "--since='#{since.to_s}'"
       `git -C #{@path} log \
-       --all \
        --numstat #{since} \
        --format='id %h%nauthor %an%ndate %ai %nchanges' $@ | \
        ruby -lawne '#{code}' | \
