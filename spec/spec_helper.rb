@@ -153,8 +153,8 @@ RSpec.configure do |config|
   config.include(GinatraFactory)
 
   config.before(:all) do
-    Ginatra::App.root = GinatraDummy::DUMMY_DIR
-    Ginatra::App.data = GinatraDummy::DUMMY_DIR + '/data'
+    Ginatra::Env.root = GinatraDummy::DUMMY_DIR
+    Ginatra::Env.data = GinatraDummy::DUMMY_DIR + '/data'
     create_test_dummy
   end
 
