@@ -4,7 +4,18 @@
 [![Code Climate](https://codeclimate.com/github/nathandao/ginatra/badges/gpa.svg)](https://codeclimate.com/github/nathandao/ginatra)
 [![Test Coverage](https://codeclimate.com/github/nathandao/ginatra/badges/coverage.svg)](https://codeclimate.com/github/nathandao/ginatra/coverage)
 
-Ginatra displays real-time visualization of your git repositories, using Sinatra, ReactJs and ChartJs.
+Ginatra is a Sinatra app that provides a web API for git repositories. Updates of new commits are streamed through an em-websocket server.
+
+There is also a front-end dashboard that comes with the package built with ReacJs and ChartJS to display real-time visualization of your git repos.
+
+Features:
+- All repos are stored and accessed locally.
+- Quick setup. No database required.
+- Intuitive API to get repo data. Example: ```/commits?by=AuthorName&in=RepoName&from=2 days ago&til=2 hours ago```
+- Data is abstracted from any info available in the commit data including commits, authors, dates, line changes.
+- Calculation of estimated time based on the commit time of each authors.
+- Realtime updates of repo changes through websocket.
+- Provides a default super cool looking dashboard built with ReactJs and ChartJs, althought you can always build a custom front-end with data from the API.
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc/generate-toc again -->
 **Table of Contents**
@@ -95,7 +106,15 @@ To compensate for the time leading to the first commit, 3 hours are added to tha
 
 # Usage
 
-Once you have added your repositories, start the app server from the app root directory:
+Build the bundled javascript to be used in the Dashboard chart page:
+From the Ginatra's root folder, run:
+```npm install```
+
+Build the bundled javascript:
+```npm run build```
+
+
+Once you have added your repositories start the app server from the app root directory:
 
 ```
 bundle exec rackup
