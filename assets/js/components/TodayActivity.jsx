@@ -55,7 +55,8 @@ var TodayActivity = React.createClass({
       '20:00',
       '21:00',
       '22:00',
-      '23:00'
+      '23:00',
+      '23:59'
     ];
     $.ajax({
       url: '/stat/chart/timeline/commits',
@@ -73,8 +74,13 @@ var TodayActivity = React.createClass({
   },
   componentDidMount: function() {
     this.loadData();
-    if (this.props.interval) {
-      setInterval(this.loadData, this.props.interval);
+    if (this.props.socket != undefined && this.props.socket !== false) {
+      this.props.socket.onmessage = function(event) {
+        var updatedRepos = event.data.split(",");
+        if (updatedRepos.indexOf(this.props.repoId) > -1 || this.props.repoId == undefined) {
+          this.loadChartData();
+        }
+      }.bind(this);
     }
   },
   render: function() {
@@ -89,3 +95,4 @@ var TodayActivity = React.createClass({
 });
 
 module.exports = TodayActivity;
+

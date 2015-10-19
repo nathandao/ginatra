@@ -75,27 +75,37 @@ var RepoInfo = React.createClass({
     var url = '/stat/chart/timeline/commits?in=' + repoId;
 
     return (
-      <div className="repo-cell full">
+      <div className="repo-cell third">
         <div className="full">
-          <h3 className="half">{repoName}<br/>
-          <small>({repoId})</small></h3>
+          <h3 className="half">{repoName} <small>({repoId})</small></h3>
         </div>
-        <div className="third">
-          <ul>
-            <li><span className="label">Commits:</span> {commitsCount}</li>
-            <li><span className="label">Lines:</span> {lines}</li>
-            <li><span className="label">Additions:</span> {additions}</li>
-            <li><span className="label">Deletions:</span> {deletions}</li>
-            <li><span className="label">First commit:</span> {firstCommit}</li>
-            <li><span className="label">Last commit:</span> {lastCommit}</li>
-            <li><span className="label">Estimated hours:</span> {hours}</li>
-          </ul>
+        <div className="full">
+          <table>
+            <tr>
+              <td><span className="label">Commits</span></td>
+              <td><span className="label">Lines</span></td>
+              <td><span className="label">Additions</span></td>
+              <td><span className="label">Deletions</span></td>
+              <td><span className="label">First commit</span></td>
+              <td><span className="label">Last commit</span></td>
+              <td><span className="label">Est hours</span></td>
+            </tr>
+            <tr>
+              <td>{commitsCount}</td>
+              <td>{lines}</td>
+              <td>{additions}</td>
+              <td>{deletions}</td>
+              <td>{firstCommit}</td>
+              <td>{lastCommit}</td>
+              <td>{hours}</td>
+            </tr>
+          </table>
         </div>
-        <div className="half">
-          <GinatraChart type="Line" url={url} socket={this.props.socket} width="300" height="100" />
+        <div className="full">
+          <GinatraChart type="Line" url={url} socket={this.props.socket} width="450" height="100" />
         </div>
       </div>
-   );
+    );
   }
 });
 

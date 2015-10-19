@@ -1,34 +1,55 @@
-<div class="half">
-  <!-- TODAY COMMITS -->
+<div class="full">
   <div class="full">
-    <% today = Time.new %>
-    <h1 class="label"><%= "#{today.day}-#{today.month}-#{today.year}" %></h1>
-    <div id="today-overview"></div>
-  </div>
-  <!-- /TODAY COMMITS -->
+    <div class="third">
+      <% today = Time.new %>
 
-  <!-- TODAY ACTIVITY -->
-  <div class="half big-margin">
-    <h2 class="label center">Today's Commit Activity</h2>
-    <div id="today-activity"></div>
-  </div>
-  <!-- /TODAY ACTIVITY -->
+      <!-- TODAY COMMITS -->
+      <div class="full">
+        <h1 class="label"><%= title %> . <%= "#{today.day}-#{today.month}-#{today.year}" %></h1>
+        <div id="today-overview"></div>
+      </div>
+      <!-- /TODAY COMMITS -->
+    </div>
 
-  <!-- PROJECT SIZE COMPARISON -->
-  <div class="half big-margin">
-    <h2 class="label center">Project Sizes</h2>
-    <div id="project-size-comparison"></div>
-  </div>
-  <!-- /PROJECT SIZE COMPARISON -->
+    <div class="third">
+      <!-- HOURLY ACTIVITY -->
+      <div class="full">
+        <h2 class="label center">Hourly commits</h2>
+        <div id="hourly-activity"></div>
+      </div>
+      <!-- /HOURLY ACTIVITY -->
+    </div>
 
-  <!-- SPRINT OVERVIEW -->
-  <div class="full big-margin">
-    <h2 class="label">Sprint Overview</h2>
-    <div id="sprint-overview"></div>
+    <div class="third">
+      <div class="half">
+        <!-- SPRINT PROJECT COMMITS COMPARISON -->
+        <div class="full">
+          <h2 class="label">Sprint commits</h2>
+          <div id="sprint-projects-commits"></div>
+        </div>
+        <!-- /SPRINT PROJECT COMMITS COMPARISON -->
+      </div>
+
+      <div class="half">
+        <!-- SPRINT PROJECT HOURS COMPARISON -->
+        <div class="full">
+          <h2 class="label">Sprint hours</h2>
+          <div id="sprint-projects-hours"></div>
+        </div>
+        <!-- /SPRINT PROJECT HOURS COMPARISON -->
+      </div>
+    </div>
+
   </div>
-  <!-- /SPRINT OVERVIEW -->
+
+  <!-- <\!-- SPRINT OVERVIEW -\-> -->
+  <!-- <div class="full big-margin"> -->
+  <!--   <h2 class="label">Sprint Overview</h2> -->
+  <!--   <div id="sprint-overview"></div> -->
+  <!-- </div> -->
+  <!-- <\!-- /SPRINT OVERVIEW -\-> -->
 </div>
 
-<div class="half">
+<div class="full big-margin">
   <div id="repo-info"></div>
 </div>

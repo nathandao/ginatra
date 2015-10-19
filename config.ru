@@ -26,7 +26,7 @@ EM.run {
   # start rainbows
   rackup = Unicorn::Configurator::RACKUP
   rackup[:set_listener] = true
-  rackup[:port] = 8080
+  rackup[:port] = 9292
   options = rackup[:options]
   options[:config_file] = File.expand_path('./rainbows.conf', Ginatra::API.root)
 

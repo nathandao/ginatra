@@ -21,11 +21,18 @@ module Ginatra
       end
 
       def rc_hours params = {}
-        Ginatra::Activity.hours(params).inject({}) { |output, repo|
+        res = Ginatra::Activity.hours(params).inject([]) { |output, repo|
           repo_id = repo[0]
-          output.merge!({repo_id => total_hours(repo[1])})
+          color = Ginatra::Helper.get_repo(repo_id).color
+          output << {
+            'value' => total_hours(repo[1]),
+            'label' => repo_id,
+            'color' => color,
+            'highlight' => color
+          }
           output
         }
+        return res
       end
 
       def rc_sprint_commits params = {}

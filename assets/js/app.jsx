@@ -19,8 +19,13 @@ $(function(){
   );
 
   React.render(
-    <SprintOverview socket={socket} width='500' height='180' />,
-    document.getElementById("sprint-overview")
+    <GinatraChart type="PolarArea" url="/stat/chart/round/sprint_commits" width="500" height="500" socket={socket} options='{ scaleBackdropColor: "rgba(255,255,255,1)" }' />,
+    document.getElementById("sprint-projects-commits")
+  );
+
+  React.render(
+    <GinatraChart type="Doughnut" url="/stat/chart/round/sprint_hours" width="500" height="500" socket={socket} options='{ scaleBackdropColor: "rgba(255,255,255,1)" }' />,
+    document.getElementById("sprint-projects-hours")
   );
 
   React.render(
@@ -29,12 +34,7 @@ $(function(){
   );
 
   React.render(
-    <GinatraChart type="Doughnut" url="/stat/chart/round/lines" socket={socket} options='{ scaleBackdropColor : "rgba(255,255,255,1)" }' />,
-    document.getElementById("project-size-comparison")
-  );
-
-  React.render(
-    <TodayActivity socket={socket} width="500" height="300" />,
-    document.getElementById("today-activity")
+    <TodayActivity socket={socket} width="250" height="100" />,
+    document.getElementById("hourly-activity")
   );
 });
