@@ -138,7 +138,7 @@ module Ginatra
     # end
 
     def change_exists?
-      result = `git fech origin
+      result = `git fetch origin
                 GINATRA_LOCAL=$(git -C #{@path} rev-parse @)
                 GINATRA_REMOTE=$(git -C #{@path} rev-parse @{u})
                 if [ $GINATRA_LOCAL = $GINATRA_REMOTE ]; then
