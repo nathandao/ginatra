@@ -70,6 +70,9 @@ Add some repositories on your local installation to ```config.yml```:
             path: /path/to/your/repo_2
             name: Repository 2 Name
 
+    # The interval at wich you would like the server to check of updates
+    # on the git repos
+    update_interval: 60s
 
     # This is the default color swatch.
     # The color order in the array matches the repo_id order.
