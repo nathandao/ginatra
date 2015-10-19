@@ -138,7 +138,8 @@ module Ginatra
     # end
 
     def change_exists?
-      result = `GINATRA_LOCAL=$(git -C #{@path} rev-parse @)
+      result = `git fech origin
+                GINATRA_LOCAL=$(git -C #{@path} rev-parse @)
                 GINATRA_REMOTE=$(git -C #{@path} rev-parse @{u})
                 if [ $GINATRA_LOCAL = $GINATRA_REMOTE ]; then
                   echo "[ginatra_branch_up_to_date]"
