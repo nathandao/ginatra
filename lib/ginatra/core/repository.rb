@@ -47,6 +47,11 @@ module Ginatra
       else
         result = @commits
       end
+
+      if params[:limit]
+        result = result[0..params[:limit]-1]
+      end
+
       commits_by(result, params[:by])
     end
 

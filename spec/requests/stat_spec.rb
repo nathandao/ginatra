@@ -7,10 +7,11 @@ describe Ginatra::Stat do
     full_params = {from: "9 Feb 2015",
                    til: "9 March 2015",
                    by: "Nathan Dao",
-                   in: "repo_1"}
+                   in: "repo_1",
+                   limit: 2}
 
     # Test all combinations of params
-    (0..4).to_a.each do |size|
+    (0..5).to_a.each do |size|
       full_params.keys.combination(size).to_a.each do |combi|
         params = combi.inject({}) { |p, k|
           p.merge!({k => full_params[k]})
@@ -44,9 +45,10 @@ describe Ginatra::Stat do
     full_params = {from: "9 Feb 2015",
                    til: "9 March 2015",
                    by: "Nathan Dao",
-                   in: "repo_1"}
+                   in: "repo_1",
+                   limit: 2}
 
-    (0..4).to_a.each do |size|
+    (0..5).to_a.each do |size|
       full_params.keys.combination(size).to_a.each do |combi|
         params = combi.inject({}) { |p, k|
           p.merge!({k => full_params[k]})
