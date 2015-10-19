@@ -11,8 +11,8 @@
   </head>
 
   <body>
-    <%= partial :header %>
-    <%= partial :main_content, :locals => {:title => title} %>
+    <%= partial :header, :locals => {:title => title} %>
+    <%= partial :main_content %>
     <%= partial :footer%>
   </body>
 </html>

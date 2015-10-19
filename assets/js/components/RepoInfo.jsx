@@ -102,7 +102,7 @@ var RepoInfo = React.createClass({
           </table>
         </div>
         <div className="full">
-          <GinatraChart type="Line" url={url} socket={this.props.socket} width="450" height="100" />
+          <GinatraChart type="Line" url={url} socket={this.props.socket} width="400" height="100" />
         </div>
       </div>
     );
