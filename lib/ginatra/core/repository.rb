@@ -224,7 +224,7 @@ module Ginatra
           commit_change_strs.each do |commit_change_str|
             commit_change = commit_change_str.split("\t")
             changes << {
-              addition: commit_change[0],
+              additions: commit_change[0],
               deletions: commit_change[1],
               path: commit_change[2]
             }
