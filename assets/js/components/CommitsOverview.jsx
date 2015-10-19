@@ -8,8 +8,13 @@ var CommitsOverview = React.createClass({
       dataType: 'json',
       cache: false,
       success: function(data) {
+        var commits_string = 'commits';
+        if(data.commits_count == 1) {
+          commits_string = 'commit';
+        }
         this.setState({
           commits_count: data.commits_count,
+          commits_string: commits_string,
           additions: data.additions,
           deletions: data.deletions
         });
@@ -19,6 +24,7 @@ var CommitsOverview = React.createClass({
   getInitialState: function() {
     return {
       commits_count: 0,
+      commits_string: 'commits',
       additions: 0,
       deletions: 0
     }
@@ -35,7 +41,7 @@ var CommitsOverview = React.createClass({
     return(
       <div className="commits-overview">
       <div classnName="half">
-      <p><span className="big">{this.state.commits_count}</span> commits</p>
+      <p><span className="big">{this.state.commits_count}</span> {this.state.commits_string}</p>
       </div>
       <div className="half">
       <p>{this.state.additions} additions</p>
