@@ -36,8 +36,13 @@ var GinatraChart = React.createClass({
   },
   componentDidMount: function() {
     this.loadChartData();
-    if (this.props.interval) {
-      setInterval(this.loadChartData, this.props.interval);
+    if (this.props.socket != undefined && this.props.socket !== false) {
+      this.props.socket.onmessage = function(event) {
+        var updatedRepos = event.data.split(",");
+        if (updatedRepos.indexOf(this.props.repoId) > -1 || this.props.repoId == undefined) {
+          this.loadChartData();
+        }
+      }.bind(this);
     }
   },
   render: function() {
@@ -59,5 +64,6 @@ var GinatraChart = React.createClass({
     );
   }
 });
+
 
 module.exports = GinatraChart;

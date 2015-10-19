@@ -25,10 +25,13 @@ var CommitsOverview = React.createClass({
   },
   componentDidMount: function() {
     this.loadOverviewData();
-    setInterval(this.loadOverviewData, this.props.interval);
+    if (this.props.socket != undefined) {
+      this.props.socket.onmessage = function(event) {
+        this.loadOverviewData();
+      }.bind(this);
+    }
   },
   render: function() {
-    var interval = this.props.interval || 20000;
     return(
       <div className="commits-overview">
       <div classnName="half">

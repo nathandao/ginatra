@@ -5,9 +5,10 @@ var SprintOverview = React.createClass({
   render: function() {
     var width = this.props.width || '500';
     var height = this.props.height || '500';
-    var interval = this.props.interval || false
+    var socket = this.props.socket;
+
     return(
-      <GinatraChart url='/stat/chart/line/sprint_hours_commits' width={width} height={height} interval={interval} type="Bar" />
+      <GinatraChart url='/stat/chart/line/sprint_commits' width={width} height={height} socket={socket} type="Bar" />
     );
   }
 });

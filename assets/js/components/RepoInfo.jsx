@@ -36,8 +36,13 @@ var RepoInfo = React.createClass({
   },
   componentDidMount: function() {
     this.loadRepoData();
-    if (this.props.interval != false) {
-      setInterval(this.loadRepoData, this.props.interval);
+    if (this.props.socket != undefined) {
+      this.props.socket.onmessage = function(event) {
+        var updatedRepos = event.data.split(",");
+        if (updatedRepos.indexOf(this.props.repoId) > -1 || this.props.repoId == undefined) {
+          this.loadRepoData();
+        }
+      }.bind(this);
     }
   },
   render: function() {
@@ -71,7 +76,7 @@ var RepoInfo = React.createClass({
           </ul>
         </div>
         <div className="half">
-          <GinatraChart type="Line" url={url} interval={this.props.interval} width="300" height="100" />
+          <GinatraChart type="Line" url={url} socket={this.props.socket} width="300" height="100" />
         </div>
       </div>
    );

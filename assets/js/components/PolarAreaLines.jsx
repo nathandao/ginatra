@@ -7,10 +7,10 @@ var PolarAreaLines = React.createClass({
     var height = this.props.height;
     var width = this.props.width;
     var url = this.props.url;
-    var interval = this.props.interval || 60000;
+    var socket = this.props.socket || false;
 
     return (
-      <GinatraChart url={url} type={type} width={width} height={height} interval={interval} />
+      <GinatraChart url={url} type={type} width={width} height={height} socket={socket} />
     );
   }
 });
