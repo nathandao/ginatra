@@ -27,10 +27,10 @@ module Ginatra
       commits(params).group_by { |commit|
         commit.first[1]['author']
       }.map { |name, commits|
-        {'name' => name,
-         'commits' => commits.size,
-         'additions' => Ginatra::Helper.get_additions(commits),
-         'deletions' => Ginatra::Helper.get_deletions(commits)}
+        { 'name' => name,
+          'commits' => commits.size,
+          'additions' => Ginatra::Helper.get_additions(commits),
+          'deletions' => Ginatra::Helper.get_deletions(commits) }
       }
     end
 
@@ -54,8 +54,8 @@ module Ginatra
       commits(params).inject(0) { |line_count, commit|
         changes = commit.flatten[1]["changes"]
         line_count += changes.inject(0) { |c_line_count, change|
-          c_line_count -= change['deletions']
-          c_line_count += change['additions']
+          c_line_count -= change['deletions'].to_i
+          c_line_count += change['additions'].to_i
         } unless changes.empty?
         line_count
       }
@@ -138,7 +138,8 @@ module Ginatra
     # end
 
     def change_exists?
-      result = `GINATRA_LOCAL=$(git -C #{@path} rev-parse @)
+      result = `git -C #{@path} fetch origin
+                GINATRA_LOCAL=$(git -C #{@path} rev-parse @)
                 GINATRA_REMOTE=$(git -C #{@path} rev-parse @{u})
                 if [ $GINATRA_LOCAL = $GINATRA_REMOTE ]; then
                   echo "[ginatra_branch_up_to_date]"
@@ -188,43 +189,52 @@ module Ginatra
 
     def create_commits_data
       File.open(data_file, 'w') { |file|
-        file.write(git_log)
+        file.write(git_log.to_json)
       }
     end
 
     def git_log since = nil
-      code = %s{
-        if !$F.empty?
-          require "json"
-          markers = %w{ id author date subject }
-          key = $F[0]
-          if key == "changes"
-            puts "\"changes\": ["
-          else
-            if markers.include? key
-              $F.shift
-              value = $F.inject { |o, n| o + " " + n }
-              puts key == "id" ? "]\}\},\{\"#{$F[0]}\":\{" : "#{key.to_json}: #{value.to_json},"
-            else
-              add = $F[0].to_i
-              del = $F[1].to_i
-              file = $F[2].to_s
-              puts "{\"additions\": #{add}, \"deletions\": #{del}, \"path\": \"#{file}\"},"
-            end
+      c_separator = "[<ginatra_commit_section>]"
+      i_separator = "[<ginatra_separator]"
+      # path = "~/Sites/emessukeskus"
+      str = `git -C #{path} log \
+             --numstat \
+             --format='#{c_separator}id %h#{i_separator}author %an#{i_separator}date %ai#{i_separator}subject %s#{i_separator}changes'`
+
+      # Create an array of commits, each commit is a string
+      commit_section_strs = str.split(c_separator)[1..-1]
+
+      full_commits = []
+      commit_section_strs.each do |commit_section_str|
+        # Divide each commit string into separate components
+        commit_section_arr = commit_section_str.split(i_separator)
+
+        # Get the components based on their order in the array
+        commit_hash = {
+          id: commit_section_arr[0][3..-1],
+          author: commit_section_arr[1][7..-1],
+          date: commit_section_arr[2][5..-1],
+          subject: commit_section_arr[3][8..-1]
+        }
+
+        changes = []
+        commit_change_strs = commit_section_arr[4].split("\n")[2..-1]
+
+        unless commit_change_strs.nil?
+          commit_change_strs.each do |commit_change_str|
+            commit_change = commit_change_str.split("\t")
+            changes << {
+              addition: commit_change[0],
+              deletions: commit_change[1],
+              path: commit_change[2]
+            }
           end
         end
-      }
-      wrapper = %s{ BEGIN{puts "["}; END{puts "]\}\}]"} }
-
-      since = since.nil? ? '' : "--since='#{since.to_s}'"
-      `git -C #{@path} log \
-       --numstat #{since} \
-       --format='id %h%nauthor %an%ndate %ai%nsubject %s%nchanges' $@ | \
-       ruby -lawne '#{code}' | \
-       ruby -wpe '#{wrapper}' | \
-       tr -d '\n' | \
-       sed "s/,]/]/g; s/]}},//"
-      `
+        # merge changes to commit hash
+        commit_hash[:changes] = changes
+        full_commits << {commit_hash[:id] => commit_hash}
+      end
+      return full_commits
     end
   end
 end

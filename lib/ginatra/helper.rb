@@ -34,7 +34,7 @@ module Ginatra
         commits.each do |commit|
           commit.each do |k, v|
             v['changes'].each do |change|
-              value += change[key] unless change[key].nil?
+              value += change[key].to_i unless change[key].nil?
             end
           end
         end
