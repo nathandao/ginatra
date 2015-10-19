@@ -138,8 +138,7 @@ module Ginatra
     # end
 
     def change_exists?
-      result = `git fetch origin
-                GINATRA_LOCAL=$(git -C #{@path} rev-parse @)
+      result = `GINATRA_LOCAL=$(git -C #{@path} rev-parse @)
                 GINATRA_REMOTE=$(git -C #{@path} rev-parse @{u})
                 if [ $GINATRA_LOCAL = $GINATRA_REMOTE ]; then
                   echo "[ginatra_branch_up_to_date]"
@@ -196,7 +195,8 @@ module Ginatra
     def git_log since = nil
       code = %s{
         if !$F.empty?
-          markers = %w{ id author date }
+          require "json"
+          markers = %w{ id author date subject }
           key = $F[0]
           if key == "changes"
             puts "\"changes\": ["
@@ -204,7 +204,7 @@ module Ginatra
             if markers.include? key
               $F.shift
               value = $F.inject { |o, n| o + " " + n }
-              puts key == "id" ? "]\}\},\{\"#{$F[0]}\":\{" : "\"#{key}\": \"#{value}\","
+              puts key == "id" ? "]\}\},\{\"#{$F[0]}\":\{" : "#{key.to_json}: #{value.to_json},"
             else
               add = $F[0].to_i
               del = $F[1].to_i
@@ -219,7 +219,7 @@ module Ginatra
       since = since.nil? ? '' : "--since='#{since.to_s}'"
       `git -C #{@path} log \
        --numstat #{since} \
-       --format='id %h%nauthor %an%ndate %ai %nchanges' $@ | \
+       --format='id %h%nauthor %an%ndate %ai%nsubject %s%nchanges' $@ | \
        ruby -lawne '#{code}' | \
        ruby -wpe '#{wrapper}' | \
        tr -d '\n' | \
