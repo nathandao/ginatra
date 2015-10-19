@@ -277,8 +277,8 @@ module Ginatra
       end
 
       def default_timeline_stamps
-        ['7 days ago at 0:00', '6 days ago at 0:00', '5 days ago at 0:00',
-         '4 days ago at 0:00', '3 days ago at 0:00', '2 days ago at 0:00',
+        ['8 days ago at 0:00', '7 days ago at 0:00', '6 days ago at 0:00',
+         '5 days ago at 0:00', '4 days ago at 0:00', '3 days ago at 0:00',
          'yesterday at 0:00', 'today at 0:00', 'today at 23:59:59']
       end
 
@@ -292,7 +292,7 @@ module Ginatra
             Chronic.parse time_stamp
           end
         }
-        params[:labels] ||= params[:time_stamps][0..-2].map { |time_stamp|
+        params[:labels] ||= params[:time_stamps][0..-1].map { |time_stamp|
           time_stamp.strftime("%a %d %b")
         }
         params[:from] = params[:time_stamps][0]
