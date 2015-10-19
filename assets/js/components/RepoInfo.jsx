@@ -13,7 +13,7 @@ var RepoInfo = React.createClass({
   goodDay: function(dateStr) {
     var d = new Date(dateStr),
         date = this.doubleDigit(d.getDate()),
-        month = this.doubleDigit(d.getMonth()),
+        month = this.doubleDigit(d.getMonth() + 1),
         year = d.getFullYear(),
         hours = this.doubleDigit(d.getHours()),
         minutes = this.doubleDigit(d.getMinutes());
