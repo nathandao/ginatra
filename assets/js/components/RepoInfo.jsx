@@ -2,7 +2,23 @@ var React = require('react');
 var $ = require('jquery');
 var GinatraChart = require("./GinatraChart.jsx");
 
+
 var RepoInfo = React.createClass({
+  doubleDigit: function(digit) {
+    if (digit < 10) {
+      digit = "0" + digit;
+    }
+    return digit;
+  },
+  goodDay: function(dateStr) {
+    var d = new Date(dateStr),
+        date = this.doubleDigit(d.getDate()),
+        month = this.doubleDigit(d.getMonth()),
+        year = d.getFullYear(),
+        hours = this.doubleDigit(d.getHours()),
+        minutes = this.doubleDigit(d.getMinutes());
+    return date + "." + month + "." + year + " " + hours + ":" + minutes;
+  },
   loadRepoData: function() {
     var repoId = this.props.repoId;
     $.ajax({
@@ -17,8 +33,8 @@ var RepoInfo = React.createClass({
           additions: info.additions,
           deletions: info.deletions,
           hours: info.hours.toFixed(2),
-          firstCommit: info.first_commit,
-          lastCommit: info.last_commit
+          firstCommit: this.goodDay(info.first_commit),
+          lastCommit: this.goodDay(info.last_commit)
         });
       }.bind(this)
     });
