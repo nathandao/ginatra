@@ -12,11 +12,13 @@ module Ginatra
         @channel = EM::Channel.new
         @scheduler = Rufus::Scheduler.new
 
-        @scheduler.every '10s' do
+        update_interval = Ginatra::Config.update_interval || "60s"
+
+        @scheduler.every update_interval do
           updated_repos = Ginatra::Stat.list_updated_repos
-          unless updated_repos.empty?
-            sid = @channel.subscribe { |msg| p updated_repos }
-            @channel.push updated_repos.to_json
+          unless updated_repos == ""
+            sid = @channel.subscribe { |msg| p [Time.now, "updated repos", updated_repos] }
+            @channel.push updated_repos
             @channel.unsubscribe(sid)
           end
         end

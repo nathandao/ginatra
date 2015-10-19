@@ -68,6 +68,7 @@ repositories:
 
 colors: ['#ce0000','#114b5f','#f7d708','#028090','#9ccf31','#ff9e00','#e4fde1','#456990','#ff9e00','#f45b69']
 
+update_interval: 60s
 threshold: 3
 sprint:
   period: 14

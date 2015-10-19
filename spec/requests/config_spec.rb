@@ -27,6 +27,10 @@ RSpec.describe Ginatra::Config do
       end
     end
 
+    it "should have the correct update interval" do
+      expect(@settings["update_interval"]).to eq("60s")
+    end
+
     it "should have the correct default color array" do
       @colors.each_with_index do |color, i|
         expect(@settings["colors"][i]).to eq(color)

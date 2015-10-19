@@ -16,6 +16,10 @@ module Ginatra
         self.settings['repositories']
       end
 
+      def update_interval
+        self.settings['update_interval']
+      end
+
       def colors
         self.settings['colors']
       end

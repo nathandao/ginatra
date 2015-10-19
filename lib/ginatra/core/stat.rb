@@ -99,14 +99,14 @@ module Ginatra
       end
 
       def list_updated_repos
-        updated = []
+        updated = ""
         threads = []
         repos = Ginatra::Config.repositories
         repos.each do |key, params|
           if Ginatra::Helper.get_repo(key)
             threads << Thread.new {
               if Ginatra::Helper.get_repo(key).refresh_data
-                updated << key
+                updated += key + ","
               end
             }
           end
@@ -114,7 +114,7 @@ module Ginatra
         threads.each do |t|
           t.join
         end
-        updated
+        updated[0..-2]
       end
     end
   end
