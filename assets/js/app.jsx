@@ -34,7 +34,7 @@ $(function(){
   );
 
   React.render(
-    <TodayActivity socket={socket} width="250" height="100" />,
+    <TodayActivity socket={socket} width="300" height="100" />,
     document.getElementById("hourly-activity")
   );
 });
