@@ -77,7 +77,7 @@ th, td {
 }
 
 #today-overview {
-    font-size: 4em;
+    font-size: 5em;
     .commits-overview {
         > div {
             width: 48%;
@@ -88,4 +88,8 @@ th, td {
         font-size: 2em;
         font-weight: bold;
     }
+}
+
+.commits-string {
+  margin-top: -35px;
 }

@@ -41,11 +41,12 @@ var CommitsOverview = React.createClass({
     return(
       <div className="commits-overview">
         <div classnName="half">
-          <p><span className="big">{this.state.commits_count}</span> {this.state.commits_string}</p>
+          <div><span className="big">{this.state.commits_count}</span></div>
+          <div className="commits-string">{this.state.commits_string}</div>
         </div>
         <div className="half">
-          <p>{this.state.additions} additions</p>
-          <p>{this.state.deletions} deletions</p>
+          <p>{this.state.additions} add</p>
+          <p>{this.state.deletions} del</p>
         </div>
       </div>
     );
