@@ -12,8 +12,8 @@ repositories:
     path: ~/Repositories/repo3
     name: Repository 3
 
-# The interval at which the scheduler check for new updates on all repositories
-update_interval: 60000
+# The interval at which the scheduler check for new updates on all repositories in Seconds
+update_interval: 30
 
 # Color palete to be used in the graphs
 colors: ['#ce0000','#114b5f','#f7d708','#028090','#9ccf31','#ff9e00','#e4fde1','#456990','#ff9e00','#f45b69']

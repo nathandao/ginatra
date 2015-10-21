@@ -8,30 +8,35 @@ Ginatra is a Sinatra app that provides a web API for git repositories. Updates o
 
 There is also a front-end dashboard that comes with the package built with ReacJs and ChartJS to display real-time visualization of your git repos.
 
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-generate-toc again -->
+**Table of Contents**
+
+- [Ginatra](#ginatra)
+    - [Features:](#features)
+    - [Requirement:](#requirement)
+- [Setup](#setup)
+- [Configurations](#configurations)
+- [Threshold](#threshold)
+- [Usage](#usage)
+- [Developing](#developing)
+- [Using the API](#using-the-api)
+- [Change log](#change-log)
+    - [0.1.1](#011)
+- [Todo:](#todo)
+
+<!-- markdown-toc end -->
+
 ## Features:
+- Provides a default super cool looking dashboard built with ReactJs and ChartJs, althought you can always build a custom front-end with data from the API.
 - All repos are stored and accessed locally.
 - Quick setup. No database required.
 - Intuitive API to get repo data. Example: ```/commits?by=AuthorName&in=RepoName&from=2 days ago&til=2 hours ago```
 - Data is abstracted from any info available in the commit data including commits, authors, dates, line changes.
 - Calculation of estimated time based on the commit time of each authors.
 - Realtime updates of repo changes through websocket.
-- Provides a default super cool looking dashboard built with ReactJs and ChartJs, althought you can always build a custom front-end with data from the API.
 
 ## Requirement:
 - npm : to build the bundled javascript used in the demo Dashboard.
-
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc/generate-toc again -->
-**Table of Contents**
-
-- [Ginatra](#ginatra)
-- [Setup](#setup)
-- [Configurations](#configurations)
-- [Threshold](#threshold)
-- [Usage](#usage)
-- [Developing](#developing)
-- [Todos](#todos)
-
-<!-- markdown-toc end -->
 
 # Setup
 
@@ -71,8 +76,8 @@ Add some repositories on your local installation to ```config.yml```:
             name: Repository 2 Name
 
     # The interval at wich you would like the server to check of updates
-    # on the git repos
-    update_interval: 60s
+    # on the git repos in number of Seconds.
+    update_interval: 60
 
     # This is the default color swatch.
     # The color order in the array matches the repo_id order.
@@ -135,6 +140,8 @@ Component files are in ```assets/js/``` folder. Only the compiled ```bundle.js``
 
 # Using the API
 
+(Documentation in progress)
+
 Get commits:
 
     /stat/repo_list
@@ -174,8 +181,11 @@ returns
 
 ```repository``` class is the only class with instance methods handling retrieving and storing of commits json data, from which other classes get data from.
 
-# Todos
+# Change log
 
-- Provides options for diffrent servers support. Currently only works with Rainbows
-- Install scripts to setup ```config.yml``` and ```data``` folder automatically.
-- Web API for author info (Name, email, ...)
+## 0.1.1
+- Separate websocket channel stream to individual repository's stream instead of pushing updates once when check on all the channels are done.
+- Fully working front-end react app with activity stream from websocket.
+
+# Todo:
+- Web API documentations.
