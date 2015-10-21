@@ -160,11 +160,13 @@ module Ginatra
         end
       }
       result = []
-      commits.each do |commit|
-        commit_date = Time.parse commit.flatten[1]['date']
-        break if commit_date < date_range[0]
-        result << commit if commit_date >= date_range[0] &&
-          commit_date <= date_range[1]
+      unless commits.nil?
+        commits.each do |commit|
+          commit_date = Time.parse commit.flatten[1]['date']
+          break if commit_date < date_range[0]
+          result << commit if commit_date >= date_range[0] &&
+            commit_date <= date_range[1]
+        end
       end
       return result
     end
