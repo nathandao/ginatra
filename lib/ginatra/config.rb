@@ -17,7 +17,8 @@ module Ginatra
       end
 
       def update_interval
-        self.settings['update_interval']
+        interval = self.settings['update_interval'] || 60
+        return interval
       end
 
       def colors
