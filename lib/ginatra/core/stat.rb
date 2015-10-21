@@ -1,3 +1,5 @@
+require "chronic"
+
 module Ginatra
   class Stat
     class << self
@@ -61,7 +63,7 @@ module Ginatra
         end
         {commits_count: commits_count, additions: additions,
          deletions: deletions, lines: lines, hours: hours,
-         last_commit: last_commit, first_commit: first_commit}
+         last_commit: Chronic.parse(last_commit).to_f * 1000, first_commit: Chronic.parse(first_commit).to_f * 1000}
       end
 
       def authors(params = {})
@@ -105,7 +107,7 @@ module Ginatra
         repos.each do |key, params|
           if Ginatra::Helper.get_repo(key)
             threads << Thread.new {
-              if Ginatra::Helper.get_repo(key).refresh_data
+              if Ginatra::Helper.get_repo(key).refresh_data == true
                 updated += key + ","
               end
             }
