@@ -11,7 +11,7 @@ var TodayActivity = require("./components/TodayActivity.jsx");
 
 $(function(){
   var Socket = window.MozWebSocket || window.WebSocket,
-      socket = new Socket('ws://localhost:9290');
+      socket = new Socket('ws://' + window.location.hostname + ':9290');
 
   React.render(
     <CommitsOverview url='/stat/commits_overview?from=today%20at%200:00&til=now' socket={socket} width='500' height='500' />,
