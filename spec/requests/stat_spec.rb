@@ -66,9 +66,8 @@ describe Ginatra::Stat do
     context "without params" do
       let(:expected) { {:commits_count => 654, :additions => 17541,
                         :deletions => 10560, :lines => 7614,
-                        :hours => 521.4816666666667,
-                        :last_commit => "2015-06-15 19:05:44 +0300",
-                        :first_commit => "2008-11-26 23:58:27 +0000"} }
+                        :last_commit => 1434384344000.0,
+                        :first_commit => 1227743907000.0} }
 
       it "should return the correct overview hash" do
         expect(Ginatra::Stat.commits_overview).to eq expected
