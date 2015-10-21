@@ -31,11 +31,10 @@ var CommitsOverview = React.createClass({
   },
   componentDidMount: function() {
     this.loadOverviewData();
-    if (this.props.socket != undefined) {
-      this.props.socket.onmessage = function(event) {
-        this.loadOverviewData();
-      }.bind(this);
-    }
+    socket = new WebSocket("ws://" + window.location.hostname + ":9290");
+    socket.onmessage = function(event) {
+      this.loadOverviewData();
+    }.bind(this);
   },
   render: function() {
     return(

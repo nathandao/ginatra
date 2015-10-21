@@ -9,32 +9,30 @@ var RepoTable = require("./components/RepoTable.jsx");
 var GinatraChart = require("./components/GinatraChart.jsx");
 var TodayActivity = require("./components/TodayActivity.jsx");
 
-$(function(){
-  var Socket = window.MozWebSocket || window.WebSocket,
-      socket = new Socket('ws://' + window.location.hostname + ':9290');
 
+$(function(){
   React.render(
-    <CommitsOverview url='/stat/commits_overview?from=today%20at%200:00&til=now' socket={socket} width='500' height='500' />,
+    <CommitsOverview url='/stat/commits_overview?from=today%20at%200:00&til=now' width='500' height='500' />,
     document.getElementById("today-overview")
   );
 
   React.render(
-    <GinatraChart type="PolarArea" url="/stat/chart/round/sprint_commits" width="500" height="500" socket={socket} options='{ scaleBackdropColor: "rgba(255,255,255,1)" }' />,
+    <GinatraChart type="PolarArea" url="/stat/chart/round/sprint_commits" width="500" height="500" options='{ scaleBackdropColor: "rgba(255,255,255,1)" }' />,
     document.getElementById("sprint-projects-commits")
   );
 
   React.render(
-    <GinatraChart type="Doughnut" url="/stat/chart/round/sprint_hours" width="500" height="500" socket={socket} options='{ scaleBackdropColor: "rgba(255,255,255,1)" }' />,
+    <GinatraChart type="Doughnut" url="/stat/chart/round/sprint_hours" width="500" height="500" options='{ scaleBackdropColor: "rgba(255,255,255,1)" }' />,
     document.getElementById("sprint-projects-hours")
   );
 
   React.render(
-    <RepoTable url='/stat/repo_list' socket={socket} />,
+    <RepoTable url='/stat/repo_list' />,
     document.getElementById("repo-info")
   );
 
   React.render(
-    <TodayActivity socket={socket} width="300" height="100" />,
+    <TodayActivity width="300" height="100" />,
     document.getElementById("hourly-activity")
   );
 });

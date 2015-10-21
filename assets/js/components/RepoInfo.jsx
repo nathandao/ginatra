@@ -15,7 +15,7 @@ var RepoInfo = React.createClass({
         date = this.doubleDigit(d.getDate()),
         month = this.doubleDigit(d.getMonth() + 1),
         year = d.getFullYear(),
-        hours = this.doubleDigit(d.getHours()),
+        hours = this.doubleDigit(d.getHours());
         minutes = this.doubleDigit(d.getMinutes());
     return date + "." + month + "." + year + " " + hours + ":" + minutes;
   },
@@ -32,7 +32,6 @@ var RepoInfo = React.createClass({
           commitsCount: info.commits_count,
           additions: info.additions,
           deletions: info.deletions,
-          hours: info.hours.toFixed(2),
           firstCommit: this.goodDay(info.first_commit),
           lastCommit: this.goodDay(info.last_commit)
         });
@@ -45,21 +44,19 @@ var RepoInfo = React.createClass({
       commitsCount: 0,
       additions: 0,
       deletions: 0,
-      hours: 0,
       firstCommit: 0,
       lastCommit: 0
     };
   },
   componentDidMount: function() {
     this.loadRepoData();
-    if (this.props.socket != undefined) {
-      this.props.socket.onmessage = function(event) {
-        var updatedRepos = event.data.split(",");
-        if (updatedRepos.indexOf(this.props.repoId) > -1 || this.props.repoId == undefined) {
-          this.loadRepoData();
-        }
-      }.bind(this);
-    }
+    socket = new WebSocket("ws://" + window.location.hostname + ":9290");
+    socket.onmessage = function(event) {
+      var updatedRepos = event.data.split(",");
+      if (updatedRepos.indexOf(this.props.repoId) > -1 || this.props.repoId == undefined) {
+        this.loadRepoData();
+      }
+    }.bind(this);
   },
   render: function() {
     var repoId = this.props.repoId;
@@ -70,7 +67,6 @@ var RepoInfo = React.createClass({
     var deletions = this.state.deletions;
     var firstCommit = this.state.firstCommit;
     var lastCommit = this.state.lastCommit;
-    var hours = this.state.hours;
 
     var url = '/stat/chart/timeline/commits?in=' + repoId;
 
@@ -88,7 +84,6 @@ var RepoInfo = React.createClass({
               <td><span className="label">Deletions</span></td>
               <td><span className="label">First commit</span></td>
               <td><span className="label">Last commit</span></td>
-              <td><span className="label">Est hours</span></td>
             </tr>
             <tr>
               <td>{commitsCount}</td>
@@ -97,7 +92,6 @@ var RepoInfo = React.createClass({
               <td>{deletions}</td>
               <td>{firstCommit}</td>
               <td>{lastCommit}</td>
-              <td>{hours}</td>
             </tr>
           </table>
         </div>

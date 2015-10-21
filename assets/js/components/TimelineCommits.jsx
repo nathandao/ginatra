@@ -7,10 +7,9 @@ var TimelineCommits = React.createClass({
     var height = this.props.height;
     var width = this.props.width;
     var url = this.props.url;
-    var socket = this.props.socket;
 
     return (
-      <GinatraChart url={url} type={type} width={width} height={height} socket={socket} />
+      <GinatraChart url={url} type={type} width={width} height={height} />
     );
   }
 });

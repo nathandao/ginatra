@@ -36,21 +36,19 @@ var GinatraChart = React.createClass({
   },
   componentDidMount: function() {
     this.loadChartData();
-    if (this.props.socket != undefined && this.props.socket !== false) {
-      this.props.socket.onmessage = function(event) {
-        var updatedRepos = event.data.split(",");
-        if (updatedRepos.indexOf(this.props.repoId) > -1 || this.props.repoId == undefined) {
-          this.loadChartData();
-        }
-      }.bind(this);
-    }
+    socket = new WebSocket("ws://" + window.location.hostname + ":9290");
+    socket.onmessage = function(event) {
+      var updatedRepos = event.data.split(",");
+      if (this.props.repoId == undefined || updatedRepos.indexOf(this.props.repoId) > -1) {
+        this.loadChartData();
+      }
+    }.bind(this);
   },
   render: function() {
     var width = this.props.width || 1000;
     var height = this.props.height || 500;
     var type = this.props.type || "PolarArea"
     var chart = [];
-
 
     chart["PolarArea"] = PolarAreaChart;
     chart["Bar"] = BarChart;

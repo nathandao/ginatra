@@ -74,14 +74,13 @@ var TodayActivity = React.createClass({
   },
   componentDidMount: function() {
     this.loadData();
-    if (this.props.socket != undefined && this.props.socket !== false) {
-      this.props.socket.onmessage = function(event) {
-        var updatedRepos = event.data.split(",");
-        if (updatedRepos.indexOf(this.props.repoId) > -1 || this.props.repoId == undefined) {
-          this.loadChartData();
-        }
-      }.bind(this);
-    }
+    socket = new WebSocket("ws://" + window.location.hostname + ":9290");
+    socket.onmessage = function(event) {
+      var updatedRepos = event.data.split(",");
+      if (updatedRepos.indexOf(this.props.repoId) > -1 || this.props.repoId == undefined) {
+        this.loadData();
+      }
+    }.bind(this);
   },
   render: function() {
     var width = this.props.width || 1000;
