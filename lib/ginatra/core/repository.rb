@@ -1,6 +1,7 @@
 require 'yajl'
 require 'fileutils'
 require 'chronic'
+require 'eventmachine'
 
 module Ginatra
   class Repository
@@ -13,10 +14,9 @@ module Ginatra
     attr_accessor :id, :path, :name, :commits, :color
 
     def self.new(params)
+      @id ||= params["id"]
       self.validate(params)
       super
-    rescue MissingName, MissingPath, MissingId, InvalidPath, InvalidRepoId
-      false
     end
 
     def initialize(params)
@@ -62,13 +62,20 @@ module Ginatra
     end
 
     def refresh_data
-      if change_exists?
-        remove_data_file
-        pull_latest_commits
-        get_commits
-        return true
-      end
-      false
+      remove_data_file
+      pull_latest_commits
+      get_commits
+    end
+
+    def start_stream(channel, update_interval)
+      EM.add_periodic_timer(update_interval) {
+        if change_exists?
+          refresh_data
+          sid = channel.subscribe { |msg| p ["repo #{@id} subscribed"] }
+          channel.push @id
+          channel.unsubscribe(sid)
+        end
+      }
     end
 
     private
@@ -83,11 +90,11 @@ module Ginatra
           raise InvalidRepoId, "#{self.current_path} repository's id is invalid"
         end
       end
-      raise MissingName, "repository's name missing" unless params['name']
-      raise MissingPath, "repository's path missing" unless params['path']
-      raise MissingId, "repository's id missing" unless params['id']
-      raise MissingColor, "repository's color missing" unless params['color']
-      raise InvalidPath, "repository's path is invalid" unless self.is_repo_path?(params['path'])
+      raise MissingName, "repository's name is missing for #{@id}. Check config.yml file, make sure your data is correct." unless params['name']
+      raise MissingPath, "repository's path is missing for #{@id}. Check config.yml file, make sure your data is correct." unless params['path']
+      raise MissingId, "repository's id is missing. Check config.yml file, make sure your repository data is correct." unless params['id']
+      raise MissingColor, "repository's color missing for #{@id}. Check config.yml file, make sure your data is correct." unless params['color']
+      raise InvalidPath, "repository's path is invalid for #{@id}. Check config.yml file, make sure your data is correct." unless self.is_repo_path?(params['path'])
     end
 
     def self.is_repo_path?(path)

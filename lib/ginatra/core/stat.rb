@@ -119,6 +119,19 @@ module Ginatra
         end
         updated[0..-2]
       end
+
+      def start_repo_streams(channel, update_interval)
+        threads = []
+        repos = Ginatra::Config.repositories
+        repos.each do |key, params|
+          if Ginatra::Helper.get_repo(key)
+            threads << Thread.new {
+              Ginatra::Helper.get_repo(key).start_stream(channel, update_interval)
+            }
+          end
+        end
+        return threads
+      end
     end
   end
 end
