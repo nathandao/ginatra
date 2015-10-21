@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
 require_relative '../spec_helper.rb'
 
-shared_examples "invalid repository" do
-  it "should return false" do
-    expect(Ginatra::Repository.new(params)).to be false
-  end
-end
-
 describe Ginatra::Repository do
   context "initialize" do
     context "with valid information" do
@@ -41,24 +35,32 @@ describe Ginatra::Repository do
                    "name" => @repo.name}
       end
 
-      %w{id path name}.each do |key|
-        context "missing #{key}" do
-          before { @params[key] = nil }
-          let(:params) { @params }
-          include_examples "invalid repository"
+      context "missing repo name" do
+        before { @params['name'] = nil }
+        it "should return MissingName error" do
+          expect { Ginatra::Repository.new @params }.to raise_error("repository's name is missing for #{@repo.id}. Check config.yml file, make sure your data is correct.")
+        end
+      end
+
+      context "missing repo path" do
+        before { @params['path'] = nil }
+        it "should return MissingPath error" do
+          expect { Ginatra::Repository.new @params }.to raise_error("repository's path is missing for #{@repo.id}. Check config.yml file, make sure your data is correct.")
+        end
+      end
+
+      context "missing repo id" do
+        before { @params['id'] = nil }
+        it "should return MissingId error" do
+          expect { Ginatra::Repository.new @params }.to raise_error("repository's id is missing. Check config.yml file, make sure your repository data is correct.")
         end
       end
 
       context "invalid path" do
         before { @params['path'] = "/ginatra/random/path" }
-        let(:params) { @params }
-        include_examples "invalid repository"
-      end
-
-      context "invalid id" do
-        before { @params['id'] = "invalid_repo" }
-        let(:params) { @params }
-        include_examples "invalid repository"
+        it "should return InvalidPath error" do
+          expect { Ginatra::Repository.new @params }.to raise_error("repository's path is invalid for #{@repo.id}. Check config.yml file, make sure your data is correct.")
+        end
       end
     end
   end
@@ -88,12 +90,6 @@ describe Ginatra::Repository do
         undo_commits(@repo.id, 5)
         remove_data_file(@repo.id)
       end
-
-      # describe "before" do
-      #   it "should have the old commits count" do
-      #     expect(@repo.commits.size).to eq 49
-      #   end
-      # end
 
       describe "after" do
         before { @repo.refresh_data }
