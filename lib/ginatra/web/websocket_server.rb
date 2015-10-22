@@ -10,7 +10,6 @@ module Ginatra
         websocket_port = Ginatra::Env.websocket_port || 9290
 
         @channel = EM::Channel.new
-        @scheduler = Rufus::Scheduler.new
 
         EM::WebSocket.start(:host => '0.0.0.0', :port => websocket_port) do |ws|
           ws.onopen do |handshake|
