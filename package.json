@@ -6,7 +6,7 @@
   "scripts": {
     "build": "browserify -t reactify assets/js/app.jsx -o assets/js/bundle.js",
     "watch": "watchify -t reactify assets/js/app.jsx -o assets/js/bundle.js",
-    "lint": " ./node_modules/.bin/eslint assets/js/*/**.jsx"
+    "lint": " ./node_modules/.bin/eslint assets/js/*.jsx assets/js/*/**.jsx"
   },
   "repository": {
     "type": "git",
