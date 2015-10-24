@@ -5,7 +5,8 @@
   "main": "assets/js/app.js",
   "scripts": {
     "build": "browserify -t reactify assets/js/app.jsx -o assets/js/bundle.js",
-    "watch": "watchify -t reactify assets/js/app.jsx -o assets/js/bundle.js"
+    "watch": "watchify -t reactify assets/js/app.jsx -o assets/js/bundle.js",
+    "lint": " ./node_modules/.bin/eslint assets/js/*/**.jsx"
   },
   "repository": {
     "type": "git",
@@ -19,6 +20,8 @@
   "homepage": "https://github.com/nathandao/ginatra",
   "devDependencies": {
     "browserify": "^11.0.1",
+    "eslint": "^1.7.3",
+    "eslint-plugin-react": "^3.6.3",
     "reactify": "^1.1.1",
     "watchify": "^3.2.1"
   },
