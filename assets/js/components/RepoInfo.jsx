@@ -1,5 +1,5 @@
-var React = require('react');
-var $ = require('jquery');
+var React = require("react");
+var $ = require("jquery");
 var GinatraChart = require("./GinatraChart.jsx");
 
 
@@ -15,15 +15,15 @@ var RepoInfo = React.createClass({
         date = this.doubleDigit(d.getDate()),
         month = this.doubleDigit(d.getMonth() + 1),
         year = d.getFullYear(),
-        hours = this.doubleDigit(d.getHours());
+        hours = this.doubleDigit(d.getHours()),
         minutes = this.doubleDigit(d.getMinutes());
     return date + "." + month + "." + year + " " + hours + ":" + minutes;
   },
   loadRepoData: function() {
     var repoId = this.props.repoId;
     $.ajax({
-      url: '/stat/repo_overview',
-      data: { 'in': repoId },
+      url: "/stat/repo_overview",
+      data: { "in": repoId },
       cache: false,
       success: function(data) {
         var info = data[repoId];
@@ -49,14 +49,14 @@ var RepoInfo = React.createClass({
     };
   },
   componentDidMount: function() {
-    this.loadRepoData();
-    socket = new WebSocket("ws://" + window.location.hostname + ":9290");
+    var socket = new WebSocket("ws://" + window.location.hostname + ":9290");
     socket.onmessage = function(event) {
       var updatedRepos = event.data.split(",");
       if (updatedRepos.indexOf(this.props.repoId) > -1 || this.props.repoId == undefined) {
         this.loadRepoData();
       }
     }.bind(this);
+    this.loadRepoData();
   },
   render: function() {
     var repoId = this.props.repoId;
@@ -68,7 +68,7 @@ var RepoInfo = React.createClass({
     var firstCommit = this.state.firstCommit;
     var lastCommit = this.state.lastCommit;
 
-    var url = '/stat/chart/timeline/commits?in=' + repoId;
+    var url = "/stat/chart/timeline/commits?in=" + repoId;
 
     return (
       <div className="repo-cell third">
