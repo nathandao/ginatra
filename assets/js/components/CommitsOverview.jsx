@@ -5,12 +5,12 @@ var CommitsOverview = React.createClass({
   loadOverviewData: function() {
     $.ajax({
       url: this.props.url,
-      dataType: 'json',
+      dataType: "json",
       cache: false,
       success: function(data) {
-        var commits_string = 'commits';
+        var commits_string = "commits";
         if(data.commits_count == 1) {
-          commits_string = 'commit';
+          commits_string = "commit";
         }
         this.setState({
           commits_count: data.commits_count,
@@ -24,17 +24,17 @@ var CommitsOverview = React.createClass({
   getInitialState: function() {
     return {
       commits_count: 0,
-      commits_string: 'commits',
+      commits_string: "commits",
       additions: 0,
       deletions: 0
-    }
+    };
   },
   componentDidMount: function() {
-    this.loadOverviewData();
-    socket = new WebSocket("ws://" + window.location.hostname + ":9290");
-    socket.onmessage = function(event) {
+    var socket = new WebSocket("ws://" + window.location.hostname + ":9290");
+    socket.onmessage = function() {
       this.loadOverviewData();
     }.bind(this);
+    this.loadOverviewData();
   },
   render: function() {
     return(

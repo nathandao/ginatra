@@ -1,5 +1,4 @@
 var React = require("react");
-var Chart = require('react-chartjs');
 var PolarAreaChart = require("react-chartjs").PolarArea;
 var BarChart = require("react-chartjs").Bar;
 var LineChart = require("react-chartjs").Line;
@@ -13,7 +12,7 @@ var GinatraChart = React.createClass({
   loadChartData: function() {
     $.ajax({
       url: this.props.url,
-      dataType: 'json',
+      dataType: "json",
       cache: false,
       success: function(data) {
         this.setState({chartData: data});
@@ -29,25 +28,25 @@ var GinatraChart = React.createClass({
     if (type === "PolarArea" || type === "Pie" || type === "Doughnut") {
       initData = { chartData: []};
     } else {
-      initData = { chartData: { labels:['loading...'], datasets:[{ label: 'loading...', data: [0] }] } };
+      initData = { chartData: { labels:["loading..."], datasets:[{ label: "loading...", data: [0] }] } };
     }
 
     return initData;
   },
   componentDidMount: function() {
-    this.loadChartData();
-    socket = new WebSocket("ws://" + window.location.hostname + ":9290");
+    var socket = new WebSocket("ws://" + window.location.hostname + ":9290");
     socket.onmessage = function(event) {
       var updatedRepos = event.data.split(",");
       if (this.props.repoId == undefined || updatedRepos.indexOf(this.props.repoId) > -1) {
         this.loadChartData();
       }
     }.bind(this);
+    this.loadChartData();
   },
   render: function() {
     var width = this.props.width || 1000;
     var height = this.props.height || 500;
-    var type = this.props.type || "PolarArea"
+    var type = this.props.type || "PolarArea";
     var chart = [];
 
     chart["PolarArea"] = PolarAreaChart;

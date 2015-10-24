@@ -3,7 +3,7 @@ var React = require("react");
 
 var TimelineCommits = React.createClass({
   render: function() {
-    var type = 'Line';
+    var type = "Line";
     var height = this.props.height;
     var width = this.props.width;
     var url = this.props.url;
