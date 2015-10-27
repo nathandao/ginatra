@@ -105,7 +105,7 @@ var RepoInfo = React.createClass({
         <div className="full">
           <GinatraChart type="Line" url={url} socket={this.props.socket} width="300" height="100" />
         </div>
-        <div className="full small-text">
+        <div className="full">
           <p>Latest commit :: { lastCommit } :: { lastCommitInfo.author } :: { lastCommitInfo.id }</p>
           <p>{ lastCommitInfo.subject }</p>
         </div>
