@@ -71,9 +71,11 @@ describe Ginatra::Stat do
                         :last_commit => 1434384344000.0,
                         :first_commit => 1227743907000.0,
                         :last_commit_info => {
+                          "id" => "f8f88e5",
                           "author" => "Nathan Dao",
                           "date" => "2015-06-15 19:05:44 +0300",
-                          "changes" => [{"additions"=>0, "deletions"=>74, "path"=>"README.md"}]
+                          "subject" => "remove README",
+                          "changes" => [{"additions" => "0", "deletions" => "74", "path" => "README.md"}]
                         }
                        } }
 
