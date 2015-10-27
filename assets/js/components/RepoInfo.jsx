@@ -33,7 +33,8 @@ var RepoInfo = React.createClass({
           additions: info.additions,
           deletions: info.deletions,
           firstCommit: this.goodDay(info.first_commit),
-          lastCommit: this.goodDay(info.last_commit)
+          lastCommit: this.goodDay(info.last_commit),
+          lastCommitInfo: info.last_commit_info
         });
       }.bind(this)
     });
@@ -45,8 +46,13 @@ var RepoInfo = React.createClass({
       additions: 0,
       deletions: 0,
       firstCommit: 0,
-      lastCommit: 0
-    };
+      lastCommit: 0,
+      lastCommitInfo: {
+        author: "",
+        subject: "",
+        id: ""
+      }
+    }
   },
   componentDidMount: function() {
     var socket = new WebSocket("ws://" + window.location.hostname + ":9290");
@@ -67,6 +73,7 @@ var RepoInfo = React.createClass({
     var deletions = this.state.deletions;
     var firstCommit = this.state.firstCommit;
     var lastCommit = this.state.lastCommit;
+    var lastCommitInfo = this.state.lastCommitInfo;
 
     var url = "/stat/chart/timeline/commits?in=" + repoId;
 
@@ -97,6 +104,10 @@ var RepoInfo = React.createClass({
         </div>
         <div className="full">
           <GinatraChart type="Line" url={url} socket={this.props.socket} width="300" height="100" />
+        </div>
+        <div className="full small-text">
+          <p>Latest commit :: { lastCommit } :: { lastCommitInfo.author } :: { lastCommitInfo.id }</p>
+          <p>{ lastCommitInfo.subject }</p>
         </div>
       </div>
     );

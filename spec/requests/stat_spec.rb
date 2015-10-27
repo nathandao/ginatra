@@ -69,7 +69,13 @@ describe Ginatra::Stat do
       let(:expected) { {:commits_count => 654, :additions => 17541,
                         :deletions => 10560, :lines => 7614,
                         :last_commit => 1434384344000.0,
-                        :first_commit => 1227743907000.0} }
+                        :first_commit => 1227743907000.0,
+                        :last_commit_info => {
+                          "author" => "Nathan Dao",
+                          "date" => "2015-06-15 19:05:44 +0300",
+                          "changes" => [{"additions"=>0, "deletions"=>74, "path"=>"README.md"}]
+                        }
+                       } }
 
       it "should return the correct overview hash" do
         expect(Ginatra::Stat.commits_overview).to eq expected

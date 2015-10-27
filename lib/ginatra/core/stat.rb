@@ -49,6 +49,7 @@ module Ginatra
         lines = 0
         last_commit = Time.new
         first_commit = Time.new
+        last_commit_info = {}
         commits(params).each do |repo_id, repo_commits|
           unless repo_commits.nil?
             commits_count += repo_commits.size
@@ -58,13 +59,15 @@ module Ginatra
             unless repo_commits[0].nil?
               last_commit = repo_commits[0].flatten[1]['date']
               first_commit = repo_commits[-1].flatten[1]['date']
+              last_commit_info = repo_commits[0].flatten[1]
             end
           end
         end
         { commits_count: commits_count, additions: additions,
-          deletions: deletions, lines: lines, 
+          deletions: deletions, lines: lines,
           last_commit: Chronic.parse(last_commit).to_f * 1000,
-          first_commit: Chronic.parse(first_commit).to_f * 1000 }
+          first_commit: Chronic.parse(first_commit).to_f * 1000,
+          last_commit_info: last_commit_info }
       end
 
       def authors(params = {})

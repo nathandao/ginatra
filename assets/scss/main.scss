@@ -8,6 +8,7 @@ $color_text_label: #b1b1b1;
 $ff_main: 'Orbitron', 'Helvetica', 'Arial';
 $fw_main: 300;
 $fs_main: 11px;
+$fs_small: 8px;
 
 body {
     background: $color_bg;
@@ -26,6 +27,11 @@ div, ul, ol, li, p {
     list-style: none;
     margin: 0px;
     padding: 0px;
+}
+
+.small-text {
+  font-size: $fs_small;
+  color: $color_text_label;
 }
 
 table {

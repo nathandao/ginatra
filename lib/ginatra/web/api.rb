@@ -6,7 +6,7 @@ module Ginatra
     before '/stat/*' do
       content_type 'application/json'
       @filter = params.inject({}) { |prms, v|
-        if [:from, :til, :by, :in, :color, :labels,
+        if [:from, :til, :by, :in, :color, :labels, :limit,
           :time_stamps].include? v[0].to_sym
           prms[v[0].to_sym] = v[1] 
         end

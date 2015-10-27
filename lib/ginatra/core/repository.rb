@@ -49,6 +49,7 @@ module Ginatra
       end
 
       if params[:limit]
+        params[:limit] = params[:limit].to_i
         result = result[0..params[:limit]-1]
       end
 
