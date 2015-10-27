@@ -90,7 +90,6 @@ var RepoInfo = React.createClass({
               <td><span className="label">Additions</span></td>
               <td><span className="label">Deletions</span></td>
               <td><span className="label">First commit</span></td>
-              <td><span className="label">Last commit</span></td>
             </tr>
             <tr>
               <td>{commitsCount}</td>
@@ -98,16 +97,20 @@ var RepoInfo = React.createClass({
               <td>{additions}</td>
               <td>{deletions}</td>
               <td>{firstCommit}</td>
-              <td>{lastCommit}</td>
+            </tr>
+            <tr>
+              <td colSpan="2"><span className="label">Last commit</span></td>
+              <td><span className="label">{ lastCommit }</span></td>
+              <td><span className="label">{ lastCommitInfo.author }</span></td>
+              <td><span className="label">{ lastCommitInfo.id }</span></td>
+            </tr>
+            <tr>
+              <td colSpan="5">{ lastCommitInfo.subject }</td>
             </tr>
           </table>
         </div>
         <div className="full">
           <GinatraChart type="Line" url={url} socket={this.props.socket} width="300" height="100" />
-        </div>
-        <div className="full">
-          <p>Latest commit :: { lastCommit } :: { lastCommitInfo.author } :: { lastCommitInfo.id }</p>
-          <p>{ lastCommitInfo.subject }</p>
         </div>
       </div>
     );
