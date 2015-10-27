@@ -99,13 +99,7 @@ var RepoInfo = React.createClass({
               <td>{firstCommit}</td>
             </tr>
             <tr>
-              <td colSpan="2"><span className="label">Last commit</span></td>
-              <td><span className="label">{ lastCommit }</span></td>
-              <td><span className="label">{ lastCommitInfo.author }</span></td>
-              <td><span className="label">{ lastCommitInfo.id }</span></td>
-            </tr>
-            <tr>
-              <td colSpan="5">{ lastCommitInfo.subject }</td>
+              <td colSpan="5"><span className="small-text">Latest commit on { lastCommit } by { lastCommitInfo.author }: { lastCommitInfo.subject }</span></td>
             </tr>
           </table>
         </div>
