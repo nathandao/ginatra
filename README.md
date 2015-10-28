@@ -140,9 +140,33 @@ Component files are in ```assets/js/``` folder. Only the compiled ```bundle.js``
 
 # Using the API
 
-(Documentation in progress)
+Currently available API endpoints:
+- /stat/repo_list
+- /stat/hours
+- /stat/commits
+- /stat/commits_overview
+- /stat/repo_overview
+- /stat/authors
+- /stat/lines
+- /stat/chart/round/commits
+- /stat/chart/round/lines
+- /stat/chart/round/hours
+- /stat/chart/round/sprint_commits
+- /stat/chart/round/sprint_lines
+- /stat/chart/round/sprint_hours
+- /stat/chart/line/commits
+- /stat/chart/line/lines
+- /stat/chart/line/hours
+- /stat/chart/line/sprint_hours_commits
+- /stat/chart/line/sprint_commits
+- /stat/chart/line/sprint_hours
+- /stat/chart/timeline/commits
+- /stat/chart/timeline/hours
+- /stat/chart/timeline/sprint_commits
+- /stat/chart/timeline/sprint_hours
+- /stat/chart/timeline/sprint_hours_commits
 
-Get commits:
+Repository List:
 
     /stat/repo_list
 
@@ -150,7 +174,7 @@ returns
 
     ["repo_1", "repo_2", "repo_3"]
 
-List all repository ids
+Aproximate hours spent by unique authors in repositories:
 
     /stat/hours
 
@@ -178,6 +202,88 @@ returns
             }
         ]
     }
+
+
+Commit List:
+
+    /stat/commits
+
+returns
+
+    {
+        "repo_1": [
+            {
+                "ffbd72f":
+                    {
+                        "author": "Foo",
+                        "date": "2015-10-19 16:04:24 +0300",
+                        "changes": [
+                            {
+                                "additions": 652,
+                                "deletions": 682,
+                                "path": "path/to/some/file.md"
+                            }
+                        ]
+                    },
+                "ai34dbd":
+                    {
+                        "author": "Bar",
+                        "date": "2015-10-16 14:04:24 +0300",
+                        "changes": [
+                            {
+                                "additions": 10,
+                                "deletions": 0,
+                                "path": "path/to/some/file.md"
+                            }
+                        ]
+                    },
+            }
+        ],
+        "repo_2": [
+            {
+                "bcdd17p":
+                    {
+                        "author": "Foo",
+                        "date": "2015-10-27 09:04:24 +0100",
+                        "changes": [
+                            {
+                                "additions": 0,
+                                "deletions": 10,
+                                "path": "path/to/some/file.php"
+                            }
+                        ]
+                    },
+            }
+        ]
+    }
+
+Commit Overview
+
+    /stat/commits_overview
+
+returns
+
+    {
+        "commits_count": 2420,
+        "additions": 386455,
+        "deletions": 87453,
+        "lines": 299002,
+        "last_commit": 1445259890000,
+        "first_commit": 1420720820000,
+        "last_commit_info":
+        {
+            "author": "Foo",
+            "date": "2015-10-19 16:04:50 +0300",
+            "changes": [
+                {
+                    "additions": 0,
+                    "deletions": 10,
+                    "path": "path/to/some/file.php"
+                }
+            ]
+        }
+    }
+
 
 ```repository``` class is the only class with instance methods handling retrieving and storing of commits json data, from which other classes get data from.
 
