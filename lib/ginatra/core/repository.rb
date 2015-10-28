@@ -81,6 +81,10 @@ module Ginatra
           channel.push @id
           channel.unsubscribe(sid)
         end
+
+        # hit Control + C to stop
+        Signal.trap("INT")  { EventMachine.stop }
+        Signal.trap("TERM") { EventMachine.stop }
       }
     end
 
