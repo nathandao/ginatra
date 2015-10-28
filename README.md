@@ -152,7 +152,7 @@ returns
 
 List all repository ids
 
-    /start/hours
+    /stat/hours
 
 returns
 
