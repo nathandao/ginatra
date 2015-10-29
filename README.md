@@ -284,6 +284,82 @@ returns
         }
     }
 
+Repository Overview
+
+    /stat/repo_overview
+
+returns
+
+    {
+        "repo_1":
+        {
+            "commits_count": 2420,
+            "additions": 386455,
+            "deletions": 87453,
+            "lines": 299002,
+            "last_commit": 1445259890000,
+            "first_commit": 1420720820000,
+            "last_commit_info":
+                {
+                    "author": "Foo",
+                    "date": "2015-10-19 16:04:50 +0300",
+                    "changes": [ ]
+                }
+        },
+        "repo_2":
+        {
+            "commits_count": 157,
+            "additions": 645,
+            "deletions": 35,
+            "lines": 811,
+            "last_commit": 1445259890000,
+            "first_commit": 1420720820000,
+            "last_commit_info":
+                {
+                    "author": "Bar",
+                    "date": "2015-10-22 12:22:40 +0300",
+                    "changes": [
+                        {
+                            "additions": 0,
+                            "deletions": 10,
+                            "path": "path/to/some/file.php"
+                        }
+                    ]
+                }
+        }
+    }
+
+Authors
+
+    /stat/authors
+
+returns
+
+    [
+        {
+            "name": "Foo",
+            "commits": 443,
+            "additions": 18735,
+            "deletions": 6185
+        },
+        {
+            "name": "Bar",
+            "commits": 552,
+            "additions": 151847,
+            "deletions": 12751
+        }
+    ]
+
+Line Count
+
+    /stat/lines
+
+returns
+
+    {
+        "repo_1": 299002,
+        "repo_2": 811
+    }
 
 ```repository``` class is the only class with instance methods handling retrieving and storing of commits json data, from which other classes get data from.
 
