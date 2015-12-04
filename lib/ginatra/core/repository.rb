@@ -253,7 +253,9 @@ module Ginatra
         commit_hash[:changes] = changes
         full_commits << {commit_hash[:id] => commit_hash}
       end
-      return full_commits
+      return full_commits.sort! { |x, y|
+        Chronic.parse(y.flatten[1][:date]) <=> Chronic.parse(x.flatten[1][:date])
+      }
     end
   end
 end
