@@ -215,7 +215,6 @@ module Ginatra
     def git_log since = nil
       c_separator = "[<ginatra_commit_section>]"
       i_separator = "[<ginatra_separator]"
-      # path = "~/Sites/emessukeskus"
       str = `git -C #{path} log \
              --numstat \
              --format='#{c_separator}id %h#{i_separator}author %an#{i_separator}date %ai#{i_separator}subject %s#{i_separator}changes'`
@@ -254,7 +253,7 @@ module Ginatra
         full_commits << {commit_hash[:id] => commit_hash}
       end
       return full_commits.sort! { |x, y|
-        Chronic.parse(y.flatten[1][:date]) <=> Chronic.parse(x.flatten[1][:date])
+        y.flatten[1][:date] <=> x.flatten[1][:date]
       }
     end
   end
