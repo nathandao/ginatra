@@ -1,8 +1,21 @@
 require 'sinatra/base'
+require 'sinatra/cross_origin'
 require 'yajl/json_gem'
 
 module Ginatra
   class API < Sinatra::Base
+    register Sinatra::CrossOrigin
+
+    configure do
+      enable :cross_origin
+    end
+
+    options '*' do
+      response.headers['Allow'] = 'HEAD,GET,PUT,POST,DELETE,OPTIONS'
+      response.headers['Access-Control-Allow-Headers'] = 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept'
+      200
+    end
+
     before '/stat/*' do
       content_type 'application/json'
       @filter = params.inject({}) { |prms, v|
