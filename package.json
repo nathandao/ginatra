@@ -1,34 +1,50 @@
 {
   "name": "ginatra",
-  "version": "1.0.0",
-  "description": "Ginatra is a team dashboard that displays git repository statistics in real time using Sinatra and ReactJs",
-  "main": "assets/js/app.js",
+  "version": "0.0.1",
+  "description": "[![Build Status](https://travis-ci.org/nathandao/ginatra.svg?branch=master)](https://travis-ci.org/nathandao/ginatra) [![Code Climate](https://codeclimate.com/github/nathandao/ginatra/badges/gpa.svg)](https://codeclimate.com/github/nathandao/ginatra) [![Test Coverage](https://codeclimate.com/github/nathandao/ginatra/badges/coverage.svg)](https://codeclimate.com/github/nathandao/ginatra/coverage)",
+  "main": "assets/js/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "autoprefixer": "^6.1.2",
+    "babel-core": "5.6.18",
+    "babel-eslint": "^4.1.6",
+    "babel-loader": "^5.3.1",
+    "babel-runtime": "^6.3.13",
+    "css-loader": "^0.23.0",
+    "cssnext": "^1.8.4",
+    "eslint-loader": "^1.1.1",
+    "events": "^1.1.0",
+    "flux": "^2.1.1",
+    "html-webpack-plugin": "^1.6.0",
+    "jwt-decode": "^1.4.0",
+    "lost": "^6.6.2",
+    "postcss-loader": "^0.8.0",
+    "precss": "^1.3.0",
+    "react-hot-loader": "^1.3.0",
+    "react-mixin": "^3.0.3",
+    "react-mixin-decorator": "^1.1.3",
+    "reqwest": "^2.0.5",
+    "style-loader": "^0.13.0",
+    "webpack": "1.12.1",
+    "webpack-dev-server": "1.12.1",
+    "when": "^3.7.5"
+  },
   "scripts": {
-    "build": "browserify -t reactify assets/js/app.jsx -o assets/js/bundle.js",
-    "watch": "watchify -t reactify assets/js/app.jsx -o assets/js/bundle.js",
-    "lint": " ./node_modules/.bin/eslint assets/js/*.jsx assets/js/*/**.jsx"
+    "build": "NODE_ENV=production webpack --progress --profile --colors",
+    "watch": "webpack-dev-server --hot --inline --progress --colors",
+    "test": "echo \"No unit tests and e2e tests yet\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nathandao/ginatra.git"
+    "url": "git+https://github.com/nathandao/ginatra.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Guy Nathan",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/nathandao/ginatra/issues"
   },
-  "homepage": "https://github.com/nathandao/ginatra",
-  "devDependencies": {
-    "browserify": "^11.0.1",
-    "eslint": "^1.7.3",
-    "eslint-plugin-react": "^3.6.3",
-    "reactify": "^1.1.1",
-    "watchify": "^3.2.1"
-  },
-  "dependencies": {
-    "chart.js": "^1.0.2",
-    "jquery": "^2.1.4",
-    "react": "^0.13.3",
-    "react-chartjs": "nathandao/react-chartjs"
-  }
+  "homepage": "https://github.com/nathandao/ginatra#readme"
 }
