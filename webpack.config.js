@@ -12,7 +12,7 @@ var app = {
 
   entry: {
     main: path.join(srcPath, 'app.js'),
-    common: ['react', 'events']
+    common: ['react', 'react-dom', 'events']
   },
 
   resolve: {
@@ -31,11 +31,11 @@ var app = {
 
   module: {
     loaders: [
-      { test: /\.js$/, exclude: /node_modules/, loaders: ['babel'] },
+      { test: /\.js$/, exclude: /node_modules/, loaders: ['react-hot', 'babel'] },
       { test: /\.css$/, exclude: /node_modules/, loader: 'style!css?sourceMap!postcss' }
     ],
     preLoaders: [
-      { test: /\.js$/, loaders: ['eslint-loader'], include: [path.resolve('assets/js/src')] }
+      { test: /\.js$/, loaders: ['eslint'], include: [path.resolve('./assets/js/src')] }
     ]
   },
 
@@ -68,7 +68,10 @@ var app = {
     else {
       plugins.push(
         new webpack.HotModuleReplacementPlugin(),
-        new HtmlWebpackPlugin()
+        new HtmlWebpackPlugin({
+          inject: true,
+          template: 'assets/js/src/index.html'
+        })
       );
     }
 
@@ -76,11 +79,12 @@ var app = {
   }()),
 
   stats: { colors: true },
-  eslint: { configFile: './.eslintrc' },
+  eslint: { configFile: '.eslintrc' },
   debug: true,
   devtool: 'eval-cheap-module-source-map',
   devServer: {
     hot: true,
+    port: 9292,
     historyApiFallback: true,
     stats: {
       chunkModules: false,
