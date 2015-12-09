@@ -1,59 +1,73 @@
-'use strict';
+"use strict";
 
-var webpack = require('webpack'),
-    HtmlWebpackPlugin = require('html-webpack-plugin'),
-    path = require('path'),
-    srcPath = path.join(__dirname, 'assets/js/src'),
-    env = process.env.NODE_ENV || 'development';
+var webpack = require("webpack"),
+    HtmlWebpackPlugin = require("html-webpack-plugin"),
+    path = require("path"),
+    srcPath = path.join(__dirname, "assets/js/src"),
+    env = process.env.NODE_ENV || "development";
 
 var app = {
-  target: 'web',
+  target: "web",
   cache: true,
 
   entry: {
-    main: path.join(srcPath, 'app.js'),
-    common: ['react', 'react-dom', 'events']
+    main: path.join(srcPath, "app.js"),
+    common: ["react", "react-dom", "events", "react-router"]
   },
 
   resolve: {
     root: srcPath,
-    extensions: ['', '.js'],
-    modulesDirectories: ['node_modules', srcPath]
+    extensions: ["", ".js"],
+    modulesDirectories: ["node_modules", srcPath]
   },
 
   output: {
-    path: path.join(__dirname, 'assets/js/dist'),
-    publicPath: '',
-    filename: '[name].js',
-    library: ['Ginatra', 'name'],
+    path: path.join(__dirname, "assets/js/dist"),
+    publicPath: "",
+    filename: "[name].js",
+    library: ["Ginatra", "name"],
     pathInfo: true
   },
 
   module: {
     loaders: [
-      { test: /\.js$/, exclude: /node_modules/, loaders: ['react-hot', 'babel'] },
-      { test: /\.css$/, exclude: /node_modules/, loader: 'style!css?sourceMap!postcss' }
+      {
+        test: /\.js$/,
+        loaders: ["react-hot", "babel"],
+        exclude: /node_modules/
+      },
+      {
+        test: /\.css$/,
+        loader: "style-loader!css-loader?sourceMap!postcss"
+      }
     ],
     preLoaders: [
-      { test: /\.js$/, loaders: ['eslint'], include: [path.resolve('./assets/js/src')] }
+      {
+        test: /\.js$/,
+        loaders: ["eslint"],
+        include: [path.resolve("./assets/js/src")] }
     ]
   },
 
-  postcss: [
-    require('lost'),
-    require('autoprefixer'),
-    require('precss')
-  ],
+  postcss: function() {
+    return [
+      require("cssnext"),
+      require("postcss-import-url"),
+      require("lost"),
+      require("autoprefixer"),
+      require("postcss-normalize"),
+    ];
+  },
 
   plugins: (function() {
 
     var plugins = [
-      new webpack.optimize.CommonsChunkPlugin('common', 'common.js'),
+      new webpack.optimize.CommonsChunkPlugin("common", "common.js"),
       new webpack.NoErrorsPlugin(),
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
     ];
 
-    if (process.env.NODE_ENV == 'production') {
+    if (process.env.NODE_ENV == "production") {
       plugins.push(
         new webpack.DefinePlugin({
           "process.env": {
@@ -70,7 +84,7 @@ var app = {
         new webpack.HotModuleReplacementPlugin(),
         new HtmlWebpackPlugin({
           inject: true,
-          template: 'assets/js/src/index.html'
+          template: "assets/js/src/index.html"
         })
       );
     }
@@ -79,9 +93,9 @@ var app = {
   }()),
 
   stats: { colors: true },
-  eslint: { configFile: '.eslintrc' },
+  eslint: { configFile: ".eslintrc" },
   debug: true,
-  devtool: 'eval-cheap-module-source-map',
+  devtool: "eval-cheap-module-source-map",
   devServer: {
     hot: true,
     port: 9292,
@@ -91,10 +105,10 @@ var app = {
       colors: true
     }
   }
-}
+};
 
-if (process.env.NODE_ENV === 'production') {
-  app.devtool = 'source-map';
+if (process.env.NODE_ENV === "production") {
+  app.devtool = "source-map";
 }
 
 module.exports = [
