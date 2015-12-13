@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css?family=Orbitron:400,500,700');
+
+:root {
+  --textColor: #fff;
+  --backgroundColor: #000;
+  --highlightColor: #b1b1b1;
+
+  --fontSize: 12px;
+  --fontFamily: "Orbitron", "Helvetica", "Arial";
+}
+
+/* Grid */
+@lost flexbox flex;
+@lost gutter 20px;
+
+section {
+  lost-flex-container: row;
+}
+
+.col-half {
+  lost-column: 1/2;
+}
+
+.col-third {
+  background: var(--backgroundColor);
+  height: 100px;
+  lost-column: 1/3 flex;
+}
+
+.col-fourth {
+  lost-column: 1/4;
+}
+
+.col-fifth {
+  lost-column: 1/5;
+}
+
+/* Document */
+body {
+  background: var(--backgroundColor);
+  color: var(--textColor);
+  font-family: var(--fontFamily);
+  padding: 0 20px;
+}
+
+h1,h2,h3,h4,h5 {
+  color: var(--highlightColor);
+}
+
+a {
+  color: var(--textColor);
+  padding: 5px;
+  text-decoration: none;
+}
+
+.button {
+  border: 1px solid var(--textColor);
+  display: inline-block;
+}
+
+.active {
+  background: #fff;
+  color: #000;
+}

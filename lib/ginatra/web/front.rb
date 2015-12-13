@@ -19,7 +19,7 @@ module Ginatra
     assets do
       # Custom assets mangement
       serve '/js', from: 'assets/js'
-      serve '/css', from: 'assets/scss'
+      # serve '/css', from: 'assets/scss'
     end
 
     get '/css/:stylesheet.css' do

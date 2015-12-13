@@ -51,7 +51,7 @@ var app = {
 
   postcss: function() {
     return [
-      require("cssnext"),
+      require("postcss-cssnext"),
       require("postcss-import-url"),
       require("lost"),
       require("autoprefixer"),

@@ -1,20 +1,20 @@
 {
     "parser": "babel-eslint",
     "rules": {
-        "quotes": 0,
-        "no-trailing-spaces": 0,
+        "quotes": 1,
+        "no-trailing-spaces": 1,
         "eqeqeq": 0,
         "no-underscore-dangle": 0,
         "no-undef": 0,
         "no-extra-boolean-cast": 0,
         "no-mixed-spaces-and-tabs": 0,
-        "no-alert": 0,
+        "no-alert": 1,
         "no-shadow": 0,
         "no-empty": 0,
         "no-irregular-whitespace": 0,
         "no-multi-spaces": 0,
         "no-new": 0,
-        "no-unused-vars": 2, // disallow declaration of variables that are not used in the code
+        "no-unused-vars": 1, // disallow declaration of variables that are not used in the code
         "no-redeclare": 2, // disallow declaring the same variable more then once
         "new-cap": 0,
         //
@@ -34,7 +34,7 @@
         "react/no-did-update-set-state": 2, // Prevent usage of setState in componentDidUpdate
         "react/no-multi-comp": 0, // Prevent multiple component definition per file
         "react/no-unknown-property": 2, // Prevent usage of unknown DOM property
-        "react/prop-types": 2, // Prevent missing props validation in a React component definition
+        //"react/prop-types": 2, // Prevent missing props validation in a React component definition
         "react/react-in-jsx-scope": 2, // Prevent missing React when using JSX
         "react/require-extension": [1, { "extensions": [".js"] }], // Restrict file extensions that may be required
         "react/self-closing-comp": 2, // Prevent extra closing tags for components without children

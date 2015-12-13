@@ -1,11 +1,15 @@
-import React from 'react';
+require ("../../css/main.css");
 
-class TestYo extends React.Component {
-  render() {
-    return(
-      <h1>Yo mama</h1>
-    );
-  }
-}
+import React from "react";
+import ReactDOM from "react-dom";
+import { Router } from "react-router";
+import routes from "routes";
 
-export default TestYo;
+import createHistory from "history/lib/createBrowserHistory";
+
+const history = createHistory();
+
+ReactDOM.render(
+  <Router routes={routes} history={history} />,
+  document.getElementById("wrapper")
+);
