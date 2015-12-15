@@ -34,7 +34,7 @@ class DashboardStore {
     else if (repoIndex < 0) {
       visibleRepos = visibleRepos.concat(repo["repoId"]);
     }
-    this.setState({ visibleRepos })
+    this.setState({ visibleRepos });
   }
 }
 

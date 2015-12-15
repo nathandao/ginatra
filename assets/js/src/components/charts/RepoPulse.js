@@ -1,35 +1,36 @@
 import React from "react";
+import connectToStores from "alt/utils/connectToStores";
 
 import BaseChart from "components/charts/BaseChart";
+import RepoStore from "stores/RepoStore";
 
+@connectToStores
 class RepoPulse extends React.Component {
 
-  constructor(props) {
-    super(props)
+  static getStores() {
+    return [RepoStore];
   }
 
-  _timestamps(daysAgo) {
-    if (daysAgo < 4) {
-      daysAgo = 4;
-    }
+  static getPropsFromStores() {
+    return RepoStore.getState();
+  }
 
-    var timestamps = [];
-
-    for (i = daysAgo; i >= 3; i--) {
-      timestamps = timestamps.concat(i + " days ago at 0:00");
-    }
-
-    timestamps = timestamps.concat([
-      "yesterday at 0:00",
-      "today at 0:00",
-      "today at 23:59:59"
-    ]);
+  constructor(props) {
+    super(props);
   }
 
   render() {
-    return (
-      <BaseChart />
-    );
+    var repoIds = Object.keys(this.props.repoPulses);
+    if (repoIds.length > 0 && repoIds.indexOf(this.props.repoId >= 0)) {
+      console.log(this.props.repoPulses);
+      var chartData = this.props.repoPulses[this.props.repoId];
+      return (
+        <BaseChart type={ this.props.type } chartData={ chartData } />
+      );
+    }
+    else {
+      return <div></div>
+    }
   }
 }
 

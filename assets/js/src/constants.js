@@ -6,7 +6,7 @@ if (process.env.NODE_ENV === "production") {
 
 export default {
   // API parameter constants
-  REPO_PULSE_DAYS: 14,
+  PULSE_PERIOD: 7,
 
   // End points.
   API_REPO_LIST: baseUrl + "stat/repo_list",

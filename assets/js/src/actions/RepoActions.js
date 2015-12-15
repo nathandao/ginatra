@@ -1,13 +1,9 @@
 import control from "control";
 
-import {
-  API_CHART_REPO_PULSE
-} from "constants";
-
 class RepoActions {
 
-  getPulseData(repoId) {
-    return repoId;
+  updatePulseData(pulseData) {
+    return pulseData;
   }
 
   switchVisibility(repoId, isVisible = true) {
