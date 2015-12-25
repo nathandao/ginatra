@@ -1,2 +1,4 @@
 import Alt from "alt";
-export default new Alt();
+var alt = new Alt();
+Alt.debug('ginatra', alt);
+export default alt;
