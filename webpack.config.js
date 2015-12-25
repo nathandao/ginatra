@@ -12,7 +12,7 @@ var app = {
 
   entry: {
     main: path.join(srcPath, "app.js"),
-    common: ["react", "react-dom", "events", "react-router"]
+    common: ["react", "react-dom", "react-router"]
   },
 
   resolve: {
