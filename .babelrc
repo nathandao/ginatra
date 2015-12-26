@@ -1,5 +1,7 @@
 {
-  "optional": ["runtime"],
-  "stage": 0,
-  "comments": false
+  presets: ['es2015', 'stage-0', 'react'],
+  plugins: [
+    'transform-runtime',
+    'transform-decorators-legacy'
+  ]
 }
