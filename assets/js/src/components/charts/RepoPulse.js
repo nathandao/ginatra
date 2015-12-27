@@ -1,8 +1,8 @@
-import React from "react";
-import connectToStores from "alt/utils/connectToStores";
+import React from 'react';
+import connectToStores from 'alt/utils/connectToStores';
 
-import BaseChart from "components/charts/BaseChart";
-import RepoStore from "stores/RepoStore";
+import BaseChart from 'components/charts/BaseChart';
+import RepoStore from 'stores/RepoStore';
 
 @connectToStores
 class RepoPulse extends React.Component {

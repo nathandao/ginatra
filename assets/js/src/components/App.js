@@ -1,16 +1,26 @@
-import React from "react";
-import { Link } from "react-router";
+import React from 'react';
+import connectToStores from 'alt/utils/connectToStores';
 
+import RepoStore from 'stores/RepoStore';
+import Dashboard from 'components/Dashboard';
 
 class App extends React.Component {
+  static getStores() {
+    return [RepoStore];
+  }
+
+  static getPropsFromStores() {
+    return RepoStore.getState();
+  }
 
   render() {
-    return(
+    return (
       <div>
-        <h1><Link to="/">Ginatra</Link></h1>
+        <h1>Ginatra</h1>
+        <Dashboard repos={ this.props.repos } />
       </div>
     );
   }
 }
 
-export default App;
+export default connectToStores(App);

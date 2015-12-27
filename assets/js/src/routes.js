@@ -1,8 +1,12 @@
 import React from 'react';
-import { Router } from 'react-router';
+import { Router, Route } from 'react-router';
+
+import App from 'components/App';
 
 const routes = (
-  <Router />
+  <Router>
+    <Route path="/" component={App} />
+  </Router>
 );
 
 export default routes;

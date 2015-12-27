@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 import {
   Bar,
@@ -7,7 +7,7 @@ import {
   Pie,
   PolarArea,
   Radar
-} from "react-chartjs";
+} from 'react-chartjs';
 
 class BaseChart extends React.Component {
 
@@ -19,19 +19,19 @@ class BaseChart extends React.Component {
     return {
       width: 1000,
       height: 500,
-      type: "Line"
+      type: 'Line'
     };
   }
 
   render() {
 
     var chart = [];
-    chart["Bar"] = Bar;
-    chart["Doughnut"] = Doughnut;
-    chart["Line"] = Line;
-    chart["Pie"] = Pie;
-    chart["PolarArea"] = PolarArea;
-    chart["Radar"] = Radar;
+    chart['Bar'] = Bar;
+    chart['Doughnut'] = Doughnut;
+    chart['Line'] = Line;
+    chart['Pie'] = Pie;
+    chart['PolarArea'] = PolarArea;
+    chart['Radar'] = Radar;
     console.log(this.props.chartData);
 
     return (
@@ -41,7 +41,7 @@ class BaseChart extends React.Component {
         width: this.props.width,
         options: {
           responsive: true,
-          scaleGridLineColor: "rgba(255,255,255,0.5)"
+          scaleGridLineColor: 'rgba(255,255,255,0.5)'
         }
       })
     );
