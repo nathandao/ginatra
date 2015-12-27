@@ -13,7 +13,12 @@ module Ginatra
       end
 
       def repositories
-        self.settings['repositories']
+        repos = self.settings['repositories']
+        repos.each_with_index{ |value, index|
+          color = value[1]['color'] || colors[index]
+          repos[value[0]]['color'] = color
+        }
+        repos
       end
 
       def update_interval

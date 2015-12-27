@@ -32,7 +32,10 @@ module Ginatra
     get '/stat/repo_list' do
       repos = Ginatra::Config.repositories
       repos.map { |key, value|
-        { id: key, name: value['name'], path: value['path'] }
+        { id: key,
+          name: value['name'],
+          color: value['color'],
+          path: value['path'] }
       }.to_json
     end
 
