@@ -1,6 +1,11 @@
 {
   "extends": "airbnb",
+  "parser": "babel-eslint",
+  "ecmaFeatures": {
+    "classes": true,
+  },
   "rules": {
-    "prefer-const": 0
+    "prefer-const": 0,
+    "react/prop-types": 0
   }
 }
