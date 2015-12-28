@@ -13,7 +13,6 @@ class RepoSelector extends React.Component {
   render() {
     return (
       <SectionContainer>
-        <h1>Repo Selector</h1>
         { this._renderRepoButtonList() }
       </SectionContainer>
     );

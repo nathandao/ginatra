@@ -3,9 +3,9 @@ import React from 'react';
 class SectionContainer extends React.Component {
   render() {
     return (
-      <div className="section-container">
+      <section className="section-container">
         { this.props.children }
-      </div>
+      </section>
     );
   }
 }

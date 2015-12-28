@@ -17,6 +17,10 @@ section {
   lost-flex-container: row;
 }
 
+.col-full {
+  lost-column: 1;
+}
+
 .col-half {
   lost-column: 1/2;
 }
