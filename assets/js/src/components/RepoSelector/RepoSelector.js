@@ -1,22 +1,33 @@
 import React from 'react';
+import connectToStores from 'alt/utils/connectToStores';
 
 import SectionContainer from 'components/Utils/SectionContainer';
 import RepoButton from 'components/RepoSelector/RepoButton';
+import RepoStore from 'stores/RepoStore';
 
 class RepoSelector extends React.Component {
-  _renderRepoButtonList() {
-    return this.props.repos.map((repo) => {
-      return <RepoButton repo={ repo } key={ repo.id } />;
-    });
+  static getStores() {
+    return [RepoStore];
+  }
+
+  static getPropsFromStores() {
+    return RepoStore.getState();
   }
 
   render() {
+    let repoButtonList = [];
+    this.props.repos.map((repo) => {
+      repoButtonList.push(
+        <RepoButton repo={ repo } key={ repo.id }/>
+      );
+    });
+
     return (
       <SectionContainer>
-        { this._renderRepoButtonList() }
+        { repoButtonList }
       </SectionContainer>
     );
   }
 }
 
-export default RepoSelector;
+export default connectToStores(RepoSelector);
