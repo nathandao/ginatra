@@ -1,36 +1,26 @@
 import React from 'react';
-import connectToStores from 'alt/utils/connectToStores';
 
-import BaseChart from 'components/charts/BaseChart';
-import RepoStore from 'stores/RepoStore';
+import BaseChart from 'components/Charts/BaseChart';
 
-@connectToStores
 class RepoPulse extends React.Component {
-
-  static getStores() {
-    return [RepoStore];
+  static propTypes() {
+    return {
+      repoId: React.PropTypes.string.isRequired,
+      type: React.PropTypes.oneOf(['Line', 'PolarArea', 'Radar']),
+    };
   }
 
-  static getPropsFromStores() {
-    return RepoStore.getState();
-  }
-
-  constructor(props) {
-    super(props);
+  static defaultProps() {
+    return {
+      height: 400,
+      width: 1000,
+      options: {},
+      type: 'Line',
+    };
   }
 
   render() {
-    let repoIds = Object.keys(this.props.repoPulses);
-    if (repoIds.length > 0 && repoIds.indexOf(this.props.repoId >= 0)) {
-      console.log(this.props.repoPulses);
-      let chartData = this.props.repoPulses[this.props.repoId];
-      return (
-        <BaseChart type={ this.props.type } chartData={ chartData } />
-      );
-    }
-    else {
-      return <div></div>
-    }
+    return <BaseChart chartData={ this.props.chartData }/>;
   }
 }
 

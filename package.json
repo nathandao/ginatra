@@ -36,6 +36,7 @@
     "lodash": "^3.10.1",
     "lost": "^6.6.2",
     "mocha": "^2.3.4",
+    "moment": "^2.10.6",
     "node-sass": "^3.4.2",
     "postcss-cssnext": "^2.3.0",
     "postcss-import-url": "^1.0.0",
