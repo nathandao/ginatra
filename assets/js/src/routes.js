@@ -1,15 +1,15 @@
 import React from 'react';
-import { Router, Route } from 'react-router';
+import { Router, Route, IndexRoute } from 'react-router';
 
-import App from 'components/App';
-import RepoSelector from 'components/RepoSelector/RepoSelector';
-import Dashboard from 'components/Dashboard';
+import App from 'App';
+import Home from 'pages/Home';
+import Selector from 'pages/Selector';
 
 const routes = (
   <Router>
     <Route path="/" component={ App }>
-      <Dashboard/>
-      <Route path="repo-selector" component={ RepoSelector }/>
+      <IndexRoute component={ Home }/>
+      <Route path="/selector" component={ Selector }/>
     </Route>
   </Router>
 );

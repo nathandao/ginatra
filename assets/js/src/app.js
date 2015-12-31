@@ -1,16 +1,16 @@
-require('../../css/main.css');
-
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { Router } from 'react-router';
-import routes from 'routes';
-import createHistory from 'history/lib/createBrowserHistory';
 
-import DashboardServices from 'services/DashboardServices';
+import Navigation from 'components/Navigation/Navigation';
 
-DashboardServices.getRepoList();
-const history = createHistory();
-ReactDOM.render(
-  <Router routes={ routes } history={ history } />,
-  document.getElementById('wrapper')
-);
+class App extends React.Component {
+  render() {
+    return (
+      <div className="wrapper">
+        <Navigation />
+        { this.props.children }
+      </div>
+    );
+  }
+}
+
+export default App;

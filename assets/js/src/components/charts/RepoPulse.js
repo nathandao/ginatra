@@ -20,10 +20,10 @@ class RepoPulse extends React.Component {
   }
 
   render() {
-    var repoIds = Object.keys(this.props.repoPulses);
+    let repoIds = Object.keys(this.props.repoPulses);
     if (repoIds.length > 0 && repoIds.indexOf(this.props.repoId >= 0)) {
       console.log(this.props.repoPulses);
-      var chartData = this.props.repoPulses[this.props.repoId];
+      let chartData = this.props.repoPulses[this.props.repoId];
       return (
         <BaseChart type={ this.props.type } chartData={ chartData } />
       );

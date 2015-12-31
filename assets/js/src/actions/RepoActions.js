@@ -3,7 +3,9 @@ import control from 'control';
 class RepoActions {
   constructor() {
     this.generateActions(
-      'getRepoPulse',
+      'loadRepoList',
+      'requestRepoListError',
+      'reorderRepos',
       'switchRepoVisibility'
     );
   }

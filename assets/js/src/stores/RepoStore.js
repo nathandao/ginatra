@@ -1,22 +1,17 @@
 import _ from 'lodash';
 
 import control from 'control';
-import DashboardActions from 'actions/DashboardActions';
 import RepoActions from 'actions/RepoActions';
 
 class RepoStore {
   constructor() {
-    this.bindListeners({
-      onGetRepoList: DashboardActions.getRepoListSuccess,
-      onSwitchRepoVisibility: RepoActions.switchRepoVisibility,
-    });
-
+    this.bindActions(RepoActions);
     this.state = {
       repos: [],
     };
   }
 
-  onGetRepoList(repos) {
+  onLoadRepoList(repos) {
     _.forEach(repos, (repo, index) => {
       repos[index].visible = true;
     });

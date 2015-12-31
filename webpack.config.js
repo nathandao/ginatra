@@ -11,7 +11,7 @@ var app = {
   cache: true,
 
   entry: {
-    main: path.join(srcPath, "app.js"),
+    main: path.join(srcPath, "index.js"),
     common: ["react", "react-dom", "react-router"]
   },
 

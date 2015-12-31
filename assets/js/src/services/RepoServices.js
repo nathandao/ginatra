@@ -1,23 +1,23 @@
 import request from 'reqwest';
 
-import DashboardActions from 'actions/DashboardActions';
+import RepoActions from 'actions/RepoActions';
 import { API_REPO_LIST } from 'constants/api';
 
-class DashboardServices {
-  getRepoList() {
+class RepoServices {
+  requestRepoList() {
     request({
       url: API_REPO_LIST,
       method: 'get',
       type: 'json',
       contentType: 'application/json',
       success: (resp) => {
-        DashboardActions.getRepoListSuccess(resp);
+        RepoActions.loadRepoList(resp);
       },
       error: (err) => {
-        DashboardActions.getRepoListError(err);
+        RepoActions.requestRepoListError(err);
       },
     });
   }
 }
 
-export default new DashboardServices();
+export default new RepoServices();
