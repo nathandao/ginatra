@@ -27,7 +27,6 @@ section {
 
 .col-third {
   background: var(--backgroundColor);
-  height: 100px;
   lost-column: 1/3 flex;
 }
 

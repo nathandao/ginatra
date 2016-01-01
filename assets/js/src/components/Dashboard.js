@@ -1,9 +1,23 @@
 import React from 'react';
 import _ from 'lodash';
 
+import RepoPulseServices from 'services/chart/RepoPulseServices';
 import RepoPulse from 'components/Charts/RepoPulse';
 
 class Dashboard extends React.Component {
+  componentWillMount() {
+    let visibleRepos = this._getVisibleRepos().map((repo) => {
+      return repo.id;
+    });
+    let reposWithPulses = this.props.repoPulses.map((pulse) => {
+      return pulse.repoId;
+    });
+    let reposWithoutPulse = _.difference(visibleRepos, reposWithPulses);
+    if (reposWithoutPulse.length > 0) {
+      RepoPulseServices.requestRepoPulses(reposWithoutPulse);
+    }
+  }
+
   _getVisibleRepos() {
     return _.select(this.props.repos, (repo) => {
       return repo.visible === true;
@@ -12,14 +26,16 @@ class Dashboard extends React.Component {
 
   repoPulses() {
     let repos = this._getVisibleRepos();
-
     return repos.map((repo) => {
-      let pulseData = _.find(this.props.repoPulses, (repoPulse) {
+      let pulseData = _.find(this.props.repoPulses, (repoPulse) => {
         return repoPulse.repoId === repo.id;
       });
-
       if (pulseData) {
-        return <RepoPulse chartData={ pulseData }/>;
+        return (
+          <div className="col-third" key={ repo.id }>
+            <RepoPulse chartData={ pulseData.chartData }/>
+          </div>
+        );
       }
     });
   }
@@ -28,7 +44,9 @@ class Dashboard extends React.Component {
     return (
       <div>
         <h1>Dashboard</h1>
-        <div>{ JSON.stringify(this._getVisibleRepos()) }</div>
+        <section>
+          { this.repoPulses() }
+        </section>
       </div>
     );
   }

@@ -1,26 +1,32 @@
 import React from 'react';
 
-import BaseChart from 'components/Charts/BaseChart';
+import BaseChart from 'components/charts/BaseChart';
 
 class RepoPulse extends React.Component {
-  static propTypes() {
-    return {
-      repoId: React.PropTypes.string.isRequired,
-      type: React.PropTypes.oneOf(['Line', 'PolarArea', 'Radar']),
-    };
+  static defaultProps = {
+    height: 400,
+    width: 1000,
+    type: 'Line',
+    chartData: {
+      labels: [
+        'loading...',
+      ],
+      datasets: [],
+    },
   }
 
-  static defaultProps() {
-    return {
-      height: 400,
-      width: 1000,
-      options: {},
-      type: 'Line',
-    };
+  constructor(props) {
+    super(props);
   }
 
   render() {
-    return <BaseChart chartData={ this.props.chartData }/>;
+    let content = '';
+    if (this.props.chartData !== null) {
+      content = <BaseChart { ...this.props }/>;
+    } else {
+      content = <div></div>;
+    }
+    return content;
   }
 }
 
