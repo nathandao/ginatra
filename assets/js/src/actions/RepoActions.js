@@ -6,7 +6,9 @@ class RepoActions {
       'loadRepoList',
       'requestRepoListError',
       'reorderRepos',
-      'switchRepoVisibility'
+      'switchRepoVisibility',
+      'loadCommitsOverview',
+      'requestCommitsOverviewError'
     );
   }
 }

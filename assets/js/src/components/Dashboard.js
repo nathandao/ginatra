@@ -30,9 +30,12 @@ class Dashboard extends React.Component {
       let pulseData = _.find(this.props.repoPulses, (repoPulse) => {
         return repoPulse.repoId === repo.id;
       });
-      if (pulseData) {
+      if (!pulseData) {
+        RepoPulseServices.requestRepoPulse(repo.id);
+      } else {
         return (
           <div className="col-third" key={ repo.id }>
+            <div className="col-full"><h5>{ repo.name } [ { repo.id } ]</h5></div>
             <RepoPulse chartData={ pulseData.chartData }/>
           </div>
         );

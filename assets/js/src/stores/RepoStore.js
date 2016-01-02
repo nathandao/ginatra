@@ -8,6 +8,7 @@ class RepoStore {
     this.bindActions(RepoActions);
     this.state = {
       repos: [],
+      commitsOverviews: [],
     };
   }
 
@@ -32,6 +33,22 @@ class RepoStore {
         repos,
       });
     }
+  }
+
+  onLoadCommitsOverview(data) {
+    let overviews = this.state.commitsOverviews;
+    let repoIndex = _.findIndex(overviews, (overview) => {
+      return overview.repoId === data.repoId;
+    });
+
+    if (repoIndex >= 0) {
+      overviews[repoIndex] = data;
+    } else {
+      overviews.push(data);
+    }
+    this.setState({
+      commitsOverviews: data,
+    });
   }
 }
 
