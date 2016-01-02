@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 import RepoPulseActions from 'actions/chart/RepoPulseActions';
 
-class RepoPulseStore {
+class ChartStore {
   constructor() {
     this.bindActions(RepoPulseActions);
     this.state = {
@@ -25,4 +25,4 @@ class RepoPulseStore {
   }
 }
 
-export default control.createStore(RepoPulseStore, 'RepoPulseStore');
+export default control.createStore(ChartStore, 'ChartStore');

@@ -109,6 +109,8 @@ module Ginatra
         params = timeline_prepare_params(params)
         time_stamp_str = params[:labels]
         time_stamps = params[:time_stamps]
+        params[:from] = time_stamps[0]
+        params[:til] = time_stamps[-1]
         params.reject! { |k| [:time_stamps, :labels].include? k }
         commits = Ginatra::Stat.commits params
         color = params[:in].nil? ? nil : Ginatra::Helper.get_repo(params[:in]).color

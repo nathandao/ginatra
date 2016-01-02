@@ -20,7 +20,6 @@ class RepoPulseServices {
       time_stamps: PULSE_TIME_STAMPS,
       labels: PULSE_TIME_LABELS,
     };
-    console.log(data);
     request({
       url: API_CHART_REPO_PULSE,
       method: 'get',
