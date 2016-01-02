@@ -34,6 +34,7 @@ class RepoServices {
       method: 'get',
       type: 'json',
       contentType: 'application/json',
+      data: { in: repoId },
       success: (resp) => {
         RepoActions.loadCommitsOverview({
           repoId,

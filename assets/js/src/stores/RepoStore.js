@@ -47,7 +47,7 @@ class RepoStore {
       overviews.push(data);
     }
     this.setState({
-      commitsOverviews: data,
+      commitsOverviews: overviews,
     });
   }
 }
