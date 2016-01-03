@@ -3,7 +3,7 @@ import connectToStores from 'alt/utils/connectToStores';
 
 import RepoStore from 'stores/RepoStore';
 import ChartStore from 'stores/ChartStore';
-import Dashboard from 'components/Dashboard';
+import Dashboard from 'components/Dashboard/Dashboard';
 
 class Home extends React.Component {
   static getStores() {
