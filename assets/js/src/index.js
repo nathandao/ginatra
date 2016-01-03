@@ -8,7 +8,8 @@ import createHistory from 'history/lib/createBrowserHistory';
 
 import RepoServices from 'services/RepoServices';
 
-RepoServices.requestRepoList();
+RepoServices.initData();
+
 const history = createHistory();
 ReactDOM.render(
   <Router routes={ routes } history={ history } />,

@@ -4,7 +4,6 @@ class RepoPulseActions {
   constructor() {
     this.generateActions(
       'loadRepoPulse',
-      'requestRepoPulseStart',
       'requestRepoPulseError'
     );
   }

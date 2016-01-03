@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=Orbitron:400,500,700');
 
 :root {
-  --textColor: #fff;
+  --textColor: #b1b1b1;
   --backgroundColor: #000;
-  --highlightColor: #b1b1b1;
+  --highlightColor: #fff;
 
   --fontSize: 12px;
   --fontFamily: "Orbitron", "Helvetica", "Arial";
@@ -43,6 +43,7 @@ body {
   background: var(--backgroundColor);
   color: var(--textColor);
   font-family: var(--fontFamily);
+  font-size: var(--fontSize);
   padding: 0 20px;
 }
 

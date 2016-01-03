@@ -1,5 +1,7 @@
 import request from 'reqwest';
+import moment from 'moment';
 
+import RepoPulseServices from 'services/chart/RepoPulseServices';
 import RepoActions from 'actions/RepoActions';
 import {
   API_REPO_LIST,
@@ -7,7 +9,7 @@ import {
 } from 'constants/api';
 
 class RepoServices {
-  requestRepoList() {
+  initData() {
     request({
       url: API_REPO_LIST,
       method: 'get',
@@ -15,6 +17,10 @@ class RepoServices {
       contentType: 'application/json',
       success: (resp) => {
         RepoActions.loadRepoList(resp);
+        resp.map((repo) => {
+          RepoPulseServices.requestRepoPulse(repo.id);
+          this.requestCommitsOverview(repo.id);
+        });
       },
       error: (err) => {
         RepoActions.requestRepoListError(err);
@@ -43,6 +49,24 @@ class RepoServices {
       },
       error: (err) => {
         RepoActions.requestCommitsOverviewError(err);
+      },
+    });
+  }
+
+  requestTodayOverview() {
+    let todayEnd = moment().hour(23).minute(59).second(59).format('MM-DD-YYYY HH:mm');
+    let todayStart = moment().hour(0).minute(0).second(0).format('MM-DD-YYYY HH:mm');
+    request({
+      url: API_COMMITS_OVERVIEW,
+      method: 'get',
+      type: 'json',
+      dataType: 'application/json',
+      data: { from: todayStart, til: todayEnd },
+      success: (resp) => {
+        RepoActions.loadTodayOverview(resp);
+      },
+      error: (err) => {
+        RepoActions.requestTodayOverviewError(err);
       },
     });
   }

@@ -1,23 +1,10 @@
 import React from 'react';
 import _ from 'lodash';
 
-import RepoPulseServices from 'services/chart/RepoPulseServices';
 import RepoCell from 'components/Dashboard/RepoCell';
+import TodayOverview from 'components/Dashboard/TodayOverview';
 
 class Dashboard extends React.Component {
-  componentWillMount() {
-    let visibleRepos = this._getVisibleRepos().map((repo) => {
-      return repo.id;
-    });
-    let reposWithPulses = this.props.repoPulses.map((pulse) => {
-      return pulse.repoId;
-    });
-    let reposWithoutPulse = _.difference(visibleRepos, reposWithPulses);
-    if (reposWithoutPulse.length > 0) {
-      RepoPulseServices.requestRepoPulses(reposWithoutPulse);
-    }
-  }
-
   _getVisibleRepos() {
     return _.select(this.props.repos, (repo) => {
       return repo.visible === true;
@@ -36,6 +23,11 @@ class Dashboard extends React.Component {
     return (
       <div>
         <h1>Dashboard</h1>
+        <section>
+          <div className="col-3">
+            <TodayOverview { ...this.props.todayOverview } />
+          </div>
+        </section>
         <section>
           { this.repoPulses() }
         </section>

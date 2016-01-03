@@ -8,7 +8,9 @@ class RepoActions {
       'reorderRepos',
       'switchRepoVisibility',
       'loadCommitsOverview',
-      'requestCommitsOverviewError'
+      'requestCommitsOverviewError',
+      'requestTodayOverview',
+      'loadTodayOverview'
     );
   }
 }
