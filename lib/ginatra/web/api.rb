@@ -44,7 +44,9 @@ module Ginatra
     end
 
     get '/stat/commits' do
-      Ginatra::Stat.commits(@filter).to_json
+      Ginatra::Stat.commits(@filter).map{ |commit_data|
+        { repoId: commit_data[0], commits: commit_data[1] }
+      }.to_json
     end
 
     get '/stat/commits_overview' do
