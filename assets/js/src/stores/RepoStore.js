@@ -9,6 +9,7 @@ class RepoStore {
     this.state = {
       repos: [],
       commitsOverviews: [],
+      commitsData: [],
     };
   }
 
@@ -49,6 +50,25 @@ class RepoStore {
     this.setState({
       commitsOverviews: overviews,
     });
+  }
+
+  onLoadCommits(allCommitsData) {
+    let commitsData = this.state.commitsData;
+    _.forEach(allCommitsData, (data) => {
+      let repoIndex = _.findIndex(commitsData, (commitData) => {
+        return commitData.repoId === data.repoId;
+      });
+
+      if (repoIndex >= 0) {
+        commitsData[repoIndex].commits = _.uniq(_.merge(
+          commitsData[repoIndex].commits,
+          data.commits
+        ));
+      } else {
+        commitsData.push(data);
+      }
+    });
+    this.setState({ commitsData });
   }
 }
 

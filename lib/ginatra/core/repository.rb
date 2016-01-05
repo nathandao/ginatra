@@ -145,7 +145,7 @@ module Ginatra
     end
 
     def pull_latest_commits
-      `git -C #{path} pull &>/dev/null`
+      `git -C #{path} pull --rebase &>/dev/null`
     end
 
     # def track_all_remote_branches

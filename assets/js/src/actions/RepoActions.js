@@ -9,8 +9,8 @@ class RepoActions {
       'switchRepoVisibility',
       'loadCommitsOverview',
       'requestCommitsOverviewError',
-      'requestTodayOverview',
-      'loadTodayOverview'
+      'requestCommits',
+      'loadCommits'
     );
   }
 }

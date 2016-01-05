@@ -17,7 +17,7 @@ class Home extends React.Component {
   }
 
   render() {
-    return <Dashboard repos={ this.props.repos } repoPulses={ this.props.repoPulses } commitsOverviews={ this.props.commitsOverviews }/>;
+    return <Dashboard { ...this.props }/>;
   }
 }
 

@@ -1,12 +1,13 @@
 import request from 'reqwest';
-import moment from 'moment';
 
 import RepoPulseServices from 'services/chart/RepoPulseServices';
 import RepoActions from 'actions/RepoActions';
 import {
   API_REPO_LIST,
   API_COMMITS_OVERVIEW,
+  API_COMMITS,
 } from 'constants/api';
+import { PULSE_TIME_STAMPS } from 'constants/dashboard';
 
 class RepoServices {
   initData() {
@@ -16,7 +17,10 @@ class RepoServices {
       type: 'json',
       contentType: 'application/json',
       success: (resp) => {
+        let startTime = PULSE_TIME_STAMPS[0];
+        let endTime = PULSE_TIME_STAMPS[PULSE_TIME_STAMPS.length - 1];
         RepoActions.loadRepoList(resp);
+        this.requestCommits(startTime, endTime);
         resp.map((repo) => {
           RepoPulseServices.requestRepoPulse(repo.id);
           this.requestCommitsOverview(repo.id);
@@ -53,17 +57,15 @@ class RepoServices {
     });
   }
 
-  requestTodayOverview() {
-    let todayEnd = moment().hour(23).minute(59).second(59).format('MM-DD-YYYY HH:mm');
-    let todayStart = moment().hour(0).minute(0).second(0).format('MM-DD-YYYY HH:mm');
+  requestCommits(from, til) {
     request({
-      url: API_COMMITS_OVERVIEW,
+      url: API_COMMITS,
       method: 'get',
       type: 'json',
       dataType: 'application/json',
-      data: { from: todayStart, til: todayEnd },
+      data: { from, til },
       success: (resp) => {
-        RepoActions.loadTodayOverview(resp);
+        RepoActions.loadCommits(resp);
       },
       error: (err) => {
         RepoActions.requestTodayOverviewError(err);

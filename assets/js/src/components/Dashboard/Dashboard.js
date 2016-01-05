@@ -25,7 +25,7 @@ class Dashboard extends React.Component {
         <h1>Dashboard</h1>
         <section>
           <div className="col-3">
-            <TodayOverview { ...this.props.todayOverview } />
+            <TodayOverview commitsData={ this.props.commitsData } visibleRepos={ this._getVisibleRepos() } />
           </div>
         </section>
         <section>
