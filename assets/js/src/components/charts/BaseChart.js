@@ -12,7 +12,7 @@ import {
 class BaseChart extends React.Component {
   static defaultProps = {
     width: 1000,
-    height: 500,
+    height: 400,
     type: 'Line',
     options: {
       responsive: true,

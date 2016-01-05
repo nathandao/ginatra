@@ -5,7 +5,7 @@ class RepoCellHeader extends React.Component {
   render() {
     let overviewData = this.props.overview.overviewData;
     let lastCommitInfo = overviewData.last_commit_info;
-    let lastCommitDate = moment(lastCommitInfo.date).format('DD.MM.YY hh:mm');
+    let lastCommitDate = moment(new Date(lastCommitInfo.date)).format('DD.MM.YY hh:mm');
 
     return (
       <section>

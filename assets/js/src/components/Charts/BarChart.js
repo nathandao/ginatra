@@ -2,11 +2,11 @@ import React from 'react';
 
 import BaseChart from 'components/charts/BaseChart';
 
-class RepoPulse extends React.Component {
+class BarChart extends React.Component {
   static defaultProps = {
-    height: 400,
+    height: 350,
     width: 1000,
-    type: 'Line',
+    type: 'Bar',
     chartData: {
       labels: [
         'loading...',
@@ -24,10 +24,10 @@ class RepoPulse extends React.Component {
     if (this.props.chartData !== null) {
       content = <BaseChart { ...this.props }/>;
     } else {
-      content = <div></div>;
+      content = <div>Loading...</div>;
     }
     return content;
   }
 }
 
-export default RepoPulse;
+export default BarChart;

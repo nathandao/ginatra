@@ -16,6 +16,7 @@ class RepoStore {
   onLoadRepoList(repos) {
     _.forEach(repos, (repo, index) => {
       repos[index].visible = true;
+      repos[index].rgb = this._hexToRgb(repos[index].color);
     });
     this.setState({
       repos,
@@ -69,6 +70,15 @@ class RepoStore {
       }
     });
     this.setState({ commitsData });
+  }
+
+  _hexToRgb(hex) {
+    let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16),
+    } : null;
   }
 }
 

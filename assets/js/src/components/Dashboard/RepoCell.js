@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 
-import RepoPulse from 'components/charts/RepoPulse';
+import LineChart from 'components/Charts/LineChart';
 import RepoCellHeader from 'components/Dashboard/RepoCellHeader';
 
 class RepoCell extends React.Component {
@@ -30,7 +30,7 @@ class RepoCell extends React.Component {
 
     if (pulseData) {
       repoContent.push(
-        <RepoPulse chartData={ pulseData.chartData } key={ 'pulse-data-' + repo.id }/>
+        <LineChart chartData={ pulseData.chartData } key={ 'pulse-data-' + repo.id }/>
       );
     }
 
@@ -39,19 +39,16 @@ class RepoCell extends React.Component {
 
   render() {
     let repo = this.props.repo;
-    let repoContent = [];
 
-    repoContent.push(
-      <div className="col-full" key={ 'repo-head-' + repo.id }>
-        <h2>{ repo.name } [ { repo.id } ]</h2>
+    return (
+      <div className="col-third" key={ repo.id }>
+        <div className="col-full">
+          <h2>{ repo.name } [ { repo.id } ]</h2>
+        </div>
+        { this.repoOverview() }
+        { this.repoPulse() }
       </div>
     );
-    repoContent = repoContent.concat(
-      this.repoOverview(),
-      this.repoPulse()
-    );
-
-    return <div className="col-third" key={ repo.id }>{ repoContent }</div>;
   }
 }
 

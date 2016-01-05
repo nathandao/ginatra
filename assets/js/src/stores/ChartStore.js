@@ -1,11 +1,11 @@
 import control from 'control';
 import _ from 'lodash';
 
-import RepoPulseActions from 'actions/chart/RepoPulseActions';
+import ChartActions from 'actions/ChartActions';
 
 class ChartStore {
   constructor() {
-    this.bindActions(RepoPulseActions);
+    this.bindActions(ChartActions);
     this.state = {
       pulses: [],
     };

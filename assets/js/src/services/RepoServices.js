@@ -1,6 +1,6 @@
 import request from 'reqwest';
 
-import RepoPulseServices from 'services/chart/RepoPulseServices';
+import ChartServices from 'services/ChartServices';
 import RepoActions from 'actions/RepoActions';
 import {
   API_REPO_LIST,
@@ -22,7 +22,7 @@ class RepoServices {
         RepoActions.loadRepoList(resp);
         this.requestCommits(startTime, endTime);
         resp.map((repo) => {
-          RepoPulseServices.requestRepoPulse(repo.id);
+          ChartServices.requestRepoPulse(repo.id);
           this.requestCommitsOverview(repo.id);
         });
       },

@@ -4,8 +4,8 @@ import _ from 'lodash';
 
 class TodayOverview extends React.Component {
   getTodayData() {
-    let todayStart = moment().hour(0).minute(0).second(0).unix();
-    let todayEnd = moment().hour(23).minute(59).second(59).unix();
+    let todayStart = moment(new Date()).hour(0).minute(0).second(0).unix();
+    let todayEnd = moment(new Date()).hour(23).minute(59).second(59).unix();
     let todayData = {
       commitsCount: 0,
       additions: 0,
@@ -20,7 +20,7 @@ class TodayOverview extends React.Component {
 
     _.forEach(visibleReposData, (repoData) => {
       let todayCommits = _.filter(repoData.commits, (commit) => {
-        let commitDate = moment(commit.date).unix();
+        let commitDate = moment(new Date(commit.date)).unix();
         return commitDate >= todayStart && commitDate <= todayEnd;
       });
 
