@@ -45,7 +45,10 @@ module Ginatra
 
     get '/stat/commits' do
       Ginatra::Stat.commits(@filter).map{ |commit_data|
-        { repoId: commit_data[0], commits: commit_data[1] }
+        commits_arr = commit_data[1].map{ |commit|
+          commit.flatten[1]
+        }
+        { repoId: commit_data[0], commits: commits_arr }
       }.to_json
     end
 
