@@ -30,7 +30,7 @@ class ContributorsComparison extends React.Component {
   }
 
   render() {
-    let content = <div></div>;
+    let content = <div>Loading...</div>;
     let chartData = this.getChartData();
     if (chartData.length > 0) {
       content = <BaseChart type="PolarArea" chartData={ chartData } width="500" height="500"/>;

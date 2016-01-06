@@ -30,6 +30,5 @@ for (let i = 23; i >= 0; i--) {
   hourlyTimeLabels.push(currentTime.format('HH'));
 }
 hourlyTimeStamps.push(todayEnd.format('MM-DD-YYYY HH:mm'));
-hourlyTimeLabels.push(todayEnd.format('HH'));
 export const HOURLY_TIME_STAMPS = hourlyTimeStamps;
 export const HOURLY_TIME_LABELS = hourlyTimeLabels;

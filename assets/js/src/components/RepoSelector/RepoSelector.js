@@ -1,6 +1,5 @@
 import React from 'react';
 
-import SectionContainer from 'components/Utils/SectionContainer';
 import RepoButton from 'components/RepoSelector/RepoButton';
 
 class RepoSelector extends React.Component {
@@ -16,9 +15,9 @@ class RepoSelector extends React.Component {
 
   render() {
     return (
-      <SectionContainer>
+      <section>
         { this.repoButtonList() }
-      </SectionContainer>
+      </section>
     );
   }
 }

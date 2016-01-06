@@ -19,7 +19,7 @@ class BaseChart extends React.Component {
       scaleGridLineColor: 'rgba(255,255,255,0.5)',
       scaleLineColor: 'rgba(255,255,255,0.5)',
       scaleBackdropColor: 'rgba(255,255,255,0.75)',
-      segmentStrokeColor: '#bada55',
+      segmentStrokeColor: '#000',
     },
     chartData: {},
   }

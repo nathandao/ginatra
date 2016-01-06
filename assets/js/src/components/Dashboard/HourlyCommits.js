@@ -64,7 +64,7 @@ class HourlyCommits extends React.Component {
   render() {
     let chartData = this.getChartData();
     let content = <div>Loading...</div>;
-    if (chartData.datasets.length > 0) {
+    if (chartData.datasets.length > 0 && this.props.repos.length > 0) {
       content = <BaseChart type="Bar" chartData={ this.getChartData() } width="1000" height="150"/>;
     }
     return (
