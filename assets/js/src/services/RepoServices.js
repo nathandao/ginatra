@@ -5,8 +5,10 @@ import RepoActions from 'actions/RepoActions';
 import {
   API_REPO_LIST,
   API_COMMITS_OVERVIEW,
+  API_REPO_OVERVIEW,
   API_COMMITS,
   API_AUTHORS,
+  API_HOURS,
 } from 'constants/api';
 import { PULSE_TIME_STAMPS } from 'constants/dashboard';
 
@@ -23,6 +25,7 @@ class RepoServices {
         RepoActions.loadRepoList(resp);
         this.requestCommits(startTime, endTime);
         this.requestContributors();
+        this.requestRepoOverviews();
         resp.map((repo) => {
           ChartServices.requestRepoPulse(repo.id);
           this.requestCommitsOverview(repo.id);
@@ -40,17 +43,43 @@ class RepoServices {
     });
   }
 
-  requestCommitsOverview(repoId) {
+  requestCommitsOverview(repoId = null) {
+    let data = {};
+    if (repoId !== null) {
+      data.in = repoId;
+    }
     request({
       url: API_COMMITS_OVERVIEW,
       method: 'get',
       type: 'json',
       contentType: 'application/json',
-      data: { in: repoId },
+      data,
       success: (resp) => {
         RepoActions.loadCommitsOverview({
           repoId,
           overviewData: resp,
+        });
+      },
+      error: (err) => {
+        RepoActions.requestCommitsOverviewError(err);
+      },
+    });
+  }
+
+  requestRepoOverviews(repoId = null) {
+    let data = {};
+    if (repoId !== null) {
+      data.in = repoId;
+    }
+    request({
+      url: API_REPO_OVERVIEW,
+      method: 'get',
+      type: 'json',
+      contentType: 'application/json',
+      data,
+      success: (resp) => {
+        resp.map((repoOverview) => {
+          RepoActions.loadCommitsOverview(repoOverview);
         });
       },
       error: (err) => {
@@ -91,6 +120,26 @@ class RepoServices {
       },
       error: (err) => {
         RepoActions.requestContributorsError(err);
+      },
+    });
+  }
+
+  requestHours(repoId = null) {
+    let data = {};
+    if (repoId) {
+      data.in = repoId;
+    }
+    request({
+      url: API_HOURS,
+      method: 'get',
+      type: 'json',
+      dataType: 'application/json',
+      data,
+      success: (resp) => {
+        RepoActions.loadHours(resp);
+      },
+      error: (err) => {
+        RepoActions.requestHoursError(err);
       },
     });
   }

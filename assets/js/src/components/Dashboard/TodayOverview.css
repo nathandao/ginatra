@@ -1,0 +1,18 @@
+.today-overview-total-commits {
+  font-size: 6em;
+  font-weight: bold;
+}
+
+.today-overview-additions {
+  color: #bada55;
+}
+
+.today-overview-deletions {
+  color: red;
+}
+
+.today-overview-deletions,
+.today-overview-additions {
+  font-size: 2em;
+  font-weight: bold;
+}

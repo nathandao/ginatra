@@ -1,3 +1,5 @@
+require('./TodayOverview.css');
+
 import React from 'react';
 import moment from 'moment';
 import _ from 'lodash';
@@ -46,12 +48,12 @@ class TodayOverview extends React.Component {
     return (
       <section>
         <div className="col-half">
-          <h1>{ todayData.commitsCount }</h1>
+          <div className="today-overview-total-commits">{ todayData.commitsCount }</div>
           <h2>Commits</h2>
         </div>
         <div className="col-half">
-          <h3>{ todayData.additions } +</h3>
-          <h3>{ todayData.deletions} -</h3>
+          <div className="today-overview-additions">{ todayData.additions } +</div>
+          <div className="today-overview-deletions">{ todayData.deletions} -</div>
         </div>
       </section>
     );

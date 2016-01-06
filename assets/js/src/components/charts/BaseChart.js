@@ -15,6 +15,7 @@ class BaseChart extends React.Component {
     height: 400,
     type: 'Line',
     options: {
+      animationSteps: 60,
       responsive: true,
       scaleGridLineColor: 'rgba(255,255,255,0.5)',
       scaleLineColor: 'rgba(255,255,255,0.5)',
@@ -22,6 +23,31 @@ class BaseChart extends React.Component {
       segmentStrokeColor: '#000',
     },
     chartData: {},
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      redraw: false,
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    let types = ['Bar', 'Pie', 'PolarArea'];
+    let redraw = false;
+
+    if (types.indexOf(this.props.type) >= 0) {
+      let datasets = this.props.chartData;
+      let nextDatasets = nextProps.chartData;
+      if (this.props.type === 'Bar') {
+        datasets = this.props.chartData.datasets;
+        nextDatasets = nextProps.chartData.datasets;
+      }
+      if (datasets.length !== nextDatasets.length) {
+        redraw = true;
+      }
+      this.setState({ redraw });
+    }
   }
 
   render() {
@@ -32,6 +58,7 @@ class BaseChart extends React.Component {
         height: this.props.height,
         width: this.props.width,
         options: this.props.options,
+        redraw: this.state.redraw,
       })
     );
   }

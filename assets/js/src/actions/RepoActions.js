@@ -12,7 +12,9 @@ class RepoActions {
       'requestCommits',
       'loadCommits',
       'loadContributors',
-      'requestContributorsError'
+      'requestContributorsError',
+      'loadHours',
+      'requestHoursError'
     );
   }
 }

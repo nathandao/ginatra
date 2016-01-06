@@ -69,7 +69,6 @@ class HourlyCommits extends React.Component {
     }
     return (
       <div className="hourly-commits">
-        <h3>Hourly commits</h3>
         { content }
       </div>
     );

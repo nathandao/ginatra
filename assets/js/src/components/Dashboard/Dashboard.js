@@ -1,10 +1,10 @@
 import React from 'react';
 import _ from 'lodash';
 
-import RepoCell from 'components/Dashboard/RepoCell';
+import RepoCell from 'components/Charts/RepoCell';
+import HourlyCommits from 'components/Charts/HourlyCommits';
 import TodayOverview from 'components/Dashboard/TodayOverview';
-import HourlyCommits from 'components/Dashboard/HourlyCommits';
-import ContributorsComparison from 'components/Dashboard/ContributorsComparison';
+import ReposOverview from 'components/Dashboard/ReposOverview';
 import RepoSelector from 'components/RepoSelector/RepoSelector';
 
 class Dashboard extends React.Component {
@@ -25,26 +25,29 @@ class Dashboard extends React.Component {
   render() {
     return (
       <div>
-        <h1>Dashboard</h1>
+        <h1>Ginatra</h1>
         <section>
           <div className="col-half">
             <section>
-              <div className="col-half">
-                <RepoSelector repos={ this.props.repos }/>
-              </div>
-              <div className="col-half">
+              <div className="col-third">
+                <h3>Today's activity</h3>
                 <TodayOverview commitsData={ this.props.commitsData } visibleRepos={ this._getVisibleRepos() } />
               </div>
+              <div className="col-two-third">
+                <h3>Switch visibility</h3>
+                <RepoSelector repos={ this.props.repos }/>
+
+                <h3>Hourly commits</h3>
+                <HourlyCommits repos={ this._getVisibleRepos() } commitsData={ this.props.commitsData }/>
+              </div>
             </section>
-            <HourlyCommits repos={ this._getVisibleRepos() } commitsData={ this.props.commitsData }/>
           </div>
           <div className="col-half">
-            <div className="col-third">
-              <h3>Contributors Count</h3>
-              <ContributorsComparison repos={ this._getVisibleRepos() } contributorsData={ this.props.contributorsData } />
-            </div>
+            <h3>Overviews</h3>
+            <ReposOverview repos={ this._getVisibleRepos() } commitsOverviews={ this.props.commitsOverviews }/>
           </div>
         </section>
+        <h1>Commit counts in the past 7 days</h1>
         <section>
           { this.repoPulses() }
         </section>

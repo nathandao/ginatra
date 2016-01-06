@@ -1,9 +1,10 @@
 @import url('https://fonts.googleapis.com/css?family=Orbitron:400,500,700');
 
 :root {
-  --textColor: #fff;
+  --textColor: #ebebeb;
   --backgroundColor: #000;
   --highlightColor: #fff;
+  --borderColor: #777;
 
   --fontSize: 12px;
   --fontFamily: "Orbitron", "Helvetica", "Arial";
@@ -19,6 +20,10 @@ section {
 
 .col-full {
   lost-column: 1;
+}
+
+.col-two-third {
+  lost-column: 2/3 1;
 }
 
 .col-half {
@@ -56,6 +61,22 @@ a {
   padding: 5px;
   text-decoration: none;
 }
+
+table {
+  width: 100%;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 5px;
+  border-bottom: 1px solid var(--borderColor);
+}
+
+th {
+  border-top: 1px solid var(--borderColor);
+}
+
 
 .button {
   border: 1px solid var(--textColor);

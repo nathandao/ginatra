@@ -2,25 +2,8 @@ import React from 'react';
 import _ from 'lodash';
 
 import BaseChart from 'components/Charts/BaseChart';
-import RepoCellHeader from 'components/Dashboard/RepoCellHeader';
 
 class RepoCell extends React.Component {
-  repoOverview() {
-    let repo = this.props.repo;
-    let repoContent = [];
-    let overviewData = _.find(this.props.commitsOverviews, (overview) => {
-      return overview.repoId === repo.id;
-    });
-
-    if (overviewData) {
-      repoContent.push(
-        <RepoCellHeader overview={ overviewData } key={ 'cell-header-' + repo.id }/>
-      );
-    }
-
-    return repoContent;
-  }
-
   repoPulse() {
     let repo = this.props.repo;
     let repoContent = <div>Loading...</div>;
@@ -44,7 +27,6 @@ class RepoCell extends React.Component {
           <h3>{ repo.name } [ { repo.id } ]</h3>
         </div>
         { this.repoPulse() }
-        { this.repoOverview() }
       </div>
     );
   }
