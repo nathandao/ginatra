@@ -59,7 +59,9 @@ module Ginatra
     end
 
     get '/stat/repo_overview' do
-      Ginatra::Stat.repo_overview(@filter).to_json
+      Ginatra::Stat.repo_overview(@filter).map { |overview_data|
+        { repoId: overview_data[0], overviewData: overview_data[1] }
+      }.to_json
     end
 
     get '/stat/authors' do
