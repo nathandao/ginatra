@@ -6,6 +6,7 @@ import {
   API_REPO_LIST,
   API_COMMITS_OVERVIEW,
   API_COMMITS,
+  API_AUTHORS,
 } from 'constants/api';
 import { PULSE_TIME_STAMPS } from 'constants/dashboard';
 
@@ -21,6 +22,7 @@ class RepoServices {
         let endTime = PULSE_TIME_STAMPS[PULSE_TIME_STAMPS.length - 1];
         RepoActions.loadRepoList(resp);
         this.requestCommits(startTime, endTime);
+        this.requestContributors();
         resp.map((repo) => {
           ChartServices.requestRepoPulse(repo.id);
           this.requestCommitsOverview(repo.id);
@@ -69,6 +71,26 @@ class RepoServices {
       },
       error: (err) => {
         RepoActions.requestTodayOverviewError(err);
+      },
+    });
+  }
+
+  requestContributors(repoId = null) {
+    let data = {};
+    if (repoId) {
+      data.in = repoId;
+    }
+    request({
+      url: API_AUTHORS,
+      method: 'get',
+      type: 'json',
+      dataType: 'application/json',
+      data,
+      success: (resp) => {
+        RepoActions.loadContributors(resp);
+      },
+      error: (err) => {
+        RepoActions.requestContributorsError(err);
       },
     });
   }

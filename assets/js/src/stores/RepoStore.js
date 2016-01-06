@@ -10,6 +10,7 @@ class RepoStore {
       repos: [],
       commitsOverviews: [],
       commitsData: [],
+      contributorsData: [],
     };
   }
 
@@ -70,6 +71,22 @@ class RepoStore {
       }
     });
     this.setState({ commitsData });
+  }
+
+  onLoadContributors(newContributorsData) {
+    let contributorsData = this.state.contributorsData;
+    _.forEach(newContributorsData, (data) => {
+      let repoIndex = _.findIndex(contributorsData, (repoContributorsData) => {
+        return repoContributorsData.repoId === data.repoId;
+      });
+
+      if (repoIndex >= 0) {
+        contributorsData[repoIndex] = data.authors;
+      } else {
+        contributorsData.push(data);
+      }
+      this.setState({ contributorsData });
+    });
   }
 
   _hexToRgb(hex) {

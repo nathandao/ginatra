@@ -4,6 +4,7 @@ import _ from 'lodash';
 import RepoCell from 'components/Dashboard/RepoCell';
 import TodayOverview from 'components/Dashboard/TodayOverview';
 import HourlyCommits from 'components/Dashboard/HourlyCommits';
+import ContributorsComparison from 'components/Dashboard/ContributorsComparison';
 
 class Dashboard extends React.Component {
   _getVisibleRepos() {
@@ -27,9 +28,13 @@ class Dashboard extends React.Component {
         <section>
           <div className="col-half">
             <TodayOverview commitsData={ this.props.commitsData } visibleRepos={ this._getVisibleRepos() } />
-          </div>
-          <div className="col-full">
             <HourlyCommits repos={ this._getVisibleRepos() } commitsData={ this.props.commitsData }/>
+          </div>
+          <div className="col-half">
+            <div className="col-third">
+              <h3>Contributors Count</h3>
+              <ContributorsComparison repos={ this._getVisibleRepos() } contributorsData={ this.props.contributorsData } />
+            </div>
           </div>
         </section>
         <section>

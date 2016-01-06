@@ -2,7 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import _ from 'lodash';
 
-import BarChart from 'components/Charts/BarChart';
+import BaseChart from 'components/Charts/BaseChart';
 import {
   HOURLY_TIME_STAMPS,
   HOURLY_TIME_LABELS,
@@ -63,11 +63,16 @@ class HourlyCommits extends React.Component {
 
   render() {
     let chartData = this.getChartData();
-    let content = <div></div>;
+    let content = <div>Loading...</div>;
     if (chartData.datasets.length > 0) {
-      content = <BarChart chartData={ this.getChartData() } width="1000" height="80"/>;
+      content = <BaseChart type="Bar" chartData={ this.getChartData() } width="1000" height="150"/>;
     }
-    return content;
+    return (
+      <div className="hourly-commits">
+        <h3>Hourly commits</h3>
+        { content }
+      </div>
+    );
   }
 }
 

@@ -14,7 +14,12 @@ class Selector extends React.Component {
   }
 
   render() {
-    return <RepoSelector { ...this.props } />;
+    return (
+      <div>
+        <h1>Repo Selector</h1>
+        <RepoSelector { ...this.props } />
+      </div>
+    );
   }
 }
 

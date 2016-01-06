@@ -72,22 +72,26 @@ module Ginatra
 
       def authors(params = {})
         if params[:in].nil?
-          Ginatra::Config.repositories.inject([]) { |output, repo|
-            repo_id = repo[0]
+          result = {}
+          Ginatra::Config.repositories.each do |repo|
+            repo_id = repo.flatten[0]
+            output = { repo_id => [] }
             authors = Ginatra::Helper.get_repo(repo_id).authors params
             authors.each do |author|
               match = output.select { |k, v| k == author['name'] }
               if match.empty?
-                output << author
+                output[repo_id] << author
               else
                 author.each do |k, v|
                   # TODO: fix this
                 end
               end
             end
-          }
+            result = result.merge(output)
+          end
+          result
         else
-          Ginatra::Helper.get_repo(params[:in]).authors params
+          { params[:in] => Ginatra::Helper.get_repo(params[:in]).authors(params) }
         end
       end
 

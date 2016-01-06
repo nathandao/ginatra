@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 
-import LineChart from 'components/Charts/LineChart';
+import BaseChart from 'components/Charts/BaseChart';
 import RepoCellHeader from 'components/Dashboard/RepoCellHeader';
 
 class RepoCell extends React.Component {
@@ -23,15 +23,13 @@ class RepoCell extends React.Component {
 
   repoPulse() {
     let repo = this.props.repo;
-    let repoContent = [];
+    let repoContent = <div>Loading...</div>;
     let pulseData = _.find(this.props.repoPulses, (repoPulse) => {
       return repoPulse.repoId === repo.id;
     });
 
     if (pulseData) {
-      repoContent.push(
-        <LineChart chartData={ pulseData.chartData } key={ 'pulse-data-' + repo.id }/>
-      );
+      repoContent = <BaseChart type="Line" chartData={ pulseData.chartData } width="1000" height="400"/>;
     }
 
     return repoContent;
@@ -43,10 +41,10 @@ class RepoCell extends React.Component {
     return (
       <div className="col-third" key={ repo.id }>
         <div className="col-full">
-          <h2>{ repo.name } [ { repo.id } ]</h2>
+          <h3>{ repo.name } [ { repo.id } ]</h3>
         </div>
-        { this.repoOverview() }
         { this.repoPulse() }
+        { this.repoOverview() }
       </div>
     );
   }

@@ -61,7 +61,9 @@ module Ginatra
     end
 
     get '/stat/authors' do
-      Ginatra::Stat.authors(@filter).to_json
+      Ginatra::Stat.authors(@filter).map { |repo|
+        { repoId: repo[0], authors: repo[1] }
+      }.to_json
     end
 
     get '/stat/lines' do

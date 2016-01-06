@@ -27,9 +27,9 @@ for (let i = 23; i >= 0; i--) {
   let diff = moment.duration(i, 'h');
   let currentTime = moment().hour(23).minute(0).second(0).subtract(diff);
   hourlyTimeStamps.push(currentTime.format('MM-DD-YYYY HH:mm'));
-  hourlyTimeLabels.push(currentTime.format('HH:mm'));
+  hourlyTimeLabels.push(currentTime.format('HH'));
 }
 hourlyTimeStamps.push(todayEnd.format('MM-DD-YYYY HH:mm'));
-hourlyTimeLabels.push(todayEnd.format('HH:mm'));
+hourlyTimeLabels.push(todayEnd.format('HH'));
 export const HOURLY_TIME_STAMPS = hourlyTimeStamps;
 export const HOURLY_TIME_LABELS = hourlyTimeLabels;
