@@ -40,7 +40,9 @@ module Ginatra
     end
 
     get '/stat/hours' do
-      Ginatra::Activity.hours(@filter).to_json
+      Ginatra::Activity.hours(@filter).map { |hours_data|
+        { repoId: hours_data[0], hours: hours_data[1] }
+      }.to_json
     end
 
     get '/stat/commits' do
