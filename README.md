@@ -8,6 +8,9 @@ Ginatra is a Sinatra app that provides a web API for git repositories. Updates o
 
 There is also a front-end dashboard that comes with the package built with ReacJs and ChartJS to display real-time visualization of your git repos.
 
+![Srceenshot](https://raw.githubusercontent.com/nathandao/ginatra/master/screenshot.png)
+![Animated screenshot](https://raw.githubusercontent.com/nathandao/ginatra/master/screenshot.gif)
+
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-generate-toc again -->
 **Table of Contents**
 
