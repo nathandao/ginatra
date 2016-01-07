@@ -24,7 +24,6 @@ class RepoServices {
         let endTime = PULSE_TIME_STAMPS[PULSE_TIME_STAMPS.length - 1];
         RepoActions.loadRepoList(resp);
         this.requestCommits(startTime, endTime);
-        this.requestContributors();
         this.requestRepoOverviews();
         resp.map((repo) => {
           ChartServices.requestRepoPulse(repo.id);

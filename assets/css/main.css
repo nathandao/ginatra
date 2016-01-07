@@ -69,7 +69,7 @@ table {
 th,
 td {
   text-align: left;
-  padding: 5px;
+  padding: 8px 5px;
   border-bottom: 1px solid var(--borderColor);
 }
 

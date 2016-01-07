@@ -32,14 +32,15 @@ class ReposOverview extends React.Component {
             <td style={ inlineStyle } rowSpan="2" className="repo-name"><strong>{ repoData.name }</strong></td>
             <td>{ startDate }</td>
             <td>{ overview.commits_count }</td>
+            <td>{ overview.additions }</td>
+            <td>{ overview.deletions }</td>
             <td>{ overview.lines}</td>
-            <td>contributors</td>
           </tr>
         );
 
         content.push(
           <tr key={ 'repo-last-commit-' + repoData.id } className="repo-last-commit">
-            <td colSpan="4">
+            <td colSpan="5">
               Last commit on { lastCommitDate } by { lastCommitInfo.author }: { lastCommitInfo.subject }
             </td>
           </tr>
@@ -60,8 +61,9 @@ class ReposOverview extends React.Component {
               <th></th>
               <th>Started</th>
               <th>Commits</th>
+              <th>Additions</th>
+              <th>Deletions</th>
               <th>Lines</th>
-              <th>Contributors</th>
             </tr>
           </thead>
           <tbody>

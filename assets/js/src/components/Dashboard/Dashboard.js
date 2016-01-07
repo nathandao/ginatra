@@ -36,11 +36,13 @@ class Dashboard extends React.Component {
               <div className="col-two-third">
                 <h3>Switch visibility</h3>
                 <RepoSelector repos={ this.props.repos }/>
-
-                <h3>Hourly commits</h3>
-                <HourlyCommits repos={ this._getVisibleRepos() } commitsData={ this.props.commitsData }/>
               </div>
             </section>
+
+            <div className="col-full">
+              <h3>Hourly commits</h3>
+              <HourlyCommits repos={ this._getVisibleRepos() } commitsData={ this.props.commitsData }/>
+            </div>
           </div>
           <div className="col-half">
             <h3>Overviews</h3>

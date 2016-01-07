@@ -24,7 +24,7 @@ class RepoCell extends React.Component {
     return (
       <div className="col-third" key={ repo.id }>
         <div className="col-full">
-          <h3>{ repo.name } [ { repo.id } ]</h3>
+          <h4>{ repo.name } [ { repo.id } ]</h4>
         </div>
         { this.repoPulse() }
       </div>
