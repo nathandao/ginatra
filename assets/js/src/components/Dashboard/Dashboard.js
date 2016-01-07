@@ -25,7 +25,6 @@ class Dashboard extends React.Component {
   render() {
     return (
       <div>
-        <h1>Ginatra</h1>
         <section>
           <div className="col-half">
             <section>

@@ -25,16 +25,23 @@ class TodayOverview extends React.Component {
         let commitDate = moment(new Date(commit.date)).unix();
         return commitDate >= todayStart && commitDate <= todayEnd;
       });
-
       todayData.commitsCount = todayData.commitsCount + todayCommits.length;
-
       _.forEach(todayCommits, (commit) => {
         _.forEach(commit.changes, (change) => {
+          let additions = Number(change.additions);
+          let deletions = Number(change.deletions);
+          if (isNaN(additions)) {
+            additions = 0;
+          }
+          if (isNaN(deletions)) {
+            deletions = 0;
+          }
+
           if (change.additions) {
-            todayData.additions = todayData.additions + Number(change.additions);
+            todayData.additions = todayData.additions + additions;
           }
           if (change.deletions) {
-            todayData.deletions = todayData.deletions + Number(change.deletions);
+            todayData.deletions = todayData.deletions + deletions;
           }
         });
       });
@@ -45,6 +52,7 @@ class TodayOverview extends React.Component {
 
   render() {
     let todayData = this.getTodayData();
+
     return (
       <section>
         <div className="col-half">
