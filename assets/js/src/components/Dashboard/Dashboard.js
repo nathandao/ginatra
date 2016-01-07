@@ -29,7 +29,7 @@ class Dashboard extends React.Component {
           <div className="col-half">
             <section>
               <div className="col-third">
-                <h3>Today's activity</h3>
+                <h3>Commits today</h3>
                 <TodayOverview commitsData={ this.props.commitsData } visibleRepos={ this._getVisibleRepos() } />
               </div>
               <div className="col-two-third">
