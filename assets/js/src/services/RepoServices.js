@@ -27,7 +27,6 @@ class RepoServices {
         this.requestRepoOverviews();
         resp.map((repo) => {
           ChartServices.requestRepoPulse(repo.id);
-          this.requestCommitsOverview(repo.id);
         });
       },
       error: (err) => {

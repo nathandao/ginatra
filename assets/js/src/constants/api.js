@@ -1,7 +1,7 @@
 let baseUrl = 'http://localhost:8080';
 
 if (process.env.NODE_ENV === 'production') {
-  baseUrl = '/';
+  baseUrl = '';
 }
 
 export const API_REPO_LIST = `${baseUrl}/stat/repo_list`;
