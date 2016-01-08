@@ -12,15 +12,25 @@ GEM
     codeclimate-test-reporter (0.4.8)
       simplecov (>= 0.7.1, < 1.0.0)
     coderay (1.1.0)
+    colored (1.2)
     diff-lcs (1.2.5)
     docile (1.1.5)
     em-websocket (0.5.1)
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0.6.0)
     eventmachine (1.0.8)
+    eventmachine (1.0.8-java)
     factory_girl (4.5.0)
       activesupport (>= 3.0.0)
+    faraday (0.9.2)
+      multipart-post (>= 1.2, < 3)
+    faraday_middleware (0.10.0)
+      faraday (>= 0.7.4, < 0.10)
+    faraday_middleware-multi_json (0.0.6)
+      faraday_middleware
+      multi_json
     ffi (1.9.10)
+    ffi (1.9.10-java)
     formatador (0.2.5)
     guard (2.13.0)
       formatador (>= 0.2.4)
@@ -37,10 +47,15 @@ GEM
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
     http_parser.rb (0.6.0)
+    http_parser.rb (0.6.0-java)
+    httparty (0.13.7)
+      json (~> 1.8)
+      multi_xml (>= 0.5.2)
+    httpclient (2.7.1)
     i18n (0.7.0)
     jsmin (1.0.1)
     json (1.8.3)
-    kgio (2.10.0)
+    json (1.8.3-java)
     listen (3.0.3)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
@@ -48,24 +63,46 @@ GEM
     method_source (0.8.2)
     minitest (5.8.1)
     multi_json (1.11.2)
+    multi_xml (0.5.5)
+    multipart-post (2.0.0)
     nenv (0.2.0)
+    neo4j-core (6.1.0)
+      activesupport
+      faraday (~> 0.9.0)
+      faraday_middleware (~> 0.10.0)
+      faraday_middleware-multi_json
+      httparty
+      httpclient
+      json
+      multi_json
+      neo4j-rake_tasks (~> 0.3.0)
+      net-http-persistent
+    neo4j-rake_tasks (0.3.0)
+      colored
+      httparty
+      os
+      rake
+      rubyzip (~> 1.1.7)
+    net-http-persistent (2.9.4)
     notiffany (0.0.8)
       nenv (~> 0.1)
       shellany (~> 0.0)
+    os (0.9.6)
     pry (0.10.3)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    pry (0.10.3-java)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+      spoon (~> 0.0)
     rack (1.6.4)
     rack-protection (1.5.3)
       rack
     rack-test (0.6.3)
       rack (>= 1.0)
-    rainbows (4.6.2)
-      kgio (~> 2.5)
-      rack (~> 1.1)
-      unicorn (~> 4.8)
-    raindrops (0.15.0)
+    rake (10.4.2)
     rb-fsevent (0.9.6)
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
@@ -82,6 +119,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.3.0)
     rspec-support (3.3.0)
+    rubyzip (1.1.7)
     shellany (0.0.1)
     signal (0.3.0)
     simplecov (0.10.0)
@@ -109,18 +147,17 @@ GEM
     sinatra-partial (0.4.0)
       sinatra
     slop (3.6.0)
+    spoon (0.0.4)
+      ffi
     thor (0.19.1)
     thread_safe (0.3.5)
+    thread_safe (0.3.5-java)
     tilt (1.4.1)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
-    unicorn (4.9.0)
-      kgio (~> 2.6)
-      rack
-      raindrops (~> 0.7)
-    yajl-ruby (1.2.1)
 
 PLATFORMS
+  java
   ruby
 
 DEPENDENCIES
@@ -132,7 +169,7 @@ DEPENDENCIES
   guard (~> 2.1)
   guard-rspec
   json
-  rainbows
+  neo4j-core
   rspec (~> 3.3)
   signal
   sinatra
@@ -140,8 +177,6 @@ DEPENDENCIES
   sinatra-contrib
   sinatra-cross_origin
   sinatra-partial
-  unicorn
-  yajl-ruby
 
 BUNDLED WITH
    1.11.2

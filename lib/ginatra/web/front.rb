@@ -1,4 +1,3 @@
-require 'sass'
 require 'sinatra/assetpack'
 require 'sinatra/base'
 require 'sinatra/partial'

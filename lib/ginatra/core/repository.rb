@@ -1,7 +1,7 @@
-require 'yajl'
 require 'fileutils'
 require 'chronic'
 require 'eventmachine'
+require 'neo4j-core'
 
 module Ginatra
   class Repository
@@ -88,6 +88,10 @@ module Ginatra
       }
     end
 
+    def create_commits_data
+      git_log
+    end
+
     private
 
     def self.validate(params)
@@ -135,9 +139,9 @@ module Ginatra
     end
 
     def data_file
-      dirname = Ginatra::Env.data ? Ginatra::Env.data : '../../data'
+      dirname = Ginatra::Env.data ? Ginatra::Env.data : './data'
       FileUtils.mkdir_p dirname unless File.directory?(dirname)
-      File.expand_path '.' + @id, dirname
+      File.expand_path @id + '.csv', dirname
     end
 
     def remove_data_file
@@ -200,61 +204,34 @@ module Ginatra
 
     def get_commits
       create_commits_data unless File.exists?(data_file)
-      file = File.new data_file, 'r'
-      parser = Yajl::Parser.new
-      @commits = parser.parse file
-      @commits
     end
 
-    def create_commits_data
-      File.open(data_file, 'w') { |file|
-        file.write(git_log.to_json)
-      }
-    end
+    def git_log
+      dirname = Ginatra::Env..data ? Ginatra::Env.data : './data'
+      FileUtils.mkdir_p dirname unless File.directory?(dirname)
+      csv_file_path = File.expand_path @id + '.csv', dirname
+      d = '<ginatra_delimiter>'
+      `cd #{path} && \
+echo "sha1,hash,parents,author_email,author_name,refs,subject,timestamp,date_time" > #{csv_file_path} && \
+git log --reverse --no-merges --format='%H#{d}%h#{d}%P#{d}%ae#{d}%an#{d}%d#{d}%s#{d}%at#{d}%ai' | \
+sed '/^$/d' | \
+sed 's/\n/-/g' | \
+sed 's/,/;/g' | \
+sed 's/#{d}/,/g >> #{csv_file_path} && \
+git log --reverse --no-merges --pretty=tformat: 
 
-    def git_log since = nil
-      c_separator = "[<ginatra_commit_section>]"
-      i_separator = "[<ginatra_separator]"
-      str = `git -C #{path} log \
-             --numstat \
-             --format='#{c_separator}id %h#{i_separator}author %an#{i_separator}date %ai#{i_separator}subject %s#{i_separator}changes'`
-
-      # Create an array of commits, each commit is a string
-      commit_section_strs = str.split(c_separator)[1..-1]
-
-      full_commits = []
-      commit_section_strs.each do |commit_section_str|
-        # Divide each commit string into separate components
-        commit_section_arr = commit_section_str.split(i_separator)
-
-        # Get the components based on their order in the array
-        commit_hash = {
-          id: commit_section_arr[0][3..-1],
-          author: commit_section_arr[1][7..-1],
-          date: commit_section_arr[2][5..-1],
-          subject: commit_section_arr[3][8..-1]
-        }
-
-        changes = []
-        commit_change_strs = commit_section_arr[4].split("\n")[2..-1]
-
-        unless commit_change_strs.nil?
-          commit_change_strs.each do |commit_change_str|
-            commit_change = commit_change_str.split("\t")
-            changes << {
-              additions: commit_change[0],
-              deletions: commit_change[1],
-              path: commit_change[2]
-            }
-          end
-        end
-        # merge changes to commit hash
-        commit_hash[:changes] = changes
-        full_commits << {commit_hash[:id] => commit_hash}
-      end
-      return full_commits.sort! { |x, y|
-        y.flatten[1][:date] <=> x.flatten[1][:date]
-      }
+`
+#       `cd #{path} && \
+# echo "sha1#{bash_tab}hash#{bash_tab}parents#{bash_tab}author_email#{bash_tab}author_name#{bash_tab}refs#{bash_tab}subject#{bash_tab}timestamp#{bash_tab}date_time#{bash_tab}changes" > #{csv_file_path} && \
+# IFS=$'\n'
+# DATA=(\`git log --reverse --format='"%H","%h","%P","%ae","%an","%d","%f","%at","%ai",'\`)
+# LINES=(\`git log --pretty=format: --shortstat\`)
+# i=0
+# while [ $i -lt ${#DATA[@]} ]; do
+#     echo ${DATA[$i]}\"${LINES[$i]}\"
+#     i=$[i + 1]
+# done >> #{csv_file_path}
+#       `
     end
   end
 end

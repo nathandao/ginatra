@@ -1,8 +1,5 @@
 require 'sinatra/base'
 require 'sinatra/assetpack'
-require 'yajl'
-require 'yajl/json_gem'
-require 'sass'
 
 require_relative 'ginatra/config'
 require_relative 'ginatra/env'

@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'bundler/setup'
-require 'rainbows'
 require 'rack/content_length'
 require 'rack/chunked'
 require 'eventmachine'

@@ -1,6 +1,5 @@
 require 'sinatra/base'
 require 'sinatra/cross_origin'
-require 'yajl/json_gem'
 
 module Ginatra
   class API < Sinatra::Base
@@ -140,6 +139,11 @@ module Ginatra
 
     get '/stat/chart/timeline/sprint_hours_commits' do
       Ginatra::Chart.timeline_sprint_hours_commits(@filter).to_json
+    end
+
+    get '/test' do
+      Ginatra::Helper.get_repo('ginatra').create_commits_data
+      [].to_json
     end
   end
 end

@@ -4,15 +4,13 @@ gem 'chronic'
 gem 'em-websocket'
 gem 'eventmachine'
 gem 'json'
-gem 'rainbows', require: 'unicorn'
+gem 'neo4j-core'
 gem 'signal'
 gem 'sinatra'
 gem 'sinatra-assetpack'
 gem 'sinatra-contrib'
 gem 'sinatra-cross_origin'
 gem 'sinatra-partial'
-gem 'unicorn'
-gem 'yajl-ruby', require: 'yajl'
 
 group :test do
   gem 'codeclimate-test-reporter', require: nil
