@@ -120,6 +120,7 @@ GEM
       rspec-support (~> 3.3.0)
     rspec-support (3.3.0)
     rubyzip (1.1.7)
+    rugged (0.23.3)
     shellany (0.0.1)
     signal (0.3.0)
     simplecov (0.10.0)
@@ -171,6 +172,7 @@ DEPENDENCIES
   json
   neo4j-core
   rspec (~> 3.3)
+  rugged
   signal
   sinatra
   sinatra-assetpack
