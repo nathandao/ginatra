@@ -4,6 +4,7 @@ require 'eventmachine'
 require 'neo4j-core'
 require 'rugged'
 require 'csv'
+require 'rack/utils'
 
 module Ginatra
   class Repository
@@ -105,22 +106,125 @@ module Ginatra
 
       remove_data_file
       CSV.open(data_file, 'w') do |csv|
-        csv << %w{ hash message author_email author_name author_time commit_time parents }
+        csv << %w{ hash message author_email author_name author_time commit_time commit_timestamp parents }
         walker.each do |commit|
-          p commit.to_hash
           author = commit.author
           committor = commit.committer
           csv << [
             commit.oid,
-            commit.message.strip().gsub(/\n/, '. '),
+            commit.message.strip().gsub(/\n/, '').gsub(/"/, "'").gsub(/\\/, '\\\\\\'),
             author[:email],
             author[:name],
             author[:time],
             committor[:time],
+            commit.time,
             commit.parent_ids.join(' ')
           ]
         end
       end
+    end
+
+    def create_diff_csv
+      delimiter = '[<ginatra_commit_start>]'
+      stat_str = `cd #{path} && git log --numstat --format="#{delimiter}%H"`
+
+      stat_arr = stat_str.split(delimiter).map { |str|
+        raw_stat = str.split(/\n/)
+        hash = raw_stat[0]
+
+        if raw_stat.size < 3
+          changes = []
+        else
+          changes = raw_stat[3..-1].map{ |change_str|
+            raw_change = change_str.split(/\t/)
+            {
+              file_path: raw_change[2],
+              additions: raw_change[0].to_i,
+              deletions: raw_change[1].to_i
+            }
+          }
+        end
+
+        { hash: hash, changes: changes }
+      }
+
+      remove_diff_file
+      CSV.open(diff_file, 'w') do |csv|
+        csv << %w{ hash additions deletions file_path }
+        stat_arr.each do |stat|
+          stat[:changes].each do |change|
+            csv << [
+              stat[:hash],
+              change[:additions],
+              change[:deletions],
+              change[:file_path]
+            ]
+          end
+        end
+      end
+    end
+
+
+    def import_commits_graph
+      create_commits_csv
+      session = Neo4j::Session.open(:server_db, 'http://localhost:7474', basic_auth: { username: 'neo4j', password: 'admin'})
+
+      # Establish contraints in indexes
+      session.query('CREATE CONSTRAINT ON (r:Repository) ASSERT r.id IS UNIQUE')
+      session.query('CREATE CONSTRAINT ON (r:Repository)-[:HAS]->(c:Commit) ASSERT c.hash IS UNIQUE')
+      session.query('CREATE INDEX ON :Commit(commit_timestamp)')
+      session.query('CREATE CONSTRAINT ON (u:User) ASSERT u.email IS UNIQUE')
+      session.query("MERGE (r:Repository {name: '#{@name}'}) ON CREATE SET r.id = '#{@id}'")
+
+      # Import CSV
+      session.query("
+USING PERIODIC COMMIT 1000
+LOAD CSV WITH headers FROM 'file://#{data_file}' as line
+
+MATCH (r:Repository {id: '#{@id}'})
+MERGE (r)-[:HAS]->(c:Commit {hash: line.hash}) ON CREATE SET
+  c.message = line.message,
+  c.author_time = line.author_time,
+  c.commit_time = line.commit_time,
+  c.commit_timestamp = line.commit_timestamp,
+  c.parents = split(line.parents, ' ')
+
+MERGE (u:User:Author {email:line.author_email}) ON CREATE SET u.name = line.author_name
+MERGE (u)-[:AUTHORED]->(c)
+MERGE (c)-[:AUTHORED_BY]->(u)
+
+WITH c,line
+WHERE line.parents <> ''
+FOREACH (parent_hash in split(line.parents, ' ') |
+  MERGE (parent:Commit {hash: parent_hash})
+  MERGE (c)-[:HAS_PARENT]->(parent))
+")
+    end
+
+    def import_diff_graph
+      create_diff_csv
+      session = Neo4j::Session.open(:server_db, 'http://localhost:7474', basic_auth: { username: 'neo4j', password: 'admin'})
+
+      # Establish contraints in indexes
+      session.query('CREATE CONSTRAINT ON (f:File) ASSERT f.path IS UNIQUE')
+
+      # Import CSV
+      session.query("
+USING PERIODIC COMMIT 1000
+LOAD CSV WITH headers FROM 'file://#{diff_file}' as line
+
+MATCH (c:Commit {hash: line.hash})
+MERGE (f:File {path: line.file_path})
+MERGE (c)-[:CHANGES {additions: line.additions, deletions: line.deletions}]->(f)
+")
+    end
+
+    def import_git_graph
+      p Time.now
+      import_commits_graph
+      p Time.now
+      import_diff_graph
+      p Time.now
     end
 
     private
@@ -175,8 +279,18 @@ module Ginatra
       File.expand_path @id + '.csv', dirname
     end
 
+    def diff_file
+      dirname = Ginatra::Env.data ? Ginatra::Env.data : './data'
+      FileUtils.mkdir_p dirname unless File.directory?(dirname)
+      File.expand_path @id + '_diff.csv', dirname
+    end
+
     def remove_data_file
       FileUtils.rm(data_file) if File.exists?(data_file)
+    end
+
+    def remove_diff_file
+      FileUtils.rm(diff_file) if File.exists?(diff_file)
     end
 
     def pull_latest_commits
