@@ -2,6 +2,8 @@ require 'fileutils'
 require 'chronic'
 require 'eventmachine'
 require 'neo4j-core'
+require 'rugged'
+require 'csv'
 
 module Ginatra
   class Repository
@@ -88,8 +90,37 @@ module Ginatra
       }
     end
 
-    def create_commits_data
-      git_log
+    def create_commits_csv
+      repo = Rugged::Repository.new(File.expand_path(@path))
+      tips = []
+
+      repo.branches.each do |branch|
+        tips << branch.target.oid if (branch.target.class == Rugged::Commit)
+      end
+
+      walker = Rugged::Walker.new(repo)
+      tips.uniq.each do |target|
+        walker.push(target)
+      end
+
+      remove_data_file
+      CSV.open(data_file, 'w') do |csv|
+        csv << %w{ hash message author_email author_name author_time commit_time parents }
+        walker.each do |commit|
+          p commit.to_hash
+          author = commit.author
+          committor = commit.committer
+          csv << [
+            commit.oid,
+            commit.message.strip().gsub(/\n/, '. '),
+            author[:email],
+            author[:name],
+            author[:time],
+            committor[:time],
+            commit.parent_ids.join(' ')
+          ]
+        end
+      end
     end
 
     private
@@ -202,25 +233,24 @@ module Ginatra
       end
     end
 
-    def get_commits
-      create_commits_data unless File.exists?(data_file)
-    end
+    # def get_commits
+    #   create_commits_data unless File.exists?(data_file)
+    # end
 
-    def git_log
-      dirname = Ginatra::Env..data ? Ginatra::Env.data : './data'
-      FileUtils.mkdir_p dirname unless File.directory?(dirname)
-      csv_file_path = File.expand_path @id + '.csv', dirname
-      d = '<ginatra_delimiter>'
-      `cd #{path} && \
-echo "sha1,hash,parents,author_email,author_name,refs,subject,timestamp,date_time" > #{csv_file_path} && \
-git log --reverse --no-merges --format='%H#{d}%h#{d}%P#{d}%ae#{d}%an#{d}%d#{d}%s#{d}%at#{d}%ai' | \
-sed '/^$/d' | \
-sed 's/\n/-/g' | \
-sed 's/,/;/g' | \
-sed 's/#{d}/,/g >> #{csv_file_path} && \
-git log --reverse --no-merges --pretty=tformat: 
-
-`
+#     def git_log
+#       dirname = Ginatra::Env..data ? Ginatra::Env.data : './data'
+#       FileUtils.mkdir_p dirname unless File.directory?(dirname)
+#       csv_file_path = File.expand_path @id + '.csv', dirname
+#       d = '<ginatra_delimiter>'
+#       `cd #{path} && \
+# echo "sha1,hash,parents,author_email,author_name,refs,subject,timestamp,date_time" > #{csv_file_path} && \
+# git log --reverse --no-merges --format='%H#{d}%h#{d}%P#{d}%ae#{d}%an#{d}%d#{d}%s#{d}%at#{d}%ai' | \
+# sed '/^$/d' | \
+# sed 's/\n/-/g' | \
+# sed 's/,/;/g' | \
+# sed 's/#{d}/,/g >> #{csv_file_path} && \
+# git log --reverse --no-merges --pretty=tformat: 
+# `
 #       `cd #{path} && \
 # echo "sha1#{bash_tab}hash#{bash_tab}parents#{bash_tab}author_email#{bash_tab}author_name#{bash_tab}refs#{bash_tab}subject#{bash_tab}timestamp#{bash_tab}date_time#{bash_tab}changes" > #{csv_file_path} && \
 # IFS=$'\n'
@@ -232,6 +262,6 @@ git log --reverse --no-merges --pretty=tformat:
 #     i=$[i + 1]
 # done >> #{csv_file_path}
 #       `
-    end
+#   end
   end
 end
