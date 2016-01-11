@@ -8,6 +8,13 @@ Ginatra is a Sinatra app that provides a web API for git repositories. Updates o
 
 There is also a front-end dashboard that comes with the package built with ReacJs and ChartJS to display real-time visualization of your git repos.
 
+### Note:
+I am currently rewriting most of the api backend so the documentation for setting it up won't work. I would recommend checking the 0.1.1 branch where the app is stable. However you are always welcome to explore the master branch. So this is what going on in the master branch:
+
+- Use Rugged to get repository's data insead of formatting `git log` command output.
+- Re-writing of the core library to store repo commits, its diffs, authors and even file paths and line changes in each commit in Neo4j (a graph database). This allows much faster querying of commit data and potentially a lot of interesting applications followed by a graph database.
+- API endpoints to provide ChartJs json data to be fed into ChartJs will be deprecated. This should be handled on the client-side app from commits data instead.
+
 ![Srceenshot](https://raw.githubusercontent.com/nathandao/ginatra/master/screenshot.png)
 ![Animated screenshot](https://raw.githubusercontent.com/nathandao/ginatra/master/screenshot.gif)
 
