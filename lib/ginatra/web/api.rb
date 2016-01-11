@@ -145,5 +145,15 @@ module Ginatra
       Ginatra::Helper.get_repo('ginatra').create_commits_data
       [].to_json
     end
+
+    get '/import' do
+      Ginatra::Helper.get_repo('ginatra').import_git_graph
+      [].to_json
+    end
+
+    get '/numstat' do
+      Ginatra::Helper.get_repo('ginatra').import_branch_graph
+      [].to_json
+    end
   end
 end

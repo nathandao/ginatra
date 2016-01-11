@@ -1,10 +1,9 @@
-require 'fileutils'
 require 'chronic'
+require 'csv'
 require 'eventmachine'
+require 'fileutils'
 require 'neo4j-core'
 require 'rugged'
-require 'csv'
-require 'rack/utils'
 
 module Ginatra
   class Repository
@@ -14,7 +13,7 @@ module Ginatra
     class MissingId < RuntimeError; end
     class InvalidRepoId < RuntimeError; end
 
-    attr_accessor :id, :path, :name, :commits, :color
+    attr_accessor :id, :path, :name, :commits, :color, :origin_url
 
     def self.new(params)
       @id ||= params["id"]
@@ -76,19 +75,49 @@ module Ginatra
       get_commits
     end
 
-    def start_stream(channel, update_interval)
-      EM.add_periodic_timer(update_interval) {
-        if change_exists?
-          refresh_data
-          sid = channel.subscribe { |msg| p ["repo #{@id} subscribed"] }
-          channel.push @id
-          channel.unsubscribe(sid)
-        end
+    # def start_stream(channel, update_interval)
+    #   EM.add_periodic_timer(update_interval) {
+    #     if change_exists?
+    #       refresh_data
+    #       sid = channel.subscribe { |msg| p ["repo #{@id} subscribed"] }
+    #       channel.push @id
+    #       channel.unsubscribe(sid)
+    #     end
 
-        # hit Control + C to stop
-        Signal.trap("INT")  { EventMachine.stop }
-        Signal.trap("TERM") { EventMachine.stop }
-      }
+    #     # hit Control + C to stop
+    #     Signal.trap("INT")  { EventMachine.stop }
+    #     Signal.trap("TERM") { EventMachine.stop }
+    #   }
+    # end
+
+    def import_branch_graph
+      session = Ginatra::Db.session
+
+      # Create constraints
+      session.query('CREATE CONSTRAINT ON (r:Repository) ASSERT r.origin_url IS UNIQUE')
+      # Create or update existing repo
+      session.query("MERGE (r:Repository {origin_url: '#{@origin_url}', id: '#{@id}', name: '#{@name}'})")
+
+      repo = Rugged::Repository.new(File.expand_path(@path))
+      repo.branches.each do |branch|
+        # Only add remote branches. Since HEAD is pointed to the current
+        # local working branch
+        if (branch.target.class == Rugged::Commit && branch.head? == false)
+          # Delete previous branch
+          session.query("
+MATCH (r:Repository {origin_url: '#{@origin_url}'})-[:HAS_BRANCH]->(b:Branch {name: '#{branch.name}'}) DETACH
+DELETE b
+")
+
+          session.query("
+MATCH (r:Repository {origin_url: '#{origin_url}'})
+MATCH (c:Commit {hash: '#{branch.target.oid}'})
+CREATE (b:Branch {name: '#{branch.name}'})
+CREATE (r)-[:HAS_BRANCH]->(b)
+MERGE (b)-[:POINTS_TO]->(c)
+")
+        end
+      end
     end
 
     def create_commits_csv
@@ -170,11 +199,9 @@ module Ginatra
       session = Neo4j::Session.open(:server_db, 'http://localhost:7474', basic_auth: { username: 'neo4j', password: 'admin'})
 
       # Establish contraints in indexes
-      session.query('CREATE CONSTRAINT ON (r:Repository) ASSERT r.id IS UNIQUE')
-      session.query('CREATE CONSTRAINT ON (r:Repository)-[:HAS]->(c:Commit) ASSERT c.hash IS UNIQUE')
+      session.query('CREATE CONSTRAINT ON (c:Commit) ASSERT c.hash IS UNIQUE')
       session.query('CREATE INDEX ON :Commit(commit_timestamp)')
       session.query('CREATE CONSTRAINT ON (u:User) ASSERT u.email IS UNIQUE')
-      session.query("MERGE (r:Repository {name: '#{@name}'}) ON CREATE SET r.id = '#{@id}'")
 
       # Import CSV
       session.query("
@@ -182,12 +209,14 @@ USING PERIODIC COMMIT 1000
 LOAD CSV WITH headers FROM 'file://#{data_file}' as line
 
 MATCH (r:Repository {id: '#{@id}'})
-MERGE (r)-[:HAS]->(c:Commit {hash: line.hash}) ON CREATE SET
+MERGE (c:Commit {hash: line.hash}) ON CREATE SET
   c.message = line.message,
   c.author_time = line.author_time,
   c.commit_time = line.commit_time,
   c.commit_timestamp = line.commit_timestamp,
   c.parents = split(line.parents, ' ')
+
+MERGE (r)-[:HAS]->(c)
 
 MERGE (u:User:Author {email:line.author_email}) ON CREATE SET u.name = line.author_name
 MERGE (u)-[:AUTHORED]->(c)
@@ -220,11 +249,14 @@ MERGE (c)-[:CHANGES {additions: line.additions, deletions: line.deletions}]->(f)
     end
 
     def import_git_graph
-      p Time.now
+      session = Ginatra::Db.session
+      # Create constraints
+      session.query('CREATE CONSTRAINT ON (r:Repository) ASSERT r.origin_url IS UNIQUE')
+      # Create or update existing repo
+      session.query("MERGE (r:Repository {origin_url: '#{@origin_url}', id: '#{@id}', name: '#{@name}'})")
+
       import_commits_graph
-      p Time.now
       import_diff_graph
-      p Time.now
     end
 
     private
@@ -266,10 +298,19 @@ MERGE (c)-[:CHANGES {additions: line.additions, deletions: line.deletions}]->(f)
       @path = params['path'].strip
       @color = nil
       @name = params['name'].strip
+
+      # Get default color if it is not defined
       if params['color'].nil?
         @color = colors[repos.find_index { |k,_| k == @id } % colors.size]
       else
         @color = params['color']
+      end
+
+      # Find remote url
+      repo = Rugged::Repository.new(File.expand_path(@path))
+      @origin_url = nil
+      repo.remotes.each do |remote|
+        @origin_url = remote.url if remote.name == 'origin'
       end
     end
 
