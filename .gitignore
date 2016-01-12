@@ -4,6 +4,7 @@
 # Confidential files
 config.yml
 data/
+logs/
 
 # Autogenrated
 .sass-cache/

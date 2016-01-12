@@ -289,7 +289,7 @@ MERGE (c)-[:CHANGES {additions: line.additions, deletions: line.deletions}]->(f)
     end
 
     def import_git_graph
-      logger = Ginatra::Log.logger
+      logger = Ginatra::Log.new().logger
       logger.info("Started indexing repo #{@id}")
 
       session = Ginatra::Db.session
