@@ -62,6 +62,15 @@ module Ginatra
           Time.new(d.year, d.month, d.day)
         }.uniq
       end
+
+      def neo4j
+        {
+          path: self.settings['neo4j']['path'] || '',
+          username: self.settings['neo4j']['username'] || '',
+          password: self.settings['neo4j']['password'] || '',
+          timeout: self.settings['neo4j']['timeout'] || 600
+        }
+      end
     end
   end
 end

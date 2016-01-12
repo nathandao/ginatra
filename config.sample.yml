@@ -12,6 +12,15 @@ repositories:
     path: ~/Repositories/repo3
     name: Repository 3
 
+# Neo4j credentials if you are using the http server.
+# If neo4j is not set, embedded neo4j will be used.
+neo4j:
+  path: 'http://localhost:7474'
+  username: 'neo4j'
+  password: 'admin'
+  open_timeout: 2 # default 2
+  timeout: 600 # default 600
+
 # The interval at which the scheduler check for new updates on all repositories in Seconds
 update_interval: 30
 
