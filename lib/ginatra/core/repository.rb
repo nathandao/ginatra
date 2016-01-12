@@ -4,6 +4,7 @@ require 'eventmachine'
 require 'fileutils'
 require 'neo4j-core'
 require 'rugged'
+require 'date'
 
 module Ginatra
   class Repository
@@ -13,7 +14,7 @@ module Ginatra
     class MissingId < RuntimeError; end
     class InvalidRepoId < RuntimeError; end
 
-    attr_accessor :id, :path, :name, :commits, :color, :origin_url
+    attr_accessor :id, :path, :name, :color, :origin_url
 
     def self.new(params)
       @id ||= params["id"]
@@ -36,26 +37,9 @@ module Ginatra
       }
     end
 
-    def commits params = {}
-      # initiate @commits if not set
-      get_commits if @commits.nil?
-      result = nil
-      if params[:from] && params[:til]
-        result = commits_between params[:from], params[:til]
-      elsif params[:from]
-        result = commits_between params[:from], Time.now
-      elsif params[:til]
-        result = commits_between Time.new(0), params[:til]
-      else
-        result = @commits
-      end
-
-      if params[:limit]
-        params[:limit] = params[:limit].to_i
-        result = result[0..params[:limit]-1]
-      end
-
-      commits_by(result, params[:by])
+    def commits(params = {})
+      params[:in] = [@id]
+      Ginatra::Helper.query_commits(params).first[:commits]
     end
 
     def lines params = {}
@@ -157,7 +141,7 @@ MERGE (b)-[:POINTS_TO]->(c)
             author[:name],
             author[:time],
             committor[:time],
-            commit.time,
+            commit.epoch_time,
             commit.parent_ids.join(' ')
           ]
         end
@@ -249,7 +233,7 @@ MERGE (c:Commit {hash: line.hash}) ON CREATE SET
   c.message = line.message,
   c.author_time = line.author_time,
   c.commit_time = line.commit_time,
-  c.commit_timestamp = line.commit_timestamp,
+  c.commit_timestamp = toInt(line.commit_timestamp),
   c.parents = split(line.parents, ' ')
 
 MERGE (r)-[:HAS_COMMIT]->(c)
@@ -283,7 +267,7 @@ LOAD CSV WITH headers FROM 'file://#{diff_csv_file}' as line
 
 MATCH (c:Commit {hash: line.hash})
 MERGE (f:File {path: line.file_path})
-MERGE (c)-[:CHANGES {additions: line.additions, deletions: line.deletions}]->(f)
+MERGE (c)-[:CHANGES {additions: toInt(line.additions), deletions: toInt(line.deletions)}]->(f)
 ")
       session.close
     end

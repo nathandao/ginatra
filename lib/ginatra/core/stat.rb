@@ -4,17 +4,21 @@ module Ginatra
   class Stat
     class << self
       def commits(params = {})
-        if params[:in].nil?
-          repos = Ginatra::Config.repositories
-          repos.inject({}) { |output, repo|
-            repo_id = repo[0]
-            output[repo_id] = Ginatra::Helper.get_repo(repo_id).commits(params)
-            output
-          }
-        else
-          { params[:in] => Ginatra::Helper.get_repo(params[:in]).commits(params) }
-        end
+        Ginatra::Helper.query_commits(params)
       end
+
+      # def commits(params = {})
+      #   if params[:in].nil?
+      #     repos = Ginatra::Config.repositories
+      #     repos.inject({}) { |output, repo|
+      #       repo_id = repo[0]
+      #       output[repo_id] = Ginatra::Helper.get_repo(repo_id).commits(params)
+      #       output
+      #     }
+      #   else
+      #     { params[:in] => Ginatra::Helper.get_repo(params[:in]).commits(params) }
+      #   end
+      # end
 
       def commits_count(params = {})
         commits_count = nil
