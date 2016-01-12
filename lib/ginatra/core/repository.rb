@@ -196,11 +196,12 @@ MERGE (b)-[:POINTS_TO]->(c)
 
     def import_commits_graph
       create_commits_csv
-      session = Neo4j::Session.open(:server_db, 'http://localhost:7474', basic_auth: { username: 'neo4j', password: 'admin'})
+      session = Ginatra::Db.session
 
       # Establish contraints in indexes
       session.query('CREATE CONSTRAINT ON (c:Commit) ASSERT c.hash IS UNIQUE')
       session.query('CREATE INDEX ON :Commit(commit_timestamp)')
+      session.query('CREATE INDEX ON :Commit(message)')
       session.query('CREATE CONSTRAINT ON (u:User) ASSERT u.email IS UNIQUE')
 
       # Import CSV
@@ -216,11 +217,12 @@ MERGE (c:Commit {hash: line.hash}) ON CREATE SET
   c.commit_timestamp = line.commit_timestamp,
   c.parents = split(line.parents, ' ')
 
-MERGE (r)-[:HAS]->(c)
+MERGE (r)-[:HAS_COMMIT]->(c)
 
 MERGE (u:User:Author {email:line.author_email}) ON CREATE SET u.name = line.author_name
 MERGE (u)-[:AUTHORED]->(c)
 MERGE (c)-[:AUTHORED_BY]->(u)
+MERGE (u)-[:CONTRIBUTED_TO]->(r)
 
 WITH c,line
 WHERE line.parents <> ''
@@ -228,11 +230,12 @@ FOREACH (parent_hash in split(line.parents, ' ') |
   MERGE (parent:Commit {hash: parent_hash})
   MERGE (c)-[:HAS_PARENT]->(parent))
 ")
+      session.close
     end
 
     def import_diff_graph
       create_diff_csv
-      session = Neo4j::Session.open(:server_db, 'http://localhost:7474', basic_auth: { username: 'neo4j', password: 'admin'})
+      session = Ginatra::Db.session
 
       # Establish contraints in indexes
       session.query('CREATE CONSTRAINT ON (f:File) ASSERT f.path IS UNIQUE')
@@ -246,6 +249,7 @@ MATCH (c:Commit {hash: line.hash})
 MERGE (f:File {path: line.file_path})
 MERGE (c)-[:CHANGES {additions: line.additions, deletions: line.deletions}]->(f)
 ")
+      session.close
     end
 
     def import_git_graph
@@ -254,9 +258,16 @@ MERGE (c)-[:CHANGES {additions: line.additions, deletions: line.deletions}]->(f)
       session.query('CREATE CONSTRAINT ON (r:Repository) ASSERT r.origin_url IS UNIQUE')
       # Create or update existing repo
       session.query("MERGE (r:Repository {origin_url: '#{@origin_url}', id: '#{@id}', name: '#{@name}'})")
+      session.close
 
+      # Poor man's benchmark
+      p Time.now
       import_commits_graph
+      p Time.now
+      import_branch_graph
+      p Time.now
       import_diff_graph
+      p Time.now
     end
 
     private
