@@ -70,7 +70,7 @@ module Ginatra
     end
 
     def refresh_data
-      remove_data_file
+      remove_commit_csv_file
       pull_latest_commits
       get_commits
     end
@@ -94,7 +94,9 @@ module Ginatra
       session = Ginatra::Db.session
 
       # Create constraints
+      # TODO: This is only required once during the database setup process.
       session.query('CREATE CONSTRAINT ON (r:Repository) ASSERT r.origin_url IS UNIQUE')
+
       # Create or update existing repo
       session.query("MERGE (r:Repository {origin_url: '#{@origin_url}', id: '#{@id}', name: '#{@name}'})")
 
@@ -128,14 +130,23 @@ MERGE (b)-[:POINTS_TO]->(c)
         tips << branch.target.oid if (branch.target.class == Rugged::Commit)
       end
 
+      # Create a walker and let the starting points as the latest commit of each
+      # branch.
       walker = Rugged::Walker.new(repo)
       tips.uniq.each do |target|
         walker.push(target)
       end
 
-      remove_data_file
-      CSV.open(data_file, 'w') do |csv|
+      # Remove the old csv file before writing to the new one
+      remove_commit_csv_file
+
+      CSV.open(commit_csv_file, 'w') do |csv|
+        # Write CSV headers
         csv << %w{ hash message author_email author_name author_time commit_time commit_timestamp parents }
+
+        # Walk through the commit tree based on the defined start commit points.
+        # The walk happens simultatiniously through all branches. Commit that
+        # has been processed will be ignored automatically by Rugged::Walker.
         walker.each do |commit|
           author = commit.author
           committor = commit.committer
@@ -154,14 +165,32 @@ MERGE (b)-[:POINTS_TO]->(c)
     end
 
     def create_diff_csv
+      # Using git command to get the line and file changes of each commit
+      # since Rugged::Walker takes much longer to walk through the diff stat.
+
+      # Record the line changes output to a string and then reformat it into
+      # csv.
       delimiter = '[<ginatra_commit_start>]'
       stat_str = `cd #{path} && git log --numstat --format="#{delimiter}%H"`
 
+      # Split string at delimiter, so each string represents a commit with its
+      # commit hash and changes below it.
       stat_arr = stat_str.split(delimiter).map { |str|
+        # Each raw_stat string has this format:
+        # b3170bb1b7d73062d0807b8acd6474aadfaa83d9
+        #
+        # 1       3       Gemfile
+        # 49      14      Gemfile.lock
+        # 0       1       config.ru
+        # 0       3       lib/ginatra.rb
+        # 33      56      lib/ginatra/core/repository.rb
+        # 5       1       lib/ginatra/web/api.rb
+        # 0       1       lib/ginatra/web/front.rb
+        # 0       1       lib/ginatra/web/websocket_server.rb
         raw_stat = str.split(/\n/)
-        hash = raw_stat[0]
+        commit_hash = raw_stat[0]
 
-        if raw_stat.size < 3
+        if raw_stat.size <= 2
           changes = []
         else
           changes = raw_stat[3..-1].map{ |change_str|
@@ -174,12 +203,17 @@ MERGE (b)-[:POINTS_TO]->(c)
           }
         end
 
-        { hash: hash, changes: changes }
+        { hash: commit_hash, changes: changes }
       }
 
-      remove_diff_file
-      CSV.open(diff_file, 'w') do |csv|
+      # Remove old diff csv file
+      remove_diff_csv_file
+
+      CSV.open(diff_csv_file, 'w') do |csv|
+        # Write csv headers
         csv << %w{ hash additions deletions file_path }
+
+        # Write rows
         stat_arr.each do |stat|
           stat[:changes].each do |change|
             csv << [
@@ -199,6 +233,7 @@ MERGE (b)-[:POINTS_TO]->(c)
       session = Ginatra::Db.session
 
       # Establish contraints in indexes
+      # TODO: This is only required once during the database setup process.
       session.query('CREATE CONSTRAINT ON (c:Commit) ASSERT c.hash IS UNIQUE')
       session.query('CREATE INDEX ON :Commit(commit_timestamp)')
       session.query('CREATE INDEX ON :Commit(message)')
@@ -207,7 +242,7 @@ MERGE (b)-[:POINTS_TO]->(c)
       # Import CSV
       session.query("
 USING PERIODIC COMMIT 1000
-LOAD CSV WITH headers FROM 'file://#{data_file}' as line
+LOAD CSV WITH headers FROM 'file://#{commit_csv_file}' as line
 
 MATCH (r:Repository {id: '#{@id}'})
 MERGE (c:Commit {hash: line.hash}) ON CREATE SET
@@ -238,12 +273,13 @@ FOREACH (parent_hash in split(line.parents, ' ') |
       session = Ginatra::Db.session
 
       # Establish contraints in indexes
+      # TODO: This is only required once during the database setup process.
       session.query('CREATE CONSTRAINT ON (f:File) ASSERT f.path IS UNIQUE')
 
       # Import CSV
       session.query("
 USING PERIODIC COMMIT 1000
-LOAD CSV WITH headers FROM 'file://#{diff_file}' as line
+LOAD CSV WITH headers FROM 'file://#{diff_csv_file}' as line
 
 MATCH (c:Commit {hash: line.hash})
 MERGE (f:File {path: line.file_path})
@@ -253,6 +289,9 @@ MERGE (c)-[:CHANGES {additions: line.additions, deletions: line.deletions}]->(f)
     end
 
     def import_git_graph
+      logger = Ginatra::Log.logger
+      logger.info("Started indexing repo #{@id}")
+
       session = Ginatra::Db.session
       # Create constraints
       session.query('CREATE CONSTRAINT ON (r:Repository) ASSERT r.origin_url IS UNIQUE')
@@ -260,14 +299,16 @@ MERGE (c)-[:CHANGES {additions: line.additions, deletions: line.deletions}]->(f)
       session.query("MERGE (r:Repository {origin_url: '#{@origin_url}', id: '#{@id}', name: '#{@name}'})")
       session.close
 
-      # Poor man's benchmark
-      p Time.now
+      logger.info("Importing commits graph of #{@id}")
       import_commits_graph
-      p Time.now
+
+      logger.info("Importing branch graph of #{@id}")
       import_branch_graph
-      p Time.now
+
+      logger.info("Importing commit diff graph of #{@id}")
       import_diff_graph
-      p Time.now
+
+      logger.info("Finised indexing repository #{id}")
     end
 
     private
@@ -325,24 +366,24 @@ MERGE (c)-[:CHANGES {additions: line.additions, deletions: line.deletions}]->(f)
       end
     end
 
-    def data_file
+    def commit_csv_file
       dirname = Ginatra::Env.data ? Ginatra::Env.data : './data'
       FileUtils.mkdir_p dirname unless File.directory?(dirname)
       File.expand_path @id + '.csv', dirname
     end
 
-    def diff_file
+    def diff_csv_file
       dirname = Ginatra::Env.data ? Ginatra::Env.data : './data'
       FileUtils.mkdir_p dirname unless File.directory?(dirname)
       File.expand_path @id + '_diff.csv', dirname
     end
 
-    def remove_data_file
-      FileUtils.rm(data_file) if File.exists?(data_file)
+    def remove_commit_csv_file
+      FileUtils.rm(commit_csv_file) if File.exists?(commit_csv_file)
     end
 
-    def remove_diff_file
-      FileUtils.rm(diff_file) if File.exists?(diff_file)
+    def remove_diff_csv_file
+      FileUtils.rm(diff_csv_file) if File.exists?(diff_csv_file)
     end
 
     def pull_latest_commits
@@ -400,7 +441,7 @@ MERGE (c)-[:CHANGES {additions: line.additions, deletions: line.deletions}]->(f)
     end
 
     # def get_commits
-    #   create_commits_data unless File.exists?(data_file)
+    #   create_commits_data unless File.exists?(commit_csv_file)
     # end
 
 #     def git_log

@@ -1,6 +1,7 @@
 require 'sinatra/base'
 require 'sinatra/assetpack'
 
+require_relative 'ginatra/log'
 require_relative 'ginatra/config'
 require_relative 'ginatra/env'
 require_relative 'ginatra/helper'
