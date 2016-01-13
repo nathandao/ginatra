@@ -14,7 +14,7 @@ module Ginatra
     class MissingId < RuntimeError; end
     class InvalidRepoId < RuntimeError; end
 
-    attr_accessor :id, :path, :name, :color, :origin_url
+    attr_accessor :id, :path, :name, :color, :origin_url, :rugged_repo, :head_branch
 
     def self.new(params)
       @id ||= params["id"]
@@ -24,6 +24,8 @@ module Ginatra
 
     def initialize(params)
       prepare_repo_values(params)
+      @rugged_repo = Rugged::Repository.new(File.expand_path(@path))
+      @head_branch = @rugged_repo.head.name.sub(/^refs\/heads\//, '')
     end
 
     def authors params = {}
@@ -53,11 +55,32 @@ module Ginatra
       }
     end
 
-    def refresh_data
-      remove_commit_csv_file
-      pull_latest_commits
-      get_commits
+    # def fetch
+    #   # cred = Rugged::Credentials::SshKey.new({ username: 'git', publickey: 'id_rsa.pub', privatekey: 'id_rsa', passphrase: '' })
+    #   @rugged_repo.remotes.each do |remote|
+    #     remote.fetch({ credentials: @credentials })
+    #   end
+    # end
+
+    def pull
+      # Pull rebase on all remote branches
+      @rugged_repo.branches.each do |branch|
+        if (branch.target.class == Rugged::Commit && branch.head? == false)
+          branch_name = branch.name.split('/')[1..-1].join('/')
+          `cd #{@path} && git checkout #{branch_name}`
+          `cd #{@path} && git pull --rebase`
+        end
+      end
+
+      # Checkout to default head branch again
+      `cd #{path} && git checkout #{@head_branch}`
     end
+
+    # def refresh_data
+    #   remove_commit_csv_file
+    #   pull_latest_commits
+    #   get_commits
+    # end
 
     # def start_stream(channel, update_interval)
     #   EM.add_periodic_timer(update_interval) {
@@ -84,8 +107,7 @@ module Ginatra
       # Create or update existing repo
       session.query("MERGE (r:Repository {origin_url: '#{@origin_url}', id: '#{@id}', name: '#{@name}'})")
 
-      repo = Rugged::Repository.new(File.expand_path(@path))
-      repo.branches.each do |branch|
+      @rugged_repo.branches.each do |branch|
         # Only add remote branches. Since HEAD is pointed to the current
         # local working branch
         if (branch.target.class == Rugged::Commit && branch.head? == false)
@@ -107,16 +129,14 @@ MERGE (b)-[:POINTS_TO]->(c)
     end
 
     def create_commits_csv
-      repo = Rugged::Repository.new(File.expand_path(@path))
       tips = []
-
-      repo.branches.each do |branch|
+      @rugged_repo.branches.each do |branch|
         tips << branch.target.oid if (branch.target.class == Rugged::Commit)
       end
 
       # Create a walker and let the starting points as the latest commit of each
       # branch.
-      walker = Rugged::Walker.new(repo)
+      walker = Rugged::Walker.new(@rugged_repo)
       tips.uniq.each do |target|
         walker.push(target)
       end
@@ -343,9 +363,8 @@ MERGE (c)-[:CHANGES {additions: toInt(line.additions), deletions: toInt(line.del
       end
 
       # Find remote url
-      repo = Rugged::Repository.new(File.expand_path(@path))
       @origin_url = nil
-      repo.remotes.each do |remote|
+      @rugged_repo.remotes.each do |remote|
         @origin_url = remote.url if remote.name == 'origin'
       end
     end
