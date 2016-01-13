@@ -14,7 +14,6 @@ I am currently rewriting most of the api backend so the documentation for settin
 - Use Rugged to get repository's data insead of formatting `git log` command output.
 - Re-writing of the core library to store repo commits, its diffs, authors and even file paths and line changes in each commit in Neo4j (a graph database). This allows much faster querying of commit data and potentially a lot of interesting applications followed by a graph database.
 - API endpoints to provide ChartJs json data o be fed into ChartJs will be deprecated. This should be handled on the client-side app from commits data instead.
-=======
 - Re-writing of the core library to store repo commits, its diffs, authors and even file paths and line changes in each commit in Neo4j (a graph database). This allows much faster querying of commit data and potentially a lot of interesting applications provided by a graph database.
 - API endpoints to provide ChartJs json data to be fed into ChartJs will be deprecated. This should be handled on the client-side app from commits data instead.
 
