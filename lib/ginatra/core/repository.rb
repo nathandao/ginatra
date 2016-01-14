@@ -300,7 +300,9 @@ USING PERIODIC COMMIT 1000
 LOAD CSV WITH headers FROM 'file://#{diff_csv_file}' as line
 
 MATCH (c:Commit {hash: line.hash})
-MERGE (f:File {path: line.file_path, path_on_disk: line.file_path_on_disk, ignored: 0})
+MERGE (f:File {path_on_disk: line.file_path_on_disk}) ON CREATE SET
+  f.path = line.file_path,
+  f.ignored = 0
 MERGE (c)-[:CHANGES {additions: toInt(line.additions), deletions: toInt(line.deletions)}]->(f)
 ")
       session.close
