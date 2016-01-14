@@ -99,6 +99,74 @@ ORDER BY #{params[:order_by] ? params[:order_by] : 'commit_timestamp DESC'}
           { repo_id: repo[0], commits: repo[1] }
         }
       end
+
+      def query_overview(params = {})
+        # Always use array for :in
+        if params[:in].nil?
+          repo_ids = Ginatra::Config.repositories.keys
+        else
+          if params[:in].class == Array
+            repo_ids = params[:in]
+          else
+            repo_ids = [params[:in]]
+          end
+        end
+
+        # Get conditions.
+        conditions = ["r.id IN #{repo_ids.to_s}"]
+        if params[:from]
+          from = Ginatra::Helper.epoch_time(params[:from])
+          conditions << "c.commit_timestamp >= #{from}"
+        end
+        if params[:til]
+          til = Ginatra::Helper.epoch_time(params[:til])
+          conditions << "c.commit_timestamp <= #{til}"
+        end
+
+        # Create query parts
+        query = ["MATCH (r:Repository)-[:HAS_COMMIT]->(c:Commit)"]
+        query << "WHERE #{conditions.join(' AND ')}" if conditions.size > 0
+        query << "
+WITH DISTINCT c as c, r.id as repo_id
+MATCH (a:Author)-[:AUTHORED]->(c)-[ch:CHANGES]->(:File)
+WITH
+  repo_id,
+  COUNT(c) as commits_count,
+  SUM(ch.additions) AS additions,
+  SUM(ch.deletions) AS deletions,
+  SUM(ch.additions) - SUM(ch.deletions) AS lines,
+  COUNT(DISTINCT a) AS contributors_count
+RETURN
+  repo_id, commits_count, additions, deletions, contributors_count, lines
+"
+        # Send the query.
+        session = Ginatra::Db.session
+        query_result = session.query(query.join(' '))
+        session.close
+
+        # Prepare result with empty commits array for each repo_id
+        result = repo_ids.inject({}) { |val, repo_id|
+          val[repo_id] ||= []
+          val
+        }
+
+        # Get formatted result
+        query_result.each do |row|
+          result[row.repo_id] << {
+            additions: row.additions,
+            deletions: row.deletions,
+            contributors_count: row.contributors_count,
+            lines: row.lines,
+            commits_count: row.commits_count
+          }
+        end
+
+        p result
+
+        result.map{ |repo|
+          { repo_id: repo[0], overview_data: repo[1] }
+        }
+      end
     end
   end
 end
