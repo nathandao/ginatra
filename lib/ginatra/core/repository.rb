@@ -23,9 +23,27 @@ module Ginatra
     end
 
     def initialize(params)
-      prepare_repo_values(params)
+      colors = Ginatra::Config.colors
+      repos = Ginatra::Config.repositories
+      @id = params['id'].strip
+      @path = File.expand_path params['path'].strip
+      @color = nil
+      @name = params['name'].strip
       @rugged_repo = Rugged::Repository.new(File.expand_path(@path))
       @head_branch = @rugged_repo.head.name.sub(/^refs\/heads\//, '')
+
+      # Get default color if it is not defined
+      if params['color'].nil?
+        @color = colors[repos.find_index { |k,_| k == @id } % colors.size]
+      else
+        @color = params['color']
+      end
+
+      # Find remote url
+      @origin_url = nil
+      @rugged_repo.remotes.each do |remote|
+        @origin_url = remote.url if remote.name == 'origin'
+      end
     end
 
     def authors params = {}
@@ -75,12 +93,6 @@ module Ginatra
       # Checkout to default head branch again
       `cd #{path} && git checkout #{@head_branch}`
     end
-
-    # def refresh_data
-    #   remove_commit_csv_file
-    #   pull_latest_commits
-    #   get_commits
-    # end
 
     # def start_stream(channel, update_interval)
     #   EM.add_periodic_timer(update_interval) {
@@ -201,6 +213,7 @@ MERGE (b)-[:POINTS_TO]->(c)
             raw_change = change_str.split(/\t/)
             {
               file_path: raw_change[2],
+              file_path_on_disk: [@path, raw_change[2]].join('/'),
               additions: raw_change[0].to_i,
               deletions: raw_change[1].to_i
             }
@@ -215,7 +228,7 @@ MERGE (b)-[:POINTS_TO]->(c)
 
       CSV.open(diff_csv_file, 'w') do |csv|
         # Write csv headers
-        csv << %w{ hash additions deletions file_path }
+        csv << %w{ hash additions deletions file_path file_path_on_disk }
 
         # Write rows
         stat_arr.each do |stat|
@@ -224,7 +237,8 @@ MERGE (b)-[:POINTS_TO]->(c)
               stat[:hash],
               change[:additions],
               change[:deletions],
-              change[:file_path]
+              change[:file_path],
+              change[:file_path_on_disk],
             ]
           end
         end
@@ -278,7 +292,7 @@ FOREACH (parent_hash in split(line.parents, ' ') |
 
       # Establish contraints in indexes
       # TODO: This is only required once during the database setup process.
-      session.query('CREATE CONSTRAINT ON (f:File) ASSERT f.path IS UNIQUE')
+      session.query('CREATE CONSTRAINT ON (f:File) ASSERT f.path_on_disk IS UNIQUE')
 
       # Import CSV
       session.query("
@@ -286,15 +300,80 @@ USING PERIODIC COMMIT 1000
 LOAD CSV WITH headers FROM 'file://#{diff_csv_file}' as line
 
 MATCH (c:Commit {hash: line.hash})
-MERGE (f:File {path: line.file_path})
+MERGE (f:File {path: line.file_path, path_on_disk: line.file_path_on_disk, ignored: 0})
 MERGE (c)-[:CHANGES {additions: toInt(line.additions), deletions: toInt(line.deletions)}]->(f)
 ")
+      session.close
+    end
+
+    def create_current_files_csv
+      files_tree = Dir["#{@path}/**/*"].reject{ |path| path == "#{@path}/.git" }.map{ |path|
+        file_parts = path.split('/')
+        {
+          relative_path: file_parts[@path.split('/').size..-1].join('/'),
+          disk_path: path
+        }
+      }
+
+      # Remove old files csv file
+      remove_current_files_csv_file
+
+      CSV.open(current_files_csv_file, 'w') do |csv|
+        # Write csv headers
+        csv << %w{ file_path file_path_on_disk ignored }
+
+        # Write rows
+        files_tree.each do |file|
+          csv << [
+            file[:relative_path],
+            file[:disk_path],
+            @rugged_repo.path_ignored?("#{file[:relative_path]}") ? 1 : 0
+          ]
+        end
+      end
+    end
+
+    def import_current_files_graph
+      create_current_files_csv
+      session = Ginatra::Db.session
+
+      # Establish contraints in indexes
+      # TODO: This is only required once during the database setup process.
+      session.query('CREATE CONSTRAINT ON (tr: CurrentFileTree) ASSERT tr.origin_url IS UNIQUE')
+
+      # Create the repo's file tree node if it has not existed
+      session.query("
+MATCH (r:Repository {origin_url: '#{@origin_url}'})
+WITH r
+MERGE (r)-[:HAS_FILE_TREE]->(:CurrentFileTree {origin_url: '#{@origin_url}'})
+")
+
+      # Remove all currently files relationship from the file tree in order
+      # to construct the new one based on the current directory
+      session.query("
+MATCH (:CurrentFileTree {origin_url: '#{@origin_url}'})-[r:HAS_FILE]->(:File)
+DELETE r
+")
+
+      # Import CSV
+      session.query("
+USING PERIODIC COMMIT 1000
+LOAD CSV WITH headers FROM 'file://#{current_files_csv_file}' as line
+
+MATCH
+  (f:File {path_on_disk: line.file_path_on_disk}),
+  (tr:CurrentFileTree {origin_url: '#{@origin_url}'})
+MERGE (tr)-[:HAS_FILE]->(f)
+SET f.ignored = toInt(line.ignored)
+")
+
       session.close
     end
 
     def import_git_graph
       logger = Ginatra::Log.new().logger
       logger.info("Started indexing repo #{@id}")
+      start_time = Time.now
 
       session = Ginatra::Db.session
       # Create constraints
@@ -312,7 +391,10 @@ MERGE (c)-[:CHANGES {additions: toInt(line.additions), deletions: toInt(line.del
       logger.info("Importing commit diff graph of #{@id}")
       import_diff_graph
 
-      logger.info("Finised indexing repository #{id}")
+      logger.info("Importing current files graph of #{@id}")
+      import_current_files_graph
+
+      logger.info("Finished indexing repository #{id}. Duration: #{Time.now - start_time} seconds")
     end
 
     private
@@ -347,32 +429,14 @@ MERGE (c)-[:CHANGES {additions: toInt(line.additions), deletions: toInt(line.del
       'ginatra/repository.rb'
     end
 
-    def prepare_repo_values(params)
-      colors = Ginatra::Config.colors
-      repos = Ginatra::Config.repositories
-      @id = params['id'].strip
-      @path = params['path'].strip
-      @color = nil
-      @name = params['name'].strip
-
-      # Get default color if it is not defined
-      if params['color'].nil?
-        @color = colors[repos.find_index { |k,_| k == @id } % colors.size]
-      else
-        @color = params['color']
-      end
-
-      # Find remote url
-      @origin_url = nil
-      @rugged_repo.remotes.each do |remote|
-        @origin_url = remote.url if remote.name == 'origin'
-      end
-    end
-
     def commit_csv_file
       dirname = Ginatra::Env.data ? Ginatra::Env.data : './data'
       FileUtils.mkdir_p dirname unless File.directory?(dirname)
       File.expand_path @id + '.csv', dirname
+    end
+
+    def remove_commit_csv_file
+      FileUtils.rm(commit_csv_file) if File.exists?(commit_csv_file)
     end
 
     def diff_csv_file
@@ -381,34 +445,22 @@ MERGE (c)-[:CHANGES {additions: toInt(line.additions), deletions: toInt(line.del
       File.expand_path @id + '_diff.csv', dirname
     end
 
-    def remove_commit_csv_file
-      FileUtils.rm(commit_csv_file) if File.exists?(commit_csv_file)
-    end
-
     def remove_diff_csv_file
       FileUtils.rm(diff_csv_file) if File.exists?(diff_csv_file)
     end
 
-    def pull_latest_commits
-      `git -C #{path} pull --rebase &>/dev/null`
+    def current_files_csv_file
+      dirname = Ginatra::Env.data ? Ginatra::Env.data : './data'
+      FileUtils.mkdir_p dirname unless File.directory?(dirname)
+      File.expand_path @id + '_current_files.csv', dirname
     end
 
-    # def track_all_remote_branches
-    #   `for i in $(git -C #{@path} branch -r | grep -vE "HEAD|master"); do
-    #      git -C #{@path} branch --track ${i#*/} $i;
-    #    done >> `
-    # end
+    def remove_current_files_csv_file
+      FileUtils.rm(current_files_csv_file) if File.exists?(current_files_csv_file)
+    end
 
-    def change_exists?
-      result = `git -C #{@path} fetch origin &>/dev/null
-                GINATRA_LOCAL=$(git -C #{@path} rev-parse @)
-                GINATRA_REMOTE=$(git -C #{@path} rev-parse @{u})
-                if [ $GINATRA_LOCAL = $GINATRA_REMOTE ]; then
-                  echo "[ginatra_branch_up_to_date]"
-                else
-                  echo "[ginatra_branch_refresh_required]"
-                fi`
-      result.include? "[ginatra_branch_refresh_required]"
+    def pull_latest_commits
+      `git -C #{path} pull --rebase &>/dev/null`
     end
 
     def commits_between from = nil, til = nil
@@ -442,36 +494,5 @@ MERGE (c)-[:CHANGES {additions: toInt(line.additions), deletions: toInt(line.del
         }
       end
     end
-
-    # def get_commits
-    #   create_commits_data unless File.exists?(commit_csv_file)
-    # end
-
-#     def git_log
-#       dirname = Ginatra::Env..data ? Ginatra::Env.data : './data'
-#       FileUtils.mkdir_p dirname unless File.directory?(dirname)
-#       csv_file_path = File.expand_path @id + '.csv', dirname
-#       d = '<ginatra_delimiter>'
-#       `cd #{path} && \
-# echo "sha1,hash,parents,author_email,author_name,refs,subject,timestamp,date_time" > #{csv_file_path} && \
-# git log --reverse --no-merges --format='%H#{d}%h#{d}%P#{d}%ae#{d}%an#{d}%d#{d}%s#{d}%at#{d}%ai' | \
-# sed '/^$/d' | \
-# sed 's/\n/-/g' | \
-# sed 's/,/;/g' | \
-# sed 's/#{d}/,/g >> #{csv_file_path} && \
-# git log --reverse --no-merges --pretty=tformat: 
-# `
-#       `cd #{path} && \
-# echo "sha1#{bash_tab}hash#{bash_tab}parents#{bash_tab}author_email#{bash_tab}author_name#{bash_tab}refs#{bash_tab}subject#{bash_tab}timestamp#{bash_tab}date_time#{bash_tab}changes" > #{csv_file_path} && \
-# IFS=$'\n'
-# DATA=(\`git log --reverse --format='"%H","%h","%P","%ae","%an","%d","%f","%at","%ai",'\`)
-# LINES=(\`git log --pretty=format: --shortstat\`)
-# i=0
-# while [ $i -lt ${#DATA[@]} ]; do
-#     echo ${DATA[$i]}\"${LINES[$i]}\"
-#     i=$[i + 1]
-# done >> #{csv_file_path}
-#       `
-#   end
   end
 end
