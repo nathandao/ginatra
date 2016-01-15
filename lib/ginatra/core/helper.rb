@@ -22,16 +22,7 @@ module Ginatra
       end
 
       def query_commits(params={})
-        # Always use array for :in
-        if params[:in].nil?
-          repo_ids = Ginatra::Config.repositories.keys
-        else
-          if params[:in].class == Array
-            repo_ids = params[:in]
-          else
-            repo_ids = [params[:in]]
-          end
-        end
+        repo_ids = repo_ids_from_param_in(params[:in])
 
         # Get conditions.
         conditions = ["r.id IN #{repo_ids.to_s}"]
@@ -101,16 +92,7 @@ ORDER BY #{params[:order_by] ? params[:order_by] : 'commit_timestamp DESC'}
       end
 
       def query_overview(params = {})
-        # Always use array for :in
-        if params[:in].nil?
-          repo_ids = Ginatra::Config.repositories.keys
-        else
-          if params[:in].class == Array
-            repo_ids = params[:in]
-          else
-            repo_ids = [params[:in]]
-          end
-        end
+        repo_ids = repo_ids_from_param_in(params[:in])
 
         # Get conditions.
         conditions = ["r.id IN #{repo_ids.to_s}"]
@@ -124,21 +106,23 @@ ORDER BY #{params[:order_by] ? params[:order_by] : 'commit_timestamp DESC'}
         end
 
         # Create query parts
-        query = ["MATCH (r:Repository)-[:HAS_COMMIT]->(c:Commit)"]
-        query << "WHERE #{conditions.join(' AND ')}" if conditions.size > 0
-        query << "
-WITH DISTINCT c as c, r.id as repo_id
-MATCH (a:Author)-[:AUTHORED]->(c)-[ch:CHANGES]->(:File)
+        query = ["
+MATCH
+  (r)-[:HAS_COMMIT]->(c:Commit)
+WHERE #{conditions.join(' AND')}
+WITH c, r
+MATCH (a:Author)-[:AUTHORED]->(c)
 WITH
-  repo_id,
-  COUNT(c) as commits_count,
-  SUM(ch.additions) AS additions,
-  SUM(ch.deletions) AS deletions,
-  SUM(ch.additions) - SUM(ch.deletions) AS lines,
-  COUNT(DISTINCT a) AS contributors_count
+  r,
+  count(distinct a) as contributor_count,
+  count(distinct c) as commit_count
+MATCH (:CurrentFileTree {origin_url: r.origin_url})-[:HAS_FILE]->(:File {ignored: 0})<-[ch:CHANGES]-()
 RETURN
-  repo_id, commits_count, additions, deletions, contributors_count, lines
-"
+  r.id as repo_id,
+  contributor_count,
+  commit_count,
+  SUM(ch.additions - ch.deletions) as lines
+"]
         # Send the query.
         session = Ginatra::Db.session
         query_result = session.query(query.join(' '))
@@ -153,19 +137,29 @@ RETURN
         # Get formatted result
         query_result.each do |row|
           result[row.repo_id] << {
-            additions: row.additions,
-            deletions: row.deletions,
-            contributors_count: row.contributors_count,
-            lines: row.lines,
-            commits_count: row.commits_count
+            contributor_count: row.contributor_count,
+            commit_count: row.commit_count,
+            lines: row.lines
           }
         end
+        result
+      end
 
-        p result
+      private
 
-        result.map{ |repo|
-          { repo_id: repo[0], overview_data: repo[1] }
-        }
+      def repo_ids_from_param_in(param_in)
+        repo_ids = []
+        # Always use array for :in
+        if param_in.nil?
+          repo_ids = Ginatra::Config.repositories.keys
+        else
+          if param_in.class == Array
+            repo_ids = param_in
+          else
+            repo_ids = [param_in]
+          end
+        end
+        repo_ids
       end
     end
   end
