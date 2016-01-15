@@ -245,6 +245,15 @@ MERGE (b)-[:POINTS_TO]->(c)
       end
     end
 
+    def set_repo_graph_start_time
+      session = Ginatra::Db.session
+      session.query("
+MATCH (r:Repository {origin_url: '#{@origin_url}'})-[:HAS_COMMIT]->(c:Commit)
+WITH r, c ORDER BY c.commit_timestamp LIMIT 1
+SET r.start_timestamp = c.commit_timestamp
+")
+      session.close
+    end
 
     def import_commits_graph
       create_commits_csv
@@ -284,6 +293,9 @@ FOREACH (parent_hash in split(line.parents, ' ') |
   MERGE (c)-[:HAS_PARENT]->(parent))
 ")
       session.close
+
+      # Set repo's start timestamp property based on first commit's timestamp
+      set_repo_graph_start_time
     end
 
     def import_diff_graph
@@ -395,6 +407,9 @@ SET f.ignored = toInt(line.ignored)
 
       logger.info("Importing current files graph of #{@id}")
       import_current_files_graph
+
+      logger.info("Setting start timestamp of #{@id}")
+      set_repo_graph_start_time
 
       logger.info("Finished indexing repository #{id}. Duration: #{Time.now - start_time} seconds")
     end
