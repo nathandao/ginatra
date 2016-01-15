@@ -119,6 +119,7 @@ WITH
 MATCH (:CurrentFileTree {origin_url: r.origin_url})-[:HAS_FILE]->(:File {ignored: 0})<-[ch:CHANGES]-()
 RETURN
   r.id as repo_id,
+  r.start_timestamp as start_timestamp,
   contributor_count,
   commit_count,
   SUM(ch.additions - ch.deletions) as lines
@@ -136,9 +137,10 @@ RETURN
 
         # Get formatted result
         query_result.each do |row|
-          result[row.repo_id] << {
+          result[row.repo_id] = {
             contributor_count: row.contributor_count,
             commit_count: row.commit_count,
+            start_timestamp: row.start_timestamp,
             lines: row.lines
           }
         end
